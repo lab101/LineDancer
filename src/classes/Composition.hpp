@@ -16,7 +16,7 @@
 //
 //
 //#ifdef magick
-//#include <Magick++.h>
+#include <Magick++.h>
 //#endif
 
 class Composition{

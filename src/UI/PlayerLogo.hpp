@@ -16,17 +16,12 @@
 class PlayerLogo{
     
     
-    std::shared_ptr<ci::nvg::Context> vg;
-    
-    std::string mUniqueId;
-    ci::Color mColor;
-
     
 public:
     
-    void setup(std::string uniqueId);
+    void setup();
     void update();
-    void draw(bool fullShape, ci::vec2 position, ci::nvg::Context& vg);
+    void draw(bool fullShape, ci::vec2 position, std::string ipNr,float time, ci::nvg::Context& vg);
 
     
 };

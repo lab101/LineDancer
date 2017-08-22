@@ -13,6 +13,8 @@
 #include "OscListener.h"
 #include "cinder/System.h"
 
+#include <map>
+
 
 
 class NetworkHelper{
@@ -24,15 +26,21 @@ class NetworkHelper{
 
     std::string mLastIpNr;
     
+
+    
     void setupOSCSender();
     void sendOscMessage(std::string command,ci::vec3 point);
 
+    
+    std::string getLastIpNummer(std::string fullIp);
     
     float lastBroadcast;
     void sendAlive();
     
 public:
     
+    std::map<std::string,float> mAliveIps;
+
     bool setup();
     void update();
     std::string const getLastNummerIp();

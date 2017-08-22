@@ -52,8 +52,10 @@ void Composition::newComposition(){
     depthHistory.clear();
     imageList.clear();
     mId = getDateString();
-    mOutputFolder = getDocumentsDirectory().string() + "liveDraw/" + mId;
+    mOutputFolder = getDocumentsDirectory().string() + "lineDancer/" + mId;
     lastUsedHistoryFboIndex =0;
+    
+    clearFbo();
 }
 
 
@@ -75,6 +77,7 @@ void Composition::newLine(ci::vec3 pressurePoint){
 
 void Composition::endLine(){
     savePointsToHistory();
+    newLayer();
 }
 
 
@@ -273,28 +276,29 @@ void Composition::finished(){
     dataFile.close();
 
 
-//
-//        std::vector<Magick::Image> frames;
-//    
-//        for(auto i: imageList){
-//            Magick::Image img;
-//            img.read(i);
-//            img.animationDelay(40);
-//            frames.push_back(img);
-//        }
-//        
-//        
-//        try{
-//            std::string path = mOutputFolder + "/" +  mId + "composition.gif";
-//            CI_LOG_I(path);
-//            Magick::writeImages(frames.begin(), frames.end(),path);
-//        }
-//        catch ( Magick::WarningConfigure & error)
-//        {
-//            // Handle problem while rotating or writing outfile.
-//            CI_LOG_E( error.what());
-//        }
 
+        std::vector<Magick::Image> frames;
+    
+        for(auto i: imageList){
+            Magick::Image img;
+            img.read(i);
+            img.animationDelay(8);
+            img.animationIterations(-1);
+            frames.push_back(img);
+        }
+        
+        
+        try{
+            std::string path = mOutputFolder + "/__" +  mId + "composition.gif";
+            CI_LOG_I(path);
+            Magick::writeImages(frames.begin(), frames.end(),path);
+        }
+        catch ( Magick::WarningConfigure & error)
+        {
+            // Handle problem while rotating or writing outfile.
+            CI_LOG_E( error.what());
+        }
+ 
     
         
         
@@ -304,6 +308,8 @@ void Composition::finished(){
 
 void Composition::clearFbo(){
     // clear the screen;
+    if(!mActiveFbo) return;
+    
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     
     gl::clear();
@@ -314,6 +320,8 @@ void Composition::clearFbo(){
 
 void Composition::newLayer(){
     
+    
+
     // check if output folder exists
     if(!fs::exists(mOutputFolder)){
         fs::create_directories(mOutputFolder);
@@ -321,27 +329,37 @@ void Composition::newLayer(){
     
     // write the current drawing to a png image
     std::string path = mOutputFolder + "/" + getStringWithLeadingZero(mImageId,5) +".gif";
-    try{
-        
-        auto f = ci::gl::Fbo::create(mActiveFbo->getWidth(), mActiveFbo->getHeight());
+    
+    
+    
+    float scale = 0.25;
+    
+        auto f = ci::gl::Fbo::create(mActiveFbo->getWidth() * scale, mActiveFbo->getHeight() * scale);
         f->bindFramebuffer();
+        gl::ScopedViewport scpVp( ivec2( 0 ), f->getSize() );
+    
         gl::clear();
         gl::clear( ColorA( 1, 1, 1, 1.0 ) );
         
-        draw();
+        gl::color(1, 1, 1, 1);
+        gl::draw(mActiveFbo->getColorTexture());
         f->unbindFramebuffer();
         
-        writeImage(path, f->getColorTexture()->createSource());
-        
-        
-        imageList.push_back(path);
-    }catch(...){
-        CI_LOG_E("error writing image file: " + path);
-    }
-    
-    clearFbo();
 
-    
+    auto source = f->getColorTexture()->createSource();
+
+    std::thread threadObj([=]{
+     
+            try{
+                writeImage(path, source);
+                imageList.push_back(path);
+            }catch(...){
+                CI_LOG_E("error writing image file: " + path);
+            }
+       
+    });
+
+    threadObj.detach();
     mImageId++;
 }
 

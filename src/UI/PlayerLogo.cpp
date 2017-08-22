@@ -11,12 +11,7 @@
 
 
 
-void PlayerLogo::setup(std::string uniqueId){
-    mColor = ci::Color(1.0,1.0,1.0);
-
-    mUniqueId = uniqueId;
-    
-    
+void PlayerLogo::setup(){
 }
 
 
@@ -26,29 +21,43 @@ void PlayerLogo::update(){
 
 
 
-void PlayerLogo::draw(bool fullShape, ci::vec2 position,ci::nvg::Context& vg){
+void PlayerLogo::draw(bool isClient, ci::vec2 position, std::string ipNr,float time ,ci::nvg::Context& vg){
     
-    vg.beginPath();
-    vg.circle(position,20);
     
-    vg.textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
-    vg.fontSize(16);
+    
 
-    if(!fullShape){
-        vg.strokeColor(mColor);
-        vg.strokeWidth(4);
-        vg.stroke();
-        
-    }else{
-        vg.fillColor(mColor);
+    if(isClient){
+        float div = powf(ci::app::getElapsedSeconds() - time,1.2);
+
+        vg.beginPath();
+        vg.circle(position, 20 - div);
+
+        vg.fillColor(ci::Color(1.0,1.0,1.0));
         vg.fill();
         vg.fillColor(ci::Color(0.0,0.0,0.0));
+        
+
+    }else{
+        vg.beginPath();
+
+        vg.circle(position, 20 );
+        
+        
+        vg.strokeColor(ci::Color(1.0,1.0,1.0));
+        vg.strokeWidth(4);
+        vg.stroke();
 
         //vg->strokeColor(ci::Color(1.0,0.0,0.0));
 
     }
+
     
-    vg.text(position, mUniqueId);
+
+    
+    vg.textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
+    vg.fontSize(16);
+
+    vg.text(position, ipNr);
 
 
 }

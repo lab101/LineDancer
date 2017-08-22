@@ -34,6 +34,19 @@ void NetworkHelper::update(){
         sendAlive();
         lastBroadcast = app::getElapsedSeconds();
     }
+    
+    
+    while( mListener.hasWaitingMessages() ) {
+        osc::Message message;
+        mListener.getNextMessage( &message );
+        std::string remoteIp = message.getArgAsString(0);
+        
+//        std::cout << message.getAddress() << std::endl;
+        
+        mAliveIps[remoteIp] = ci::app::getElapsedSeconds();
+        
+    }
+
 }
 
 
@@ -44,6 +57,14 @@ std::string const NetworkHelper::getLastNummerIp(){
 }
 
 
+std::string getLastIpNummer(std::string fullIp){
+    
+    std::vector<std::string> hostSplit = ci::split(fullIp, ".");
+    return hostSplit.back();
+
+}
+
+
 
 void NetworkHelper::setupOSCSender(){
     
@@ -51,8 +72,7 @@ void NetworkHelper::setupOSCSender(){
     std::vector<std::string> hostSplit = ci::split(System::getIpAddress(), ".");
     std::vector<std::string> subnetSplit = ci::split(System::getSubnetMask(), ".");
     
-    mLastIpNr = hostSplit.back();
-    
+    mLastIpNr =  hostSplit.back(); // getLastNummerIp(System::getIpAddress());
     
     std::string broadcast = "";
     
@@ -73,7 +93,7 @@ void NetworkHelper::sendAlive(){
     
     osc::Message message;
     message.setAddress("/alive");
-    message.addIntArg(std::stoi(mLastIpNr));
+    message.addStringArg(mLastIpNr);
     mSender.sendMessage(message);
 }
 

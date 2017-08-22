@@ -50,7 +50,7 @@ class LineDancer : public App {
     
     ci::Anim<int> showGifSavedTimer;
 
-    
+    //std::vector<Logo> mLogos;
     
 public:
     
@@ -121,7 +121,7 @@ void LineDancer::setup()
     menu.btnSave.onPressed.connect([=]{
         mPrevTexture = ci::gl::Texture::create(mActiveComposition->getTexture()->createSource());
         
-        mActiveComposition->newLayer();
+        mActiveComposition->newComposition();
     });
     
     
@@ -171,7 +171,7 @@ void LineDancer::setup()
     
 
     if(mNetworkHelper.setup()){
-        logo.setup(mNetworkHelper.getLastNummerIp());
+      //  logo.setup(mNetworkHelper.getLastNummerIp());
     }
 
     
@@ -386,7 +386,15 @@ void LineDancer::draw()
     vg.beginFrame(getWindowSize(), getWindowContentScale());
     
     menu.draw();
-    logo.draw(false,vec2(30,30),vg);
+    logo.draw(false,vec2(30,30), mNetworkHelper.getLastNummerIp(), 0 ,vg);
+    
+    int i=0;
+    for(auto client : mNetworkHelper.mAliveIps){
+        i+=60;
+        logo.draw(true,vec2(30, 30 + i), client.first, client.second,vg);
+    }
+    
+    
     drawGrid();
 
     drawTextMessages();
