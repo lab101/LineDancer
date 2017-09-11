@@ -41,7 +41,9 @@ void NetworkHelper::update(){
         mListener.getNextMessage( &message );
         
         // return from our own broadcast
-        if(message.getRemoteIp() ==  mOwnIpAdress) continue;
+        std::string remoteIp = message.getRemoteIp();
+        if( remoteIp ==  mOwnIpAdress)
+            continue;
         
         std::string const adress = message.getAddress();
         

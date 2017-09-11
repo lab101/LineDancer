@@ -186,7 +186,6 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
 
     if(points.size() > 0){
         BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
-        onNewPoints.emit(points);
     }
 }
 
@@ -214,14 +213,17 @@ void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
         
         points.push_back(newPoint);
        
-        minDistance = fmax(.8f,pow(newPoint.z * .17,1.2));// (scale*10);
+        minDistance = fmax(.8f,pow(newPoint.z * .17, 1.2));// (scale*10);
         
         lastDrawDistance = newDrawPosition;
         newDrawPosition = (lastDrawDistance + minDistance);
         
     }
     
-    drawInFbo(points);
+    if(points.size() > 0){
+        onNewPoints.emit(points);
+        drawInFbo(points);
+    }
 }
 
 
@@ -249,9 +251,9 @@ void Composition::drawHistory(){
         ci::Rectf b(pos.x,pos.y,pos.x + maxWidth, pos.y +  height);
         
         ci::gl::draw(tex,b);
-
     }
 }
+
 
 
 void Composition::finished(){

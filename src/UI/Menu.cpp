@@ -14,10 +14,10 @@ void Menu::setup(std::shared_ptr<ci::nvg::Context> nanoVGContext){
     vg = nanoVGContext;
     
     btnSave.setup(26,"NEW",nanoVGContext);
-    btnUndo.setup(26,"UNDO",nanoVGContext);
+//    btnUndo.setup(26,"UNDO",nanoVGContext);
     btnGif.setup(26,"GIF", nanoVGContext);
     
-    btnUndo.setColor(ci::Color(1,0.3,0.6));
+//    btnUndo.setColor(ci::Color(1,0.3,0.6));
     btnGif.setColor(ci::Color(1,1,0.6));
     
     brushScale = 0.5;
@@ -38,7 +38,7 @@ void Menu::setPosition(ci::vec2 position){
     ci::vec2 btnMargin(0,80);
     
     btnSave.setPosition(elementPos);
-    btnUndo.setPosition(elementPos += btnMargin);
+//    btnUndo.setPosition(elementPos += btnMargin);
     btnGif.setPosition(elementPos += btnMargin);
     
     brushScaleBoxOrig.set(elementPos.x -10, elementPos.y + btnMargin.y, elementPos.x + 10, elementPos.y + 460);
@@ -49,7 +49,7 @@ void Menu::setPosition(ci::vec2 position){
 
 void Menu::draw(){
     
-    btnUndo.draw();
+   // btnUndo.draw();
     btnSave.draw();
     btnGif.draw();
     // bar
@@ -110,7 +110,7 @@ bool Menu::checkTouchDown(ci::vec2 point){
     
 
     isPressed = btnSave.checkTouchDown(point);
-    isPressed += btnUndo.checkTouchDown(point);
+//    isPressed += btnUndo.checkTouchDown(point);
     isPressed += btnGif.checkTouchDown(point);
     
    
@@ -121,7 +121,7 @@ bool Menu::checkTouchDown(ci::vec2 point){
 bool Menu::touchUp(){
 
     btnSave.touchUp();
-    btnUndo.touchUp();
+//    btnUndo.touchUp();
     btnGif.touchUp();
     
     bool wasPressed = isPressed;
