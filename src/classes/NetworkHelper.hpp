@@ -12,6 +12,7 @@
 #include "OscSender.h"
 #include "OscListener.h"
 #include "cinder/System.h"
+#include "cinder/Signals.h"
 
 #include <map>
 
@@ -38,6 +39,9 @@ class NetworkHelper{
     void sendAlive();
     
 public:
+    
+    ci::signals::Signal<void(std::string,ci::vec3)>   onAction;
+
     
     std::map<std::string,float> mAliveIps;
 
