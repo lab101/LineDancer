@@ -186,6 +186,7 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
 
     if(points.size() > 0){
         BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
+        onNewPoints.emit(points);
     }
 }
 
