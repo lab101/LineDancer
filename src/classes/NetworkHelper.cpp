@@ -45,12 +45,12 @@ void NetworkHelper::update(){
         if( remoteIp ==  mOwnIpAdress)
             continue;
         
+        std::string remoteLastNr = extractLastIpNr(remoteIp);
         std::string const adress = message.getAddress();
         
-        if(adress == "alive"){
-            std::string remoteIp = message.getArgAsString(0);
-            mAliveIps[remoteIp] = ci::app::getElapsedSeconds();
-        }else if(adress == "points"){
+        mAliveIps[remoteLastNr] = ci::app::getElapsedSeconds();
+
+        if(adress == "points"){
             int totals = message.getNumArgs() ;
             
             std::vector<ci::vec3> points;
@@ -67,15 +67,14 @@ void NetworkHelper::update(){
 }
 
 
-std::string const NetworkHelper::getLastNummerIp(){
+std::string const NetworkHelper::getLastMyIpNr(){
 
     return mLastIpNr;
     
 }
 
+std::string NetworkHelper::extractLastIpNr(std::string& fullIp){
 
-std::string getLastIpNummer(std::string fullIp){
-    
     std::vector<std::string> hostSplit = ci::split(fullIp, ".");
     return hostSplit.back();
 
@@ -126,6 +125,8 @@ void NetworkHelper::sendPoints(std::vector<ci::vec3>& points){
     }
     
     mSender.sendMessage(message);
+    lastBroadcast = app::getElapsedSeconds();
+
 
 }
 
