@@ -100,6 +100,7 @@ void NetworkHelper::setupOSCSender(){
     int port = 3000;
     
     mSender.setup( broadcast, port, true );
+    lastBroadcast = app::getElapsedSeconds();
     
 }
 
