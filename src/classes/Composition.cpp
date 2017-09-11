@@ -195,16 +195,13 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
 void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
     
     
-    
-    
     float length = path.calcLength();
     if(length <= minDistance) return;
     
     
-    
     float newDrawPosition = lastDrawDistance + minDistance;
     
-    std::vector<vec3> points;
+    pointVec points;
     
     while(newDrawPosition + minDistance < length){
         
@@ -224,7 +221,6 @@ void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
     }
     
     drawInFbo(points);
-
 }
 
 

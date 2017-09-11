@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "ci_nanovg_gl.hpp"
+#include "cinder/Signals.h"
 
 //#define magick;
 //
@@ -18,6 +19,9 @@
 //#ifdef magick
 #include <Magick++.h>
 //#endif
+
+
+typedef std::vector<ci::vec3> pointVec;
 
 class Composition{
    
@@ -47,9 +51,14 @@ class Composition{
     
     ci::gl::TextureRef glitch;
     std::vector<std::string> imageList;
+    
+
 
 public:
     
+    
+    ci::signals::Signal<void(pointVec)>   onNewPoints;
+
     ci::vec2                    mSize;
 
     

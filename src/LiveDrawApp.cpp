@@ -191,6 +191,10 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
     composition->setup(mNanoVG,hasHistory);
     composition->setNewSize(getWindowSize(),getWindowContentScale());
     
+    composition->onNewPoints.connect([=] (pointVec p){
+        mNetworkHelper.sendPoints(p);
+
+    });
 }
 
 
@@ -257,7 +261,6 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
     
     composition->lineTo(point);
-
 }
 
 
