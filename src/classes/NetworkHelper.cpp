@@ -39,11 +39,16 @@ void NetworkHelper::update(){
     while( mListener.hasWaitingMessages() ) {
         osc::Message message;
         mListener.getNextMessage( &message );
-        std::string remoteIp = message.getArgAsString(0);
         
-//        std::cout << message.getAddress() << std::endl;
+        std::string const adress = message.getAddress();
         
-        mAliveIps[remoteIp] = ci::app::getElapsedSeconds();
+        if(adress == "/alive"){
+            std::string remoteIp = message.getArgAsString(0);
+            if(mLastIpNr !=  remoteIp)  mAliveIps[remoteIp] = ci::app::getElapsedSeconds();
+        }else if(adress == "/penDown"){
+            
+        }
+        
         
     }
 

@@ -172,6 +172,10 @@ void LineDancer::setup()
 
     if(mNetworkHelper.setup()){
       //  logo.setup(mNetworkHelper.getLastNummerIp());
+        mNetworkHelper.onAction.connect([=] (std::string action,ci::vec3 point){
+            penDown(point,mActiveComposition);
+            
+        });
     }
 
     

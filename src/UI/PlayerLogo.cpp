@@ -29,6 +29,8 @@ void PlayerLogo::draw(bool isClient, ci::vec2 position, std::string ipNr,float t
     if(isClient){
         float div = powf(ci::app::getElapsedSeconds() - time,1.2);
 
+        if(div > 20) div =20;
+        
         vg.beginPath();
         vg.circle(position, 20 - div);
 
