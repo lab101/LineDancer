@@ -36,7 +36,7 @@ class NetworkHelper{
     
     float lastBroadcast;
     void sendAlive();
-    
+
 public:
     
     ci::signals::Signal<void(std::string,ci::vec3)>   onAction;
@@ -49,6 +49,7 @@ public:
     std::string const getLastNummerIp();
     
     void sendOscMessage(std::string command,ci::vec3 point);
+    void sendPoints(std::vector<ci::vec3>& points);
 
 
     

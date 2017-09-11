@@ -197,7 +197,7 @@ void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
     
     float newDrawPosition = lastDrawDistance + minDistance;
     
-    std::vector<vec3> points;
+    pointVec points;
     
     while(newDrawPosition + minDistance < length){
         
@@ -218,7 +218,10 @@ void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
     
     if(points.size() > 0){
         BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
+        onNewPoints.emit(points);
+
     }
+    
     
 
 

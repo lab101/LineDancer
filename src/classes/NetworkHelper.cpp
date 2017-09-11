@@ -97,7 +97,7 @@ void NetworkHelper::setupOSCSender(){
 void NetworkHelper::sendAlive(){
     
     osc::Message message;
-    message.setAddress("/alive");
+    message.setAddress("alive");
     message.addStringArg(mLastIpNr);
     mSender.sendMessage(message);
 }
@@ -111,7 +111,22 @@ void NetworkHelper::sendOscMessage(std::string command,vec3 point){
     message.addFloatArg(point.y);
     message.addFloatArg(point.z);
     mSender.sendMessage(message);
-    
 }
+
+
+void NetworkHelper::sendPoints(std::vector<ci::vec3>& points){
+    osc::Message message;
+    message.setAddress("points");
+    
+    for(vec3& p : points){
+        message.addFloatArg(p.x);
+        message.addFloatArg(p.y);
+        message.addFloatArg(p.z);
+    }
+    
+    mSender.sendMessage(message);
+
+}
+
 
 

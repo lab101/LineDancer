@@ -192,6 +192,10 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
     composition->setup(mNanoVG,hasHistory);
     composition->setNewSize(getWindowSize(),getWindowContentScale());
     
+    composition->onNewPoints.connect([=] (pointVec p){
+        mNetworkHelper.sendPoints(p);
+
+    });
 }
 
 
@@ -252,7 +256,7 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
     // check for menu
     isDrawing=true;
     composition->newLine(point);
-    mNetworkHelper.sendOscMessage("penDown", point);
+//    mNetworkHelper.sendOscMessage("penDown", point);
     //if(!isOSCReceiver) sendOscMessage();
 }
 
@@ -260,6 +264,8 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
     
     composition->lineTo(point);
+//    mNetworkHelper.sendOscMessage("penMove", point);
+
     //if(!isOSCReceiver)  sendOscMessage("penMove", point);
 
 }
@@ -268,6 +274,8 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
 void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
     isDrawing=false;
     composition->endLine();
+//    mNetworkHelper.sendOscMessage("penMove", vec3(1,1,1));
+
     menu.touchUp();
 }
 
