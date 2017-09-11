@@ -30,7 +30,7 @@ bool NetworkHelper::setup(){
 
 void NetworkHelper::update(){
     
-    if(ci::app::getElapsedSeconds() - lastBroadcast > 2){
+    if(ci::app::getElapsedSeconds() - lastBroadcast > 4){
         sendAlive();
         lastBroadcast = app::getElapsedSeconds();
     }
@@ -110,7 +110,6 @@ void NetworkHelper::sendAlive(){
     
     osc::Message message;
     message.setAddress("alive");
-    message.addStringArg(mLastIpNr);
     mSender.sendMessage(message);
 }
 
@@ -119,7 +118,7 @@ void NetworkHelper::sendAlive(){
 void NetworkHelper::sendPoints(std::vector<ci::vec3>& points){
     osc::Message message;
     message.setAddress("points");
-    
+
     for(vec3& p : points){
         message.addFloatArg(p.x);
         message.addFloatArg(p.y);

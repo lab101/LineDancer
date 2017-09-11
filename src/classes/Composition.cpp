@@ -334,7 +334,7 @@ void Composition::newLayer(){
     
     
     
-    float scale = 0.25;
+    float scale = 0.3;
     
         auto f = ci::gl::Fbo::create(mActiveFbo->getWidth() * scale, mActiveFbo->getHeight() * scale);
         f->bindFramebuffer();
