@@ -248,7 +248,8 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
     // check for menu
     isDrawing=true;
     composition->newLine(point);
-    //if(!isOSCReceiver) sendOscMessage("penDown", point);
+    mNetworkHelper.sendOscMessage("penDown", point);
+    //if(!isOSCReceiver) sendOscMessage();
 }
 
 
