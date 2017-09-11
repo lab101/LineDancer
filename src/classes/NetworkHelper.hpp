@@ -33,7 +33,7 @@ class NetworkHelper{
     void setupOSCSender();
 
     
-    std::string getLastIpNummer(std::string fullIp);
+    std::string extractLastIpNr(std::string& fullIp);
     
     float lastBroadcast;
     void sendAlive();
@@ -47,7 +47,7 @@ public:
 
     bool setup();
     void update();
-    std::string const getLastNummerIp();
+    std::string const getLastMyIpNr();
     
     void sendOscMessage(std::string command,ci::vec3 point);
     void sendPoints(std::vector<ci::vec3>& points);

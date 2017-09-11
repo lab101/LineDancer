@@ -390,7 +390,7 @@ void LineDancer::draw()
     vg.beginFrame(getWindowSize(), getWindowContentScale());
     
     menu.draw();
-    logo.draw(false,vec2(30,30), mNetworkHelper.getLastNummerIp(), 0 ,vg);
+    logo.draw(false,vec2(30,30), mNetworkHelper.getLastMyIpNr(), 0 ,vg);
     
     int i=0;
     for(auto client : mNetworkHelper.mAliveIps){
