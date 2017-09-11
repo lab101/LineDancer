@@ -172,9 +172,8 @@ void LineDancer::setup()
 
     if(mNetworkHelper.setup()){
       //  logo.setup(mNetworkHelper.getLastNummerIp());
-        mNetworkHelper.onAction.connect([=] (std::string action,ci::vec3 point){
-            penDown(point,mActiveComposition);
-            
+        mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points){
+            mActiveComposition->drawInFbo(points);
         });
     }
 
@@ -252,14 +251,12 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
     // check for menu
     isDrawing=true;
     composition->newLine(point);
-    //if(!isOSCReceiver) sendOscMessage("penDown", point);
 }
 
 
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
     
     composition->lineTo(point);
-    //if(!isOSCReceiver)  sendOscMessage("penMove", point);
 
 }
 

@@ -25,12 +25,12 @@ class NetworkHelper{
     ci::osc::Sender     mSender;
     ci::osc::Listener 	mListener;
 
+    std::string mOwnIpAdress;
     std::string mLastIpNr;
     
 
     
     void setupOSCSender();
-    void sendOscMessage(std::string command,ci::vec3 point);
 
     
     std::string getLastIpNummer(std::string fullIp);
@@ -40,7 +40,7 @@ class NetworkHelper{
     
 public:
     
-    ci::signals::Signal<void(std::string,ci::vec3)>   onAction;
+    ci::signals::Signal<void(std::vector<ci::vec3>&)>   onReceivePoints;
 
     
     std::map<std::string,float> mAliveIps;

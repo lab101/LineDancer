@@ -176,17 +176,24 @@ void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
 }
 
 
+void Composition::drawInFbo(std::vector<ci::vec3>& points){
+    
+    gl::ScopedFramebuffer fbScp( mActiveFbo );
+    gl::ScopedViewport fbVP (mActiveFbo->getSize());
+    //    gl::enableAlphaBlendingPremult();
+    // gl::enableAlphaBlending();
+    gl::color(1, 1, 1, 1);
+
+    if(points.size() > 0){
+        BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
+    }
+}
 
 
 
 
 void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
     
-    gl::ScopedFramebuffer fbScp( mActiveFbo );
-    gl::ScopedViewport fbVP (mActiveFbo->getSize());
-//    gl::enableAlphaBlendingPremult();
-   // gl::enableAlphaBlending();
-    gl::color(1, 1, 1, 1);
     
     
     
@@ -216,11 +223,7 @@ void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
         
     }
     
-    if(points.size() > 0){
-        BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
-    }
-    
-
+    drawInFbo(points);
 
 }
 

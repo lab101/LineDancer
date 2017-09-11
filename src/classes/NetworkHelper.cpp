@@ -40,13 +40,23 @@ void NetworkHelper::update(){
         osc::Message message;
         mListener.getNextMessage( &message );
         
+        // return from our own broadcast
+        if(message.getRemoteIp() ==  mOwnIpAdress) continue;
+        
         std::string const adress = message.getAddress();
         
-        if(adress == "/alive"){
+        if(adress == "alive"){
             std::string remoteIp = message.getArgAsString(0);
-            if(mLastIpNr !=  remoteIp)  mAliveIps[remoteIp] = ci::app::getElapsedSeconds();
-        }else if(adress == "/penDown"){
+            mAliveIps[remoteIp] = ci::app::getElapsedSeconds();
+        }else if(adress == "points"){
+            int totals = message.getNumArgs() ;
             
+            std::vector<ci::vec3> points;
+            for(int i=0;i < totals;i+=3){
+                points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
+            }
+            
+            onReceivePoints.emit(points);
         }
         
         
@@ -73,8 +83,8 @@ std::string getLastIpNummer(std::string fullIp){
 
 void NetworkHelper::setupOSCSender(){
     
-    
-    std::vector<std::string> hostSplit = ci::split(System::getIpAddress(), ".");
+    mOwnIpAdress = System::getIpAddress();
+    std::vector<std::string> hostSplit = ci::split(mOwnIpAdress, ".");
     std::vector<std::string> subnetSplit = ci::split(System::getSubnetMask(), ".");
     
     mLastIpNr =  hostSplit.back(); // getLastNummerIp(System::getIpAddress());
@@ -103,15 +113,5 @@ void NetworkHelper::sendAlive(){
 }
 
 
-void NetworkHelper::sendOscMessage(std::string command,vec3 point){
-    
-    osc::Message message;
-    message.setAddress(command);
-    message.addFloatArg(point.x);
-    message.addFloatArg(point.y);
-    message.addFloatArg(point.z);
-    mSender.sendMessage(message);
-    
-}
 
 
