@@ -172,7 +172,8 @@ void LineDancer::setup()
 
     if(mNetworkHelper.setup()){
       //  logo.setup(mNetworkHelper.getLastNummerIp());
-        mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points){
+        mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points, bool isEraserOn){
+            BrushManagerSingleton::Instance()->isEraserOn = isEraserOn;
             mActiveComposition->drawInFbo(points);
         });
     }
