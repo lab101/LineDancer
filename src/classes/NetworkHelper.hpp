@@ -50,7 +50,7 @@ public:
     std::string const getLastMyIpNr();
     
     void sendOscMessage(std::string command,ci::vec3 point);
-    void sendPoints(std::vector<ci::vec3>& points);
+    void sendPoints(std::vector<ci::vec3>& points,bool isEraserOn);
 
 
     

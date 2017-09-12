@@ -192,7 +192,7 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
     composition->setNewSize(getWindowSize(),getWindowContentScale());
     
     composition->onNewPoints.connect([=] (pointVec p){
-        mNetworkHelper.sendPoints(p);
+        mNetworkHelper.sendPoints(p, BrushManagerSingleton::Instance()->isEraserOn);
 
     });
 }

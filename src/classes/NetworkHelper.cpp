@@ -115,9 +115,10 @@ void NetworkHelper::sendAlive(){
 
 
 
-void NetworkHelper::sendPoints(std::vector<ci::vec3>& points){
+void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn){
     osc::Message message;
     message.setAddress("points");
+    message.addIntArg(isEraserOn);
 
     for(vec3& p : points){
         message.addFloatArg(p.x);
