@@ -40,7 +40,7 @@ class NetworkHelper{
 
 public:
     
-    ci::signals::Signal<void(std::vector<ci::vec3>&)>   onReceivePoints;
+    ci::signals::Signal<void(std::vector<ci::vec3>& , bool isEraserOn)>   onReceivePoints;
 
     
     std::map<std::string,float> mAliveIps;

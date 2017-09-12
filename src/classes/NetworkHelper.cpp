@@ -52,13 +52,14 @@ void NetworkHelper::update(){
 
         if(adress == "points"){
             int totals = message.getNumArgs() ;
+            bool isEraserOn = message.getArgAsInt32(0);
             
             std::vector<ci::vec3> points;
-            for(int i=0;i < totals;i+=3){
+            for(int i=1;i < totals;i+=3){
                 points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
             }
             
-            onReceivePoints.emit(points);
+            onReceivePoints.emit(points,isEraserOn);
         }
         
         
