@@ -115,8 +115,13 @@ void LineDancer::setup()
     
     CI_LOG_I("SETUP nanogvg");
     mNanoVG = std::make_shared<nvg::Context>(nvg::createContextGL());
-    mNanoVG->createFont("standard", getAssetPath("Roboto-Regular.ttf").string());
-    
+    auto  s = ci::app::getResourceDirectory().string() + "/Roboto-Regular.ttf";
+    console() << s << std::endl;
+  // std::string path = ci::app::AppMac::getResourcePath("Roboto-Regular.ttf").string();
+   mNanoVG->createFont("standard", s);
+    mNanoVG->fontFace("standard");
+
+ //   mNanoVG->fontFace("Helvetica");
     menu.setup(mNanoVG);
     menu.btnSave.onPressed.connect([=]{
         mPrevTexture = ci::gl::Texture::create(mActiveComposition->getTexture()->createSource());
@@ -157,7 +162,7 @@ void LineDancer::setup()
     isOSCReceiver   = false;
     
     CI_LOG_I("SETUP brush");
-    BrushManagerSingleton::Instance()->loadBrushes();
+    BrushManagerSingleton::Instance()->setup();
     
 
     CI_LOG_I("SETUP composition with FBO");
@@ -421,10 +426,13 @@ void LineDancer::drawTextMessages(){
 
     if(time < 6){
         
+        vg.fontFace("standard");
         vg.fontSize(40);
         vg.text(ci::app::getWindowCenter(), "KEYS:");
         vg.fontSize(30);
-        
+        vg.strokeColor(ci::Color(0,0,0));
+        vg.fillColor(ci::Color(0,0,0));
+
         vg.text(ci::app::getWindowCenter() +vec2(0,50), "toggle (f)ullscreen");
         vg.text(ci::app::getWindowCenter() +vec2(0,80), "toggle mouse (c)ursor on");
         vg.text(ci::app::getWindowCenter() +vec2(0,120), "toggle (m)ouse drawing on");
@@ -434,8 +442,8 @@ void LineDancer::drawTextMessages(){
 
 
     if(time > 5 && time < 12 ){
-        vg.strokeColor(ci::Color(1,1,1));
-        vg.fillColor(ci::Color(1,1,1));
+        vg.strokeColor(ci::Color(0,0,0));
+        vg.fillColor(ci::Color(0,0,0));
         vg.textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
         
         // warning
@@ -446,8 +454,8 @@ void LineDancer::drawTextMessages(){
     }
 
     if(time > 11 && time < 18 ){
-        vg.strokeColor(ci::Color(1,1,1));
-        vg.fillColor(ci::Color(1,1,1));
+        vg.strokeColor(ci::Color(0,0,0));
+        vg.fillColor(ci::Color(0,0,0));
         vg.textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
         
         vg.fontSize(60);

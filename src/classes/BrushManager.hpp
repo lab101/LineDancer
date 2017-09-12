@@ -28,9 +28,9 @@ public:
     int surfaceWidth;
     bool isEraserOn;
     float brushScale;
-    void loadBrushes();
+    void setup();
     
-    void generateBrush(float size,float softness);
+//    void generateBrush(float size,float softness);
     void drawBrush(std::vector<ci::vec3>& points,float softness);
 };
 

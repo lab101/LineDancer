@@ -27,6 +27,9 @@
 		154564891DA3B596006BFBD4 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 154564881DA3B596006BFBD4 /* AVFoundation.framework */; };
 		23E9BDB9A6214394B1157C43 /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0EED18DA5C324EBABEC23852 /* IpEndpointName.cpp */; };
 		3034C27FF9C646DC8A051E61 /* OscReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51705D56AB545D09653A077 /* OscReceivedElements.cpp */; };
+		501650931F680FAE0019609E /* shader_es2.frag in Resources */ = {isa = PBXBuildFile; fileRef = 501650911F680FAE0019609E /* shader_es2.frag */; };
+		501650941F680FAE0019609E /* shader_es2.vert in Resources */ = {isa = PBXBuildFile; fileRef = 501650921F680FAE0019609E /* shader_es2.vert */; };
+		501650961F6815560019609E /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 501650951F680FB70019609E /* Roboto-Regular.ttf */; };
 		50E83DEB1F4770630070464D /* PlayerLogo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E83DE91F4770630070464D /* PlayerLogo.cpp */; };
 		50E83DEE1F4AA7FC0070464D /* NetworkHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */; };
 		5117585F1B9B43BDB6061590 /* UdpSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460FE17A79E34A43810C32E9 /* UdpSocket.cpp */; };
@@ -90,6 +93,9 @@
 		460FE17A79E34A43810C32E9 /* UdpSocket.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = UdpSocket.cpp; path = ../blocks/OSC/src/ip/posix/UdpSocket.cpp; sourceTree = "<group>"; };
 		47C3E2EDECC7494B9FBB21B1 /* PacketListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PacketListener.h; path = ../blocks/OSC/src/ip/PacketListener.h; sourceTree = "<group>"; };
 		4D95AC41E1A14629AD8ECBE1 /* nanovg.c */ = {isa = PBXFileReference; lastKnownFileType = "\"\""; name = nanovg.c; path = ../blocks/NanoVG/deps/nanovg/src/nanovg.c; sourceTree = "<group>"; };
+		501650911F680FAE0019609E /* shader_es2.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader_es2.frag; sourceTree = "<group>"; };
+		501650921F680FAE0019609E /* shader_es2.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader_es2.vert; sourceTree = "<group>"; };
+		501650951F680FB70019609E /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		50E83DE91F4770630070464D /* PlayerLogo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerLogo.cpp; sourceTree = "<group>"; };
 		50E83DEA1F4770630070464D /* PlayerLogo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PlayerLogo.hpp; sourceTree = "<group>"; };
 		50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkHelper.cpp; sourceTree = "<group>"; };
@@ -291,6 +297,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				501650951F680FB70019609E /* Roboto-Regular.ttf */,
+				501650911F680FAE0019609E /* shader_es2.frag */,
+				501650921F680FAE0019609E /* shader_es2.vert */,
 				EC1EB0804AE54E23A25EC8D8 /* CinderApp.icns */,
 				66DA6DC5750C497388E7BC7C /* Info.plist */,
 			);
@@ -474,6 +483,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DDF980637BE48FE89454814 /* CinderApp.icns in Resources */,
+				501650941F680FAE0019609E /* shader_es2.vert in Resources */,
+				501650961F6815560019609E /* Roboto-Regular.ttf in Resources */,
+				501650931F680FAE0019609E /* shader_es2.frag in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

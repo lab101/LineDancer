@@ -49,10 +49,6 @@ void handlePoint(TabletData &data, NSEvent *event) {
     data.absZ  = [event absoluteZ];
     data.buttonMask = [event buttonMask];
     
-    std::cout <<  [event buttonMask] << std::endl;
-    
-    //std::cout << data.tangentialPressure << std::endl;
-
 }
 
 void handleProximity(TabletData &data, NSEvent *event) {
