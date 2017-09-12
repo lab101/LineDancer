@@ -17,7 +17,7 @@ void DotButton::setup(float radius,std::string text, std::shared_ptr<ci::nvg::Co
     
     isPressed = false;
     isHover = false;
-    mColor = ci::Color(1,1,1);
+    mColor = ci::Color(0,0,0);
     
     mText = text;
 

@@ -18,7 +18,7 @@ void Menu::setup(std::shared_ptr<ci::nvg::Context> nanoVGContext){
     btnGif.setup(26,"GIF", nanoVGContext);
     
 //    btnUndo.setColor(ci::Color(1,0.3,0.6));
-    btnGif.setColor(ci::Color(1,1,0.6));
+    btnGif.setColor(ci::Color(0,0.6,1.0));
     
     brushScale = 0.5;
     isBrushHover = false;
@@ -59,8 +59,8 @@ void Menu::draw(){
     float height = brushScaleBoxOrigCurrent.getHeight();
     
     vg->rect(brushScaleBoxOrigCurrent.x2,brushScaleBoxOrigCurrent.y2, -width, -height * brushScale);
-    vg->fillColor(ci::Color(1,1,1));
-    vg->strokeColor(ci::Color(1,1,1));
+    vg->fillColor(ci::Color(0,0,0));
+    vg->strokeColor(ci::Color(0,0,0));
     vg->fill();
     
     vg->strokeWidth(isBrushHover ? 3 : 2);

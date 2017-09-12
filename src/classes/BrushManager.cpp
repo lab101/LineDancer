@@ -48,7 +48,7 @@ void BrushManager::drawBrush(std::vector<vec3>& points,float softness){
     
     for(vec3& p : points){
         mBatch->vertex( p );
-        mBatch->color( mActiveColor );
+        mBatch->color(isEraserOn ? ci::ColorA(1,1,1,1)  : mActiveColor );
     }
     
     

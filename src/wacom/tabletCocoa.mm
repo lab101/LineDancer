@@ -36,7 +36,7 @@ void setupTabletCocoa(TabletData &data) {
 
 void handlePoint(TabletData &data, NSEvent *event) {
 
-    NSRect frame = [[NSScreen mainScreen] frame];
+   // NSRect frame = [[NSScreen mainScreen] frame];
     ci::ivec2  size = ci::app::getWindow()->getSize();
     data.abs_screen[0] = [NSEvent mouseLocation].x / size.x;
     data.abs_screen[1] = [NSEvent mouseLocation].y / size.y;
@@ -47,6 +47,10 @@ void handlePoint(TabletData &data, NSEvent *event) {
     data.rotation = [event rotation];
     data.tangentialPressure = [event tangentialPressure];
     data.absZ  = [event absoluteZ];
+    data.buttonMask = [event buttonMask];
+    
+    std::cout <<  [event buttonMask] << std::endl;
+    
     //std::cout << data.tangentialPressure << std::endl;
 
 }

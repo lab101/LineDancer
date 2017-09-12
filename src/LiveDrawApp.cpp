@@ -140,7 +140,7 @@ void LineDancer::setup()
 
     
     menu.onBrushSizeChanged.connect([&](float brushScale){
-        BrushManagerSingleton::Instance()->brushScale = 80.0f * brushScale;
+        BrushManagerSingleton::Instance()->brushScale = 120.0f * brushScale;
     });
     
     
@@ -204,6 +204,7 @@ void LineDancer::onWacomData(TabletData& data){
     lastDataPoint = data;
     
     isPenClose = data.in_proximity;
+    BrushManagerSingleton::Instance()->isEraserOn = data.buttonMask >= 2;
     
     vec3 point(data.abs_screen[0] *getWindowWidth(), getWindowHeight() - data.abs_screen[1]*getWindowHeight(), data.pressure * BrushManagerSingleton::Instance()->brushScale);
     lastWacomPoint = point;
@@ -355,11 +356,11 @@ void LineDancer::drawGrid(){
     ci::ivec2 size = getWindowSize();
     auto& vg = *mNanoVG;
 
-    for(int x =stepSize; x < size.x; x+=stepSize){
-        for(int y = stepSize; y < size.y; y+=stepSize){
+    for(int x =stepSize *0.5; x < size.x; x+=stepSize){
+        for(int y = stepSize*0.5; y < size.y; y+=stepSize){
             
             vg.beginPath();
-            vg.fillColor(ColorAf{0.7, .8f, 1.0f,0.6});
+            vg.fillColor(ColorAf{0.8, .8f, .6f, 0.6});
             vg.circle(x, y, 2);
             
             vg.strokeWidth(0.7);
@@ -374,12 +375,14 @@ void LineDancer::draw()
 {
   
     gl::clear();
-    gl::clear( ColorA( 0.3, 0.3, 1.0, 0.0 ) );
+    //gl::clear( ColorA( 0.3, 0.3, 1.0, 0.0 ) );
+    gl::clear( ColorA( 1.0, 1.0, 1.0, 0.0 ) );
 
     mActiveComposition->draw();
 
-   
-    ci::gl::drawStrokedCircle(vec2(lastWacomPoint.x,lastWacomPoint.y), 4);
+    if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0., .0);
+    else ci::gl::color(0, 0.3, 1.0);
+    ci::gl::drawStrokedCircle(vec2(lastWacomPoint.x,lastWacomPoint.y), 8, 2, 12);
 
     
     if(isHistoryVisible) mActiveComposition->drawHistory();

@@ -7,7 +7,7 @@
 //
 
 #include "PlayerLogo.hpp"
-#include <string>     // std::string, std::stoi
+#include <string>
 
 
 
@@ -27,16 +27,16 @@ void PlayerLogo::draw(bool isClient, ci::vec2 position, std::string ipNr,float t
     
 
     if(isClient){
-        float div = powf(ci::app::getElapsedSeconds() - time,1.5);
+        float div = powf(ci::app::getElapsedSeconds() - time,1.6);
 
         if(div > 20) div =20;
         
         vg.beginPath();
         vg.circle(position, 20 - div);
 
-        vg.fillColor(ci::Color(1.0,1.0,1.0));
+        vg.fillColor(ci::Color(0.0,0.4,1.0));
         vg.fill();
-        vg.fillColor(ci::Color(0.0,0.0,0.0));
+        vg.fillColor(ci::Color(1.0,1.0,1.0));
         
 
     }else{
@@ -45,9 +45,10 @@ void PlayerLogo::draw(bool isClient, ci::vec2 position, std::string ipNr,float t
         vg.circle(position, 20 );
         
         
-        vg.strokeColor(ci::Color(1.0,1.0,1.0));
+        vg.strokeColor(ci::Color(0.0,0.0,0.0));
         vg.strokeWidth(4);
         vg.stroke();
+        vg.fillColor(ci::Color(0.0,0.0,0.0));
 
         //vg->strokeColor(ci::Color(1.0,0.0,0.0));
 

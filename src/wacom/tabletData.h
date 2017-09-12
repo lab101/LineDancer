@@ -17,6 +17,7 @@ public:
     float pressure;
     float rotation;
     float tangentialPressure;
+    int buttonMask;
     
     // from proximity events
     bool in_proximity;
