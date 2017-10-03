@@ -27,6 +27,10 @@ bool NetworkHelper::setup(){
 
 }
 
+void NetworkHelper::setNextGroup(){
+    if(++groupId > 9) groupId = 0;
+}
+
 
 void NetworkHelper::update(){
     
@@ -48,18 +52,25 @@ void NetworkHelper::update(){
         std::string remoteLastNr = extractLastIpNr(remoteIp);
         std::string const adress = message.getAddress();
         
-        mAliveIps[remoteLastNr] = ci::app::getElapsedSeconds();
+        int incomingGroupId =  message.getArgAsInt32(1);
+        
+        // discard packages from other groups
+        if(incomingGroupId == groupId){
 
-        if(adress == "points"){
-            int totals = message.getNumArgs() ;
-            bool isEraserOn = message.getArgAsInt32(0);
-            
-            std::vector<ci::vec3> points;
-            for(int i=1;i < totals;i+=3){
-                points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
+            mAliveIps[remoteLastNr] = ci::app::getElapsedSeconds();
+
+            if(adress == "points"){
+                int totals = message.getNumArgs() ;
+                bool isEraserOn = message.getArgAsInt32(0);
+
+                
+                std::vector<ci::vec3> points;
+                for(int i=1;i < totals;i+=3){
+                    points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
+                }
+                
+                onReceivePoints.emit(points,isEraserOn);
             }
-            
-            onReceivePoints.emit(points,isEraserOn);
         }
         
         
@@ -69,10 +80,13 @@ void NetworkHelper::update(){
 
 
 std::string const NetworkHelper::getLastMyIpNr(){
-
     return mLastIpNr;
-    
 }
+
+int const NetworkHelper::getGroupId(){
+    return groupId;
+}
+
 
 std::string NetworkHelper::extractLastIpNr(std::string& fullIp){
 
@@ -111,6 +125,7 @@ void NetworkHelper::sendAlive(){
     
     osc::Message message;
     message.setAddress("alive");
+    message.addIntArg(groupId);
     mSender.sendMessage(message);
 }
 
@@ -119,6 +134,7 @@ void NetworkHelper::sendAlive(){
 void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn){
     osc::Message message;
     message.setAddress("points");
+    message.addIntArg(groupId);
     message.addIntArg(isEraserOn);
 
     for(vec3& p : points){

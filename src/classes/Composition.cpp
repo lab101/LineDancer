@@ -13,6 +13,8 @@
 #include "Lab101Utils.h"
 #include "cinder/Rand.h"
 #include "cinder/Log.h"
+#include "GlobalSettings.h"
+
 #include <iostream>
 #include <fstream>
 
@@ -61,8 +63,8 @@ void Composition::newComposition(){
 
 void Composition::newLine(ci::vec3 pressurePoint){
     
-    nrOfundosAvailable =  fmin(++nrOfundosAvailable,mFboHistory.size());
-    if(mHasHistory) takeSnapshotInFboHistory();
+ //   nrOfundosAvailable =  fmin(++nrOfundosAvailable,mFboHistory.size());
+  //  if(mHasHistory) takeSnapshotInFboHistory();
 
     mPath.clear();
     mDepths.clear();
@@ -76,65 +78,65 @@ void Composition::newLine(ci::vec3 pressurePoint){
 
 
 void Composition::endLine(){
-    savePointsToHistory();
+   // savePointsToHistory();
     newLayer();
 }
 
 
-void Composition::historyBack(){
-
-    if(nrOfundosAvailable <= 0) return;
-    
-    nrOfundosAvailable--;
-    
-    pointHistory.pop_back();
-    depthHistory.pop_back();
-
-      // go back in FBO's
-    
-    lastUsedHistoryFboIndex-=1;
-    if(lastUsedHistoryFboIndex <0) lastUsedHistoryFboIndex += mFboHistory.size();
-    if(lastUsedHistoryFboIndex >= mFboHistory.size()) lastUsedHistoryFboIndex = lastUsedHistoryFboIndex - mFboHistory.size();
-    
-    
-    clearFbo();
-    
-
-    gl::ScopedFramebuffer fbScp( mActiveFbo );
-    gl::ScopedViewport fbVP (mActiveFbo->getSize());
-    gl::color(1, 1, 1);
-
-    gl::enableAlphaBlending();
-    gl::draw(mFboHistory[lastUsedHistoryFboIndex]->getColorTexture());
-
-}
-
-void Composition::takeSnapshotInFboHistory(){
-    
-    ci::gl::FboRef fbo = mFboHistory[lastUsedHistoryFboIndex];
-    gl::ScopedFramebuffer fbScp( fbo );
-    gl::ScopedViewport fbVP (mActiveFbo->getSize());
-
-    gl::clear( ColorA( 0, 0, .0 ,0.0 ) );
-
-    
-    gl::draw(mActiveFbo->getColorTexture());
-
-    if(++lastUsedHistoryFboIndex >=  mFboHistory.size()){
-        lastUsedHistoryFboIndex = 0;
-    }
-    
-}
-
-void Composition::savePointsToHistory(){
-    
-   
-    if(mPath.getNumPoints() > 0){
-        pointHistory.push_back(mPath);
-        depthHistory.push_back(mDepths);
-    }
-    
-}
+//void Composition::historyBack(){
+//
+//    if(nrOfundosAvailable <= 0) return;
+//
+//    nrOfundosAvailable--;
+//
+//    pointHistory.pop_back();
+//    depthHistory.pop_back();
+//
+//      // go back in FBO's
+//
+//    lastUsedHistoryFboIndex-=1;
+//    if(lastUsedHistoryFboIndex <0) lastUsedHistoryFboIndex += mFboHistory.size();
+//    if(lastUsedHistoryFboIndex >= mFboHistory.size()) lastUsedHistoryFboIndex = lastUsedHistoryFboIndex - mFboHistory.size();
+//
+//
+//    clearFbo();
+//
+//
+//    gl::ScopedFramebuffer fbScp( mActiveFbo );
+//    gl::ScopedViewport fbVP (mActiveFbo->getSize());
+//    gl::color(1, 1, 1);
+//
+//    gl::enableAlphaBlending();
+//    gl::draw(mFboHistory[lastUsedHistoryFboIndex]->getColorTexture());
+//
+//}
+//
+//void Composition::takeSnapshotInFboHistory(){
+//
+//    ci::gl::FboRef fbo = mFboHistory[lastUsedHistoryFboIndex];
+//    gl::ScopedFramebuffer fbScp( fbo );
+//    gl::ScopedViewport fbVP (mActiveFbo->getSize());
+//
+//    gl::clear( ColorA( 0, 0, .0 ,0.0 ) );
+//
+//
+//    gl::draw(mActiveFbo->getColorTexture());
+//
+//    if(++lastUsedHistoryFboIndex >=  mFboHistory.size()){
+//        lastUsedHistoryFboIndex = 0;
+//    }
+//
+//}
+//
+//void Composition::savePointsToHistory(){
+//
+//
+//    if(mPath.getNumPoints() > 0){
+//        pointHistory.push_back(mPath);
+//        depthHistory.push_back(mDepths);
+//    }
+//
+//}
 
 void Composition::lineTo(ci::vec3 pressurePoint){
     mPath.lineTo(vec2(pressurePoint.x,pressurePoint.y));
@@ -169,7 +171,7 @@ void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
     
     gl::enableAlphaBlending();
    // format.setSamples( 4 );
-    fbo = gl::Fbo::create(size.x,size.y ,format );
+    fbo = gl::Fbo::create(size.x  * GS()->scale, size.y * GS()->scale ,format );
     
     clearFbo();
 
@@ -213,7 +215,7 @@ void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
         
         points.push_back(newPoint);
        
-        minDistance = fmax(.8f,pow(newPoint.z * .17, 1.2));// (scale*10);
+        minDistance = fmax(.8f,(newPoint.z * .17 /GS()->scale));// (scale*10);
         
         lastDrawDistance = newDrawPosition;
         newDrawPosition = (lastDrawDistance + minDistance);
@@ -234,25 +236,25 @@ void Composition::draw(){
 
 }
 
-
-void Composition::drawHistory(){
-
-
-    for(int i = 0 ; i < mFboHistory.size(); i++){
-
-        ci::gl::TextureRef tex =  mFboHistory[i]->getColorTexture();
-        ci::vec2 size =  tex->getSize();
-
-        float maxWidth = 200;
-        float height = maxWidth * size.y / size.x;
-
-        vec2 pos( maxWidth ,400 + height * i);
-
-        ci::Rectf b(pos.x,pos.y,pos.x + maxWidth, pos.y +  height);
-        
-        ci::gl::draw(tex,b);
-    }
-}
+//
+//void Composition::drawHistory(){
+//
+//
+//    for(int i = 0 ; i < mFboHistory.size(); i++){
+//
+//        ci::gl::TextureRef tex =  mFboHistory[i]->getColorTexture();
+//        ci::vec2 size =  tex->getSize();
+//
+//        float maxWidth = 200;
+//        float height = maxWidth * size.y / size.x;
+//
+//        vec2 pos( maxWidth ,400 + height * i);
+//
+//        ci::Rectf b(pos.x,pos.y,pos.x + maxWidth, pos.y +  height);
+//
+//        ci::gl::draw(tex,b);
+//    }
+//}
 
 
 
@@ -316,6 +318,10 @@ void Composition::clearFbo(){
     
     gl::clear();
     gl::clear( ColorA( 0, 0, 0, 0.0 ) );
+    // remove below jsu
+    gl::clear( ColorA( 1, 0, 0, 1.0 ) );
+    gl::clear( ColorA( 1, 1, 1, 1.0 ) );
+    
     
 
 }
@@ -334,19 +340,25 @@ void Composition::newLayer(){
     
     
     
-    float scale = 0.3;
+        float scale = 0.3;
     
         auto f = ci::gl::Fbo::create(mActiveFbo->getWidth() * scale, mActiveFbo->getHeight() * scale);
         f->bindFramebuffer();
-        gl::ScopedViewport scpVp( ivec2( 0 ), f->getSize() );
-    
+        auto size = ci::vec2(f->getWidth() , f->getHeight());
+        gl::ScopedViewport scpVp( ivec2( 0 ), size);
+       // gl::setMatricesWindowPersp(size);
         gl::clear();
         gl::clear( ColorA( 1, 1, 1, 1.0 ) );
         
         gl::color(1, 1, 1, 1);
+        ci::gl::pushMatrices();
+        ci::gl::scale(1/GS()->scale,1/GS()->scale);
         gl::draw(mActiveFbo->getColorTexture());
+        gl::popMatrices();
         f->unbindFramebuffer();
-        
+    
+  //  gl::setMatricesWindowPersp(ci::app::getWindowWidth(), ci::app::getWindowHeight());
+
 
     auto source = f->getColorTexture()->createSource();
 

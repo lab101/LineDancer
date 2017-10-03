@@ -47,7 +47,7 @@ class Composition{
     std::vector<ci::Path2d>     pointHistory;
     std::vector<ci::Path2d>     depthHistory;
     
-    void takeSnapshotInFboHistory();
+  //  void takeSnapshotInFboHistory();
     
     ci::gl::TextureRef glitch;
     std::vector<std::string> imageList;
@@ -76,17 +76,17 @@ public:
     
     void drawInFbo(std::vector<ci::vec3>& points);
     void drawInFbo(ci::Path2d& path,ci::Path2d& depths);
-    void drawHistory();
+//    void drawHistory();
     void draw();
     
     
-    void savePointsToHistory();
+  //  void savePointsToHistory();
     void newLine(ci::vec3 pressurePoint);
     void lineTo(ci::vec3 pressurePoint);
     void endLine();
     
-    void historyBack();
-    void historyForward();
+//    void historyBack();
+//    void historyForward();
     
     
     // clear history when finished

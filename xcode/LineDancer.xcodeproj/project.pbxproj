@@ -30,6 +30,7 @@
 		501650931F680FAE0019609E /* shader_es2.frag in Resources */ = {isa = PBXBuildFile; fileRef = 501650911F680FAE0019609E /* shader_es2.frag */; };
 		501650941F680FAE0019609E /* shader_es2.vert in Resources */ = {isa = PBXBuildFile; fileRef = 501650921F680FAE0019609E /* shader_es2.vert */; };
 		501650961F6815560019609E /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 501650951F680FB70019609E /* Roboto-Regular.ttf */; };
+		50C6FD251F83B3C2004256C5 /* GlobalSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD231F83B3C1004256C5 /* GlobalSettings.cpp */; };
 		50E83DEB1F4770630070464D /* PlayerLogo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E83DE91F4770630070464D /* PlayerLogo.cpp */; };
 		50E83DEE1F4AA7FC0070464D /* NetworkHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */; };
 		5117585F1B9B43BDB6061590 /* UdpSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460FE17A79E34A43810C32E9 /* UdpSocket.cpp */; };
@@ -96,6 +97,8 @@
 		501650911F680FAE0019609E /* shader_es2.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader_es2.frag; sourceTree = "<group>"; };
 		501650921F680FAE0019609E /* shader_es2.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shader_es2.vert; sourceTree = "<group>"; };
 		501650951F680FB70019609E /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
+		50C6FD231F83B3C1004256C5 /* GlobalSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalSettings.cpp; sourceTree = "<group>"; };
+		50C6FD241F83B3C2004256C5 /* GlobalSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalSettings.h; sourceTree = "<group>"; };
 		50E83DE91F4770630070464D /* PlayerLogo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerLogo.cpp; sourceTree = "<group>"; };
 		50E83DEA1F4770630070464D /* PlayerLogo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PlayerLogo.hpp; sourceTree = "<group>"; };
 		50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkHelper.cpp; sourceTree = "<group>"; };
@@ -222,6 +225,8 @@
 		152D484E1D89ADAC00AB3610 /* classes */ = {
 			isa = PBXGroup;
 			children = (
+				50C6FD231F83B3C1004256C5 /* GlobalSettings.cpp */,
+				50C6FD241F83B3C2004256C5 /* GlobalSettings.h */,
 				1589715D1D92BC7900909F5B /* Lab101Utils.h */,
 				152D484F1D89ADAC00AB3610 /* BrushManager.cpp */,
 				152D48501D89ADAC00AB3610 /* BrushManager.hpp */,
@@ -497,6 +502,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				50E83DEE1F4AA7FC0070464D /* NetworkHelper.cpp in Sources */,
+				50C6FD251F83B3C2004256C5 /* GlobalSettings.cpp in Sources */,
 				152D48611D89ADAC00AB3610 /* BrushManager.cpp in Sources */,
 				B97D7AF17DAA4CBCAEBF6F98 /* LiveDrawApp.cpp in Sources */,
 				6839E2BBD8BB4BC6863F1E9C /* nanovg.c in Sources */,

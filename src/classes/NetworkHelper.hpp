@@ -28,8 +28,8 @@ class NetworkHelper{
     std::string mOwnIpAdress;
     std::string mLastIpNr;
     
+    int groupId = 0;
 
-    
     void setupOSCSender();
 
     
@@ -40,6 +40,7 @@ class NetworkHelper{
 
 public:
     
+    
     ci::signals::Signal<void(std::vector<ci::vec3>& , bool isEraserOn)>   onReceivePoints;
 
     
@@ -47,8 +48,11 @@ public:
 
     bool setup();
     void update();
+    void setNextGroup();
+
     std::string const getLastMyIpNr();
-    
+    int const getGroupId();
+
     void sendOscMessage(std::string command,ci::vec3 point);
     void sendPoints(std::vector<ci::vec3>& points,bool isEraserOn);
 

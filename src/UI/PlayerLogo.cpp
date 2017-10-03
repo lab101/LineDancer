@@ -42,7 +42,7 @@ void PlayerLogo::draw(bool isClient, ci::vec2 position, std::string ipNr,float t
     }else{
         vg.beginPath();
 
-        vg.circle(position, 20 );
+        vg.circle(position, 24 );
         
         
         vg.strokeColor(ci::Color(0.0,0.0,0.0));

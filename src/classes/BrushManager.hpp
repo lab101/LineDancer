@@ -25,7 +25,6 @@ public:
 
     ci::ColorA  mActiveColor;
 
-    int surfaceWidth;
     bool isEraserOn;
     float brushScale;
     void setup();

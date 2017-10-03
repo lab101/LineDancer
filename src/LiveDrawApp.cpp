@@ -14,6 +14,7 @@
 #include "PlayerLogo.hpp"
 
 #include "NetworkHelper.hpp"
+#include "GlobalSettings.h"
 
 
 using namespace ci;
@@ -50,7 +51,6 @@ class LineDancer : public App {
     
     ci::Anim<int> showGifSavedTimer;
 
-    //std::vector<Logo> mLogos;
     
 public:
     
@@ -77,7 +77,7 @@ public:
     void drawGrid();
     void drawTextMessages();
     
-    void setupComposition(std::shared_ptr<Composition>& composition,bool hasHistory = true);
+    void setupComposition(std::shared_ptr<Composition>& composition,bool hasHistory = false);
     void toggleCursor();
 };
 
@@ -115,13 +115,10 @@ void LineDancer::setup()
     
     CI_LOG_I("SETUP nanogvg");
     mNanoVG = std::make_shared<nvg::Context>(nvg::createContextGL());
-    auto  s = ci::app::getResourceDirectory().string() + "/Roboto-Regular.ttf";
-    console() << s << std::endl;
-  // std::string path = ci::app::AppMac::getResourcePath("Roboto-Regular.ttf").string();
-   mNanoVG->createFont("standard", s);
+    auto  font = ci::app::getResourceDirectory().string() + "/Roboto-Regular.ttf";
+    mNanoVG->createFont("standard", font);
     mNanoVG->fontFace("standard");
 
- //   mNanoVG->fontFace("Helvetica");
     menu.setup(mNanoVG);
     menu.btnSave.onPressed.connect([=]{
         mPrevTexture = ci::gl::Texture::create(mActiveComposition->getTexture()->createSource());
@@ -130,9 +127,9 @@ void LineDancer::setup()
     });
     
     
-    menu.btnUndo.onPressed.connect([=](){
-        mActiveComposition->historyBack();
-    });
+//    menu.btnUndo.onPressed.connect([=](){
+//        mActiveComposition->historyBack();
+//    });
 
     
     menu.btnGif.onPressed.connect([=](){
@@ -176,7 +173,6 @@ void LineDancer::setup()
     
 
     if(mNetworkHelper.setup()){
-      //  logo.setup(mNetworkHelper.getLastNummerIp());
         mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points, bool isEraserOn){
             BrushManagerSingleton::Instance()->isEraserOn = isEraserOn;
             mActiveComposition->drawInFbo(points);
@@ -204,6 +200,7 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
 }
 
 
+
 void LineDancer::onWacomData(TabletData& data){
     // std::cout << data.pressure << std::endl;
     //    std::cout << data.pointerType << std::endl;
@@ -212,7 +209,7 @@ void LineDancer::onWacomData(TabletData& data){
     isPenClose = data.in_proximity;
     BrushManagerSingleton::Instance()->isEraserOn = data.buttonMask >= 2;
     
-    vec3 point(data.abs_screen[0] *getWindowWidth(), getWindowHeight() - data.abs_screen[1]*getWindowHeight(), data.pressure * BrushManagerSingleton::Instance()->brushScale);
+    vec3 point(data.abs_screen[0] *getWindowWidth(), getWindowHeight() - data.abs_screen[1]*getWindowHeight(), data.pressure * BrushManagerSingleton::Instance()->brushScale * GS()->scale);
     lastWacomPoint = point;
     
     
@@ -261,12 +258,15 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
     
     // check for menu
     isDrawing=true;
+    point.x *= 1 / GS()->scale;
+    point.y *= 1 / GS()->scale;
     composition->newLine(point);
 }
 
 
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
-    
+    point.x *= 1 / GS()->scale;
+    point.y *= 1 / GS()->scale;
     composition->lineTo(point);
 }
 
@@ -291,14 +291,20 @@ void LineDancer::keyUp( KeyEvent event ){
         if(isFullScreen() && !isMouseOnly) toggleCursor();
     }else if(event.getCode() == event.KEY_ESCAPE){
         quit();
-    }else if(event.getCode() == event.KEY_SPACE){
-        
+    }else if(event.getCode() == event.KEY_TAB){
+        mNetworkHelper.setNextGroup();
     }else if(event.getCode() == event.KEY_h){
         isHistoryVisible = !isHistoryVisible;
     }
     else if(event.getCode() == event.KEY_c){
         toggleCursor();
-    } else if(event.getCode() == event.KEY_m){
+    }else if( event.getCode() == event.KEY_e){
+        bool isEraserOn = BrushManagerSingleton::Instance()->isEraserOn;
+        BrushManagerSingleton::Instance()->isEraserOn = !isEraserOn;
+    }
+    
+    
+    else if(event.getCode() == event.KEY_m){
         isMouseOnly = !isMouseOnly;
     }
 
@@ -310,7 +316,7 @@ void LineDancer::mouseDown( MouseEvent event )
 {
     if(!isMouseOnly) return;
     
-    lastWacomPoint = vec3(event.getPos(),0.1 +fabs(sin(getElapsedSeconds())));
+    lastWacomPoint = vec3(event.getPos(),6.1 +fabs(sin(getElapsedSeconds())));
     
     if(!menu.checkTouchDown(ci::vec2(lastWacomPoint.x,lastWacomPoint.y))){
         penDown(lastWacomPoint,mActiveComposition);
@@ -323,7 +329,7 @@ void LineDancer::mouseUp( MouseEvent event )
 {
     if(!isMouseOnly) return;
     
-    lastWacomPoint = vec3(event.getPos(),1);
+    lastWacomPoint = vec3(event.getPos(),10);
     penUp(mActiveComposition);
 }
 
@@ -333,7 +339,7 @@ void LineDancer::mouseDrag( MouseEvent event )
     bool isMenuHit = menu.checkTouchDown(event.getPos());
     if((!isMouseOnly && !isMenuHit) || !isDrawing) return;
     
-    lastWacomPoint = vec3(event.getPos(),0.1 +fabs(sin(getElapsedSeconds())));
+    lastWacomPoint = vec3(event.getPos(),10 +fabs(sin(getElapsedSeconds())));
     penMove(lastWacomPoint,mActiveComposition);
     
 }
@@ -362,7 +368,7 @@ void LineDancer::drawGrid(){
     ci::ivec2 size = getWindowSize();
     auto& vg = *mNanoVG;
 
-    for(int x =stepSize *0.5; x < size.x; x+=stepSize){
+    for(int x =stepSize * 0.5; x < size.x; x+=stepSize){
         for(int y = stepSize*0.5; y < size.y; y+=stepSize){
             
             vg.beginPath();
@@ -382,16 +388,16 @@ void LineDancer::draw()
   
     gl::clear();
     //gl::clear( ColorA( 0.3, 0.3, 1.0, 0.0 ) );
-    gl::clear( ColorA( 1.0, 1.0, 1.0, 0.0 ) );
+    gl::clear( ColorA( 1.0, 1.0, .0, 0.0 ) );
 
     mActiveComposition->draw();
 
-    if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0., .0);
+    if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0.0, 0.0);
     else ci::gl::color(0, 0.3, 1.0);
     ci::gl::drawStrokedCircle(vec2(lastWacomPoint.x,lastWacomPoint.y), 8, 2, 12);
 
     
-    if(isHistoryVisible) mActiveComposition->drawHistory();
+   // if(isHistoryVisible) mActiveComposition->drawHistory();
     
     
     auto& vg = *mNanoVG;
@@ -399,7 +405,7 @@ void LineDancer::draw()
     vg.beginFrame(getWindowSize(), getWindowContentScale());
     
     menu.draw();
-    logo.draw(false,vec2(30,30), mNetworkHelper.getLastMyIpNr(), 0 ,vg);
+    logo.draw(false,vec2(30,30), ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr(), 0 ,vg);
     
     int i=0;
     for(auto client : mNetworkHelper.mAliveIps){
