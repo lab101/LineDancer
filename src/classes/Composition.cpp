@@ -286,7 +286,7 @@ void Composition::finished(){
         for(auto i: imageList){
             Magick::Image img;
             img.read(i);
-            img.animationDelay(8);
+            img.animationDelay(9);
             img.animationIterations(-1);
             frames.push_back(img);
         }
@@ -340,7 +340,7 @@ void Composition::newLayer(){
     
     
     
-        float scale = 0.3;
+        float scale = 1.0;
     
         auto f = ci::gl::Fbo::create(mActiveFbo->getWidth() * scale, mActiveFbo->getHeight() * scale);
         f->bindFramebuffer();

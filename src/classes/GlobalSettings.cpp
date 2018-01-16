@@ -18,7 +18,7 @@ using namespace ci;
 
 GlobalSettings::GlobalSettings(){
 
-    scale = 1.5;
+    scale = .5;
 
 }
 

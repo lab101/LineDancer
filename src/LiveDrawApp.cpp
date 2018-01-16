@@ -39,6 +39,9 @@ class LineDancer : public App {
     bool   isMouseOnly;
     bool   isOSCReceiver;
     bool   isCursorVisible;
+    bool   isMovingPaper;
+    
+    vec2 penMoveStart;
     
     NetworkHelper   mNetworkHelper;
     
@@ -51,6 +54,13 @@ class LineDancer : public App {
     
     ci::Anim<int> showGifSavedTimer;
 
+    ci::mat4 screenMatrix;
+    ci::vec3 localPoint;
+    ci::vec2 zoomAnchor;
+    
+    int zoomDirection = 0;
+    float zoomLevel;
+    vec2 zoomCenterPoint;
     
 public:
     
@@ -59,7 +69,8 @@ public:
     void mouseDown( MouseEvent event ) override;
     void mouseDrag( MouseEvent event ) override;
     void mouseUp( MouseEvent event ) override;
-    
+    void mouseMove( MouseEvent event ) override;
+
     
     void penDown(vec3 point,std::shared_ptr<Composition>& composition);
     void penMove(vec3 point,std::shared_ptr<Composition>& composition);
@@ -68,6 +79,8 @@ public:
     
     
     void keyUp( KeyEvent event ) override;
+    void keyDown( KeyEvent event ) override;
+    
     void onWacomData(TabletData& data);
     void resize() override;
     
@@ -155,6 +168,10 @@ void LineDancer::setup()
     isPenClose =    false;
     isHistoryVisible = false;
     isCursorVisible  =false;
+    zoomLevel = 1.0;
+    zoomCenterPoint = ci::app::getWindowCenter();
+    zoomAnchor = vec2(0.5,0.5);
+    isMovingPaper = false;
     
     isOSCReceiver   = false;
     
@@ -182,6 +199,8 @@ void LineDancer::setup()
     
     CI_LOG_I("finished SETUP");
     
+    
+    screenMatrix = glm::scale(screenMatrix,vec3(0.5f,0.5f,0.5f));
 }
 
 
@@ -215,6 +234,21 @@ void LineDancer::onWacomData(TabletData& data){
     
     bool isMenuHit = false;
     
+    
+    
+    int w = getWindowWidth();
+    int h = getWindowHeight();
+    vec4 viewport = vec4( 0, h, w, -h ); // vertical flip is required
+    
+    vec3 worldCoordinate = glm::unProject( lastWacomPoint, mat4(), screenMatrix, viewport );
+    
+    
+    localPoint.x = worldCoordinate.x;
+    localPoint.y = worldCoordinate.y;
+    localPoint.z = point.z;
+    
+    
+    
     // hovering
     penHover(point,mActiveComposition);
     
@@ -224,7 +258,7 @@ void LineDancer::onWacomData(TabletData& data){
         isMenuHit = menu.checkTouchDown(ci::vec2(point.x,point.y));
         
         if(!isMenuHit){
-            penDown(point,mActiveComposition);
+            penDown(localPoint,mActiveComposition);
         }else{
             return;
         }
@@ -246,8 +280,8 @@ void LineDancer::onWacomData(TabletData& data){
     
     
     // add data
-    if(isDrawing &&!isMenuHit){
-        penMove(point,mActiveComposition);
+    if((isDrawing || isMovingPaper) && !isMenuHit){
+        penMove(localPoint,mActiveComposition);
     }
 }
 
@@ -255,8 +289,13 @@ void LineDancer::onWacomData(TabletData& data){
 
 
 void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
-    
-    // check for menu
+    if(isMovingPaper)
+    {
+        vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
+        penMoveStart = p2;
+
+        return;
+    }
     isDrawing=true;
     point.x *= 1 / GS()->scale;
     point.y *= 1 / GS()->scale;
@@ -265,6 +304,16 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
 
 
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
+    if(isMovingPaper){
+        vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
+        vec2 div =(penMoveStart - p2) ;
+        zoomCenterPoint -=div;
+        penMoveStart = p2;
+        
+        std::cout << div << std::endl;
+        return;
+    }
+    
     point.x *= 1 / GS()->scale;
     point.y *= 1 / GS()->scale;
     composition->lineTo(point);
@@ -272,6 +321,8 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
 
 
 void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
+    if(isMovingPaper) return;
+
     isDrawing=false;
     composition->endLine();
     menu.touchUp();
@@ -282,11 +333,49 @@ void LineDancer::penHover(vec3 point,std::shared_ptr<Composition>& composition){
     menu.checkHover(ci::vec2(point.x,point.y));
 }
 
+void LineDancer::keyDown( KeyEvent event ){
+    
+    bool calculateAnchor =false;
+    
+    if(!isMovingPaper&&  event.getCode() == event.KEY_SPACE ){
+        isMovingPaper = true;
+        penMoveStart = vec2(lastWacomPoint.x,lastWacomPoint.y);
+    }
+    else if(event.getCode() == event.KEY_UP){
 
+        zoomDirection = 1;
+        calculateAnchor = true;
+    }
+    else if(event.getCode() == event.KEY_DOWN){
+
+        zoomDirection = -1;
+        calculateAnchor = true;
+
+
+    }
+    
+    
+    if(calculateAnchor){
+    ivec2 size = mActiveComposition->getTexture()->getSize();
+    
+    zoomCenterPoint = vec2(lastWacomPoint);
+    vec3 localPointCapped = localPoint;
+    localPointCapped.x = fmax(0,fmin(localPointCapped.x,size.x));
+    localPointCapped.y = fmax(0,fmin(localPointCapped.y,size.y));
+    
+    zoomAnchor = vec2(localPointCapped.x / size.x , localPointCapped.y / size.y);
+    }
+
+}
 
 void LineDancer::keyUp( KeyEvent event ){
     
-    if(event.getChar() == 'f'){
+    zoomDirection = 0;
+    
+    if(event.getCode() == event.KEY_SPACE){
+        isMovingPaper = false;
+    }
+    else if(event.getChar() == 'f'){
         setFullScreen(!isFullScreen());
         if(isFullScreen() && !isMouseOnly) toggleCursor();
     }else if(event.getCode() == event.KEY_ESCAPE){
@@ -307,7 +396,7 @@ void LineDancer::keyUp( KeyEvent event ){
     else if(event.getCode() == event.KEY_m){
         isMouseOnly = !isMouseOnly;
     }
-
+    
 }
 
 
@@ -337,18 +426,35 @@ void LineDancer::mouseUp( MouseEvent event )
 void LineDancer::mouseDrag( MouseEvent event )
 {
     bool isMenuHit = menu.checkTouchDown(event.getPos());
-    if((!isMouseOnly && !isMenuHit) || !isDrawing) return;
+    if((!isMouseOnly && !isMenuHit) || !isDrawing || !isMovingPaper) return;
     
     lastWacomPoint = vec3(event.getPos(),10 +fabs(sin(getElapsedSeconds())));
     penMove(lastWacomPoint,mActiveComposition);
     
 }
 
+void LineDancer::mouseMove( MouseEvent event )
+{
+}
+
+
 
 
 
 void LineDancer::update()
 {
+    
+    if(zoomDirection !=0){
+        
+        if(fabs(zoomDirection) < 2){
+            zoomDirection *= 2.0;
+        }
+        
+        zoomLevel += zoomDirection * 0.05;
+        if(zoomLevel < 0.1) zoomLevel =0.1;
+
+    }
+
     menu.update();
     mNetworkHelper.update();
 }
@@ -390,12 +496,40 @@ void LineDancer::draw()
     //gl::clear( ColorA( 0.3, 0.3, 1.0, 0.0 ) );
     gl::clear( ColorA( 1.0, 1.0, .0, 0.0 ) );
 
-    mActiveComposition->draw();
+    ivec2 size = mActiveComposition->getTexture()->getSize();
 
+    
+   
+    
+
+    ci::gl::pushMatrices();
+
+    ci::gl::translate(zoomCenterPoint.x  ,zoomCenterPoint.y , 0);
+
+    ci::gl::pushMatrices();
+    
+
+    ci::gl::scale(zoomLevel, zoomLevel);
+    ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
+
+    mActiveComposition->draw();
+    ci::gl::color(1,0,0);
+    
+    
+    screenMatrix = ci::gl::getModelViewProjection();
+    
+   
+
+
+    ci::gl::popMatrices();
+    ci::gl::popMatrices();
+
+    
+    
     if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0.0, 0.0);
     else ci::gl::color(0, 0.3, 1.0);
     ci::gl::drawStrokedCircle(vec2(lastWacomPoint.x,lastWacomPoint.y), 8, 2, 12);
-
+    ci::gl::drawString(toString(zoomLevel), vec2(20,10));
     
    // if(isHistoryVisible) mActiveComposition->drawHistory();
     
