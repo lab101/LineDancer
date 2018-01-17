@@ -50,7 +50,7 @@ void BrushManager::drawBrush(std::vector<vec3>& points,float softness){
     }
     
     
-    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
+//    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
     
     gl::ScopedGlslProg glslProg( mShader );
 

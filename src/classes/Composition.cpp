@@ -146,7 +146,7 @@ void Composition::lineTo(ci::vec3 pressurePoint){
 }
 
 
-void Composition::setNewSize(ci::ivec2 size,float windowScale){
+void Composition::setNewSize(ci::ivec2 size, float windowScale){
     mSize        = size;
     mWindowScale = windowScale;
     
@@ -182,13 +182,16 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
     
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
-    //    gl::enableAlphaBlendingPremult();
-    // gl::enableAlphaBlending();
+    gl::setMatricesWindow( mActiveFbo->getSize() );
+
     gl::color(1, 1, 1, 1);
 
     if(points.size() > 0){
         BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
     }
+    
+    gl::setMatricesWindow( ci::app::getWindowSize() );
+
 }
 
 
