@@ -27,8 +27,7 @@ class Composition{
    
     std::string                 mId;
     std::string                 mOutputFolder;
-    int                         mImageId;
-    bool                        mHasHistory;
+    int                         mImageLayerId;
     
     ci::gl::FboRef              mActiveFbo;
     
@@ -37,21 +36,12 @@ class Composition{
     float lastDrawDistance      = 0;
     float minDistance           = 0;
     
-    int lastUsedHistoryFboIndex = 0;
-    int nrOfundosAvailable      = 0;
     std::shared_ptr<ci::nvg::Context> vg;
     
+    
+    std::vector<std::string> mGifInputFiles;
+    pointVec interpolatedPointsToSave;
 
-    // history
-    std::vector<ci::gl::FboRef> mFboHistory;
-    std::vector<ci::Path2d>     pointHistory;
-    std::vector<ci::Path2d>     depthHistory;
-    
-  //  void takeSnapshotInFboHistory();
-    
-    ci::gl::TextureRef glitch;
-    std::vector<std::string> imageList;
-    
 
 
 public:
@@ -59,8 +49,7 @@ public:
     
     ci::signals::Signal<void(pointVec)>   onNewPoints;
 
-    ci::vec2                    mSize;
-
+    ci::vec2    mSize;
     
     ci::vec3 getNormalisedPositionAtIndex(ci::Path2d& points, ci::Path2d depths,int index);
     ci::vec3 getNormalisedPositionAtIndex(int index);
@@ -75,24 +64,19 @@ public:
     void setFbo(ci::gl::FboRef& fbo, ci::ivec2 size,float windowScale);
     
     void drawInFbo(std::vector<ci::vec3>& points);
-    void drawInFbo(ci::Path2d& path,ci::Path2d& depths);
-//    void drawHistory();
+    void calculatePath(ci::Path2d& path,ci::Path2d& depths);
     void draw();
     
     
-  //  void savePointsToHistory();
     void newLine(ci::vec3 pressurePoint);
     void lineTo(ci::vec3 pressurePoint);
     void endLine();
     
-//    void historyBack();
-//    void historyForward();
+
     
-    
-    // clear history when finished
     ci::gl::TextureRef getTexture();
     void finished();
-    void newLayer();
+    void newGifStep();
     void clearFbo();
     void drawFadeout();
     

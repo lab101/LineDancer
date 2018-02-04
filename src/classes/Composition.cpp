@@ -23,12 +23,9 @@ using namespace ci;
 
 void Composition::setup(std::shared_ptr<ci::nvg::Context> nanoVGContext,bool hasHistory){
     vg = nanoVGContext;
-    
-    mHasHistory = hasHistory;
-
     newComposition();
-
 }
+
 
 ci::vec3 Composition::getNormalisedPositionAtIndex(int index){
     return getNormalisedPositionAtIndex(mPath,mDepths,index);
@@ -46,16 +43,14 @@ ci::vec3 Composition::getNormalisedPositionAtIndex(ci::Path2d& points, ci::Path2
 
 void Composition::newComposition(){
     
-    
     mPath.clear();
     mDepths.clear();
 
-    pointHistory.clear();
-    depthHistory.clear();
-    imageList.clear();
+    interpolatedPointsToSave.clear();
+    
+    mGifInputFiles.clear();
     mId = getDateString();
     mOutputFolder = getDocumentsDirectory().string() + "lineDancer/" + mId;
-    lastUsedHistoryFboIndex =0;
     
     clearFbo();
 }
@@ -63,9 +58,6 @@ void Composition::newComposition(){
 
 void Composition::newLine(ci::vec3 pressurePoint){
     
- //   nrOfundosAvailable =  fmin(++nrOfundosAvailable,mFboHistory.size());
-  //  if(mHasHistory) takeSnapshotInFboHistory();
-
     mPath.clear();
     mDepths.clear();
     
@@ -78,71 +70,15 @@ void Composition::newLine(ci::vec3 pressurePoint){
 
 
 void Composition::endLine(){
-   // savePointsToHistory();
-    newLayer();
+    newGifStep();
 }
 
-
-//void Composition::historyBack(){
-//
-//    if(nrOfundosAvailable <= 0) return;
-//
-//    nrOfundosAvailable--;
-//
-//    pointHistory.pop_back();
-//    depthHistory.pop_back();
-//
-//      // go back in FBO's
-//
-//    lastUsedHistoryFboIndex-=1;
-//    if(lastUsedHistoryFboIndex <0) lastUsedHistoryFboIndex += mFboHistory.size();
-//    if(lastUsedHistoryFboIndex >= mFboHistory.size()) lastUsedHistoryFboIndex = lastUsedHistoryFboIndex - mFboHistory.size();
-//
-//
-//    clearFbo();
-//
-//
-//    gl::ScopedFramebuffer fbScp( mActiveFbo );
-//    gl::ScopedViewport fbVP (mActiveFbo->getSize());
-//    gl::color(1, 1, 1);
-//
-//    gl::enableAlphaBlending();
-//    gl::draw(mFboHistory[lastUsedHistoryFboIndex]->getColorTexture());
-//
-//}
-//
-//void Composition::takeSnapshotInFboHistory(){
-//
-//    ci::gl::FboRef fbo = mFboHistory[lastUsedHistoryFboIndex];
-//    gl::ScopedFramebuffer fbScp( fbo );
-//    gl::ScopedViewport fbVP (mActiveFbo->getSize());
-//
-//    gl::clear( ColorA( 0, 0, .0 ,0.0 ) );
-//
-//
-//    gl::draw(mActiveFbo->getColorTexture());
-//
-//    if(++lastUsedHistoryFboIndex >=  mFboHistory.size()){
-//        lastUsedHistoryFboIndex = 0;
-//    }
-//
-//}
-//
-//void Composition::savePointsToHistory(){
-//
-//
-//    if(mPath.getNumPoints() > 0){
-//        pointHistory.push_back(mPath);
-//        depthHistory.push_back(mDepths);
-//    }
-//
-//}
 
 void Composition::lineTo(ci::vec3 pressurePoint){
     mPath.lineTo(vec2(pressurePoint.x,pressurePoint.y));
     mDepths.lineTo(vec2(pressurePoint.x,pressurePoint.z));
     
-    drawInFbo(mPath,mDepths);
+    calculatePath(mPath,mDepths);
 }
 
 
@@ -151,14 +87,6 @@ void Composition::setNewSize(ci::ivec2 size, float windowScale){
     mWindowScale = windowScale;
     
     setFbo(mActiveFbo,size,windowScale);
-    
-    mFboHistory.clear();
-    for(int i =0;i < 6;++i){
-        ci::gl::FboRef historyFbo;
-        setFbo(historyFbo, size, windowScale);
-
-        mFboHistory.push_back(historyFbo);
-    }
 }
 
 
@@ -197,7 +125,7 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
 
 
 
-void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
+void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
     
     
     float length = path.calcLength();
@@ -206,7 +134,7 @@ void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
     
     float newDrawPosition = lastDrawDistance + minDistance;
     
-    pointVec points;
+    pointVec pointsToDraw;
     
     while(newDrawPosition + minDistance < length){
         
@@ -216,99 +144,75 @@ void Composition::drawInFbo(ci::Path2d& path,ci::Path2d& depths){
         
         vec3 newPoint(path.getPosition(newTime),depths.getPosition(newTime).y);
         
-        points.push_back(newPoint);
+        pointsToDraw.push_back(newPoint);
+        // save them later to a file.
+        interpolatedPointsToSave.push_back(newPoint);
        
         minDistance = fmax(.8f,(newPoint.z * .17 /GS()->scale));// (scale*10);
         
         lastDrawDistance = newDrawPosition;
         newDrawPosition = (lastDrawDistance + minDistance);
-        
     }
     
-    if(points.size() > 0){
-        onNewPoints.emit(points);
-        drawInFbo(points);
+    
+    if(pointsToDraw.size() > 0){
+        // emmit to other listner in this case network
+        onNewPoints.emit(pointsToDraw);
+        // draw the new points into the fbo.
+        drawInFbo(pointsToDraw);
     }
 }
+
 
 
 void Composition::draw(){
     
     gl::color(1, 1, 1, 1);
     gl::draw(mActiveFbo->getColorTexture());
-
 }
-
-//
-//void Composition::drawHistory(){
-//
-//
-//    for(int i = 0 ; i < mFboHistory.size(); i++){
-//
-//        ci::gl::TextureRef tex =  mFboHistory[i]->getColorTexture();
-//        ci::vec2 size =  tex->getSize();
-//
-//        float maxWidth = 200;
-//        float height = maxWidth * size.y / size.x;
-//
-//        vec2 pos( maxWidth ,400 + height * i);
-//
-//        ci::Rectf b(pos.x,pos.y,pos.x + maxWidth, pos.y +  height);
-//
-//        ci::gl::draw(tex,b);
-//    }
-//}
 
 
 
 void Composition::finished(){
     
-    
-   // try{
-    // write data files
-    std::ofstream dataFile;
-    
-    dataFile.open (mOutputFolder + "/data.txt");
+    // write interpolated points to a data file in the output folder
+    std::string dataFilePath = mOutputFolder + "/data.txt";
+    try{
+        std::ofstream dataFile;
+        
+        dataFile.open(dataFilePath);
 
-    for(int i=0;i < pointHistory.size();++i){
-        for(int pathIndex =0; pathIndex<  pointHistory[i].getNumPoints(); ++pathIndex){
-            auto p =  getNormalisedPositionAtIndex(pointHistory[i], depthHistory[i], pathIndex);
+        for(vec3& p :  interpolatedPointsToSave){
             dataFile << p.x << "," << p.y << "," << p.z << std::endl;
         }
         
-
-        dataFile << "--------------------" << std::endl;
-
+        dataFile.close();
+    }catch(...){
+        CI_LOG_E( "couldn't write to path: " + dataFilePath);
     }
-    dataFile.close();
 
 
-
-        std::vector<Magick::Image> frames;
+    //writing out the gif file.
+    std::vector<Magick::Image> frames;
     
-        for(auto i: imageList){
+    for(auto &i: mGifInputFiles){
             Magick::Image img;
             img.read(i);
-            img.animationDelay(9);
+            img.animationDelay(9);  // increase the delay if you want a slower gif.
             img.animationIterations(-1);
             frames.push_back(img);
-        }
-        
-        
-        try{
+    }
+    
+    try{
             std::string path = mOutputFolder + "/__" +  mId + "composition.gif";
             CI_LOG_I(path);
             Magick::writeImages(frames.begin(), frames.end(),path);
-        }
-        catch ( Magick::WarningConfigure & error)
-        {
-            // Handle problem while rotating or writing outfile.
+    }
+    catch ( Magick::WarningConfigure & error)
+    {
             CI_LOG_E( error.what());
-        }
+    }
  
-    
-        
-        
     
     
 }
@@ -318,66 +222,35 @@ void Composition::clearFbo(){
     if(!mActiveFbo) return;
     
     gl::ScopedFramebuffer fbScp( mActiveFbo );
-    
-    gl::clear();
-    gl::clear( ColorA( 0, 0, 0, 0.0 ) );
-    // remove below jsu
-    gl::clear( ColorA( 1, 0, 0, 1.0 ) );
     gl::clear( ColorA( 1, 1, 1, 1.0 ) );
-    
-    
-
 }
 
-void Composition::newLayer(){
-    
-    
 
+void Composition::newGifStep(){
+    
     // check if output folder exists
     if(!fs::exists(mOutputFolder)){
         fs::create_directories(mOutputFolder);
     }
     
     // write the current drawing to a png image
-    std::string path = mOutputFolder + "/" + getStringWithLeadingZero(mImageId,5) +".gif";
-    
-    
-    
-        float scale = 1.0;
-    
-        auto f = ci::gl::Fbo::create(mActiveFbo->getWidth() * scale, mActiveFbo->getHeight() * scale);
-        f->bindFramebuffer();
-        auto size = ci::vec2(f->getWidth() , f->getHeight());
-        gl::ScopedViewport scpVp( ivec2( 0 ), size);
-       // gl::setMatricesWindowPersp(size);
-        gl::clear();
-        gl::clear( ColorA( 1, 1, 1, 1.0 ) );
-        
-        gl::color(1, 1, 1, 1);
-        ci::gl::pushMatrices();
-        ci::gl::scale(1/GS()->scale,1/GS()->scale);
-        gl::draw(mActiveFbo->getColorTexture());
-        gl::popMatrices();
-        f->unbindFramebuffer();
-    
-  //  gl::setMatricesWindowPersp(ci::app::getWindowWidth(), ci::app::getWindowHeight());
+    std::string path = mOutputFolder + "/" + getStringWithLeadingZero(mImageLayerId,5) + ".gif";
 
-
-    auto source = f->getColorTexture()->createSource();
+    auto source = mActiveFbo->getColorTexture()->createSource();
 
     std::thread threadObj([=]{
      
             try{
                 writeImage(path, source);
-                imageList.push_back(path);
+                mGifInputFiles.push_back(path);
             }catch(...){
-                CI_LOG_E("error writing image file: " + path);
+                CI_LOG_E("error writing GIF image file: " + path);
             }
        
     });
 
     threadObj.detach();
-    mImageId++;
+    mImageLayerId++;
 }
 
 

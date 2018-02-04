@@ -31,8 +31,6 @@ class LineDancer : public App {
     vec3 lastWacomPoint;
     TabletData lastDataPoint;
     
-    
-    bool   isHistoryVisible;
     bool   isPenDown;
     bool   isPenClose;
     bool   isDrawing;
@@ -94,7 +92,11 @@ public:
     
     void setupComposition(std::shared_ptr<Composition>& composition,bool hasHistory = false);
     void toggleCursor();
+    
+    vec3 getLocalPoint(vec3& screenPoint);
 };
+
+
 
 
 void LineDancer::toggleCursor(){
@@ -103,8 +105,6 @@ void LineDancer::toggleCursor(){
     if(isCursorVisible){ hideCursor();}
     else{ showCursor(); }
 }
-
-
 
 
 void LineDancer::setup()
@@ -165,7 +165,6 @@ void LineDancer::setup()
     isDrawing =     false;
     isMouseOnly =   false;
     isPenClose =    false;
-    isHistoryVisible = false;
     isCursorVisible  =false;
     zoomLevel = 1.0;
     zoomCenterPoint = ci::app::getWindowCenter();
@@ -180,8 +179,6 @@ void LineDancer::setup()
 
     CI_LOG_I("SETUP composition with FBO");
     setupComposition(mActiveComposition);
-    
-    //resize();
     
 
     BrushManagerSingleton::Instance()->brushScale = 80.0f * menu.brushScale;
@@ -198,8 +195,6 @@ void LineDancer::setup()
     
     CI_LOG_I("finished SETUP");
     
-    
-    //screenMatrix = glm::scale(screenMatrix,vec3(0.5f,0.5f,0.5f));
 }
 
 
@@ -220,11 +215,10 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
 
 
 void LineDancer::onWacomData(TabletData& data){
-    std::cout << " --- " << std::endl;
-    
-     std::cout << data.pressure << std::endl;
-    std::cout << data.pointerType << std::endl;
-    std::cout << data.buttonMask << std::endl;
+   // std::cout << " --- " << std::endl;
+//    std::cout << data.pressure << std::endl;
+//    std::cout << data.pointerType << std::endl;
+//    std::cout << data.buttonMask << std::endl;
 
     
     lastDataPoint = data;
@@ -238,17 +232,11 @@ void LineDancer::onWacomData(TabletData& data){
     
     bool isMenuHit = false;
     
-    // based on http://discourse.libcinder.org/t/screen-to-world-coordinates/1014/2
+    localCoordinate =  getLocalPoint(lastWacomPoint);
     
-    int w = ci::app::getWindowWidth();
-    int h = ci::app::getWindowHeight();
-    vec4 viewport = vec4( 0, h, w, -h ); // vertical flip is required
-    
-    localCoordinate = glm::unProject( lastWacomPoint, mat4(), screenMatrix, viewport );
-    localCoordinate.z = point.z;
     
     // hovering
-    penHover(point,mActiveComposition);
+    penHover(point, mActiveComposition);
     
     if(data.pressure > 0 && !isPenDown){
         isPenDown = true;
@@ -294,6 +282,7 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
 
         return;
     }
+    
     isDrawing=true;
     point.x *= 1 / GS()->scale;
     point.y *= 1 / GS()->scale;
@@ -302,13 +291,12 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
 
 
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
+   
     if(isMovingPaper){
         vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
         vec2 div =(penMoveStart - p2) ;
         zoomCenterPoint -=div;
         penMoveStart = p2;
-        
-      //  std::cout << div << std::endl;
         return;
     }
     
@@ -348,8 +336,6 @@ void LineDancer::keyDown( KeyEvent event ){
 
         zoomDirection = -1;
         calculateAnchor = true;
-
-
     }
     
     
@@ -366,7 +352,7 @@ void LineDancer::keyDown( KeyEvent event ){
 
 }
 
-void LineDancer::keyUp( KeyEvent event ){
+void LineDancer::keyUp(KeyEvent event ){
     
     zoomDirection = 0;
     
@@ -380,8 +366,6 @@ void LineDancer::keyUp( KeyEvent event ){
         quit();
     }else if(event.getCode() == event.KEY_TAB){
         mNetworkHelper.setNextGroup();
-    }else if(event.getCode() == event.KEY_h){
-        isHistoryVisible = !isHistoryVisible;
     }
     else if(event.getCode() == event.KEY_c){
         toggleCursor();
@@ -403,12 +387,12 @@ void LineDancer::mouseDown( MouseEvent event )
 {
     if(!isMouseOnly) return;
     
-    lastWacomPoint = vec3(event.getPos(),6.1 +fabs(sin(getElapsedSeconds())));
-    
+    lastWacomPoint = vec3(event.getPos(),10);
+    localCoordinate = getLocalPoint(lastWacomPoint);
+
     if(!menu.checkTouchDown(ci::vec2(lastWacomPoint.x,lastWacomPoint.y))){
-        penDown(lastWacomPoint,mActiveComposition);
+        penDown(localCoordinate, mActiveComposition);
     }
-    
     
 }
 
@@ -424,12 +408,14 @@ void LineDancer::mouseUp( MouseEvent event )
 void LineDancer::mouseDrag( MouseEvent event )
 {
     bool isMenuHit = menu.checkTouchDown(event.getPos());
-    if((!isMouseOnly && !isMenuHit) || !isDrawing || !isMovingPaper) return;
+    if((!isMouseOnly && !isMenuHit) || !isDrawing) return;
     
-    lastWacomPoint = vec3(event.getPos(),10 +fabs(sin(getElapsedSeconds())));
-    penMove(lastWacomPoint,mActiveComposition);
+    lastWacomPoint = vec3(event.getPos(), 10);
+    localCoordinate =  getLocalPoint(lastWacomPoint);
     
+    penMove(localCoordinate,mActiveComposition);
 }
+
 
 void LineDancer::mouseMove( MouseEvent event )
 {
@@ -441,7 +427,8 @@ void LineDancer::update()
     const float div = ci::app::getElapsedSeconds() - lastUpdateTime;
     lastUpdateTime = ci::app::getElapsedSeconds();
     
-    if(zoomDirection !=0){
+    // provides smooth in & out zoom
+    if(zoomDirection != 0){
         
         if(fabs(zoomDirection) < 2){
             zoomDirection *= 2.0;
@@ -449,7 +436,6 @@ void LineDancer::update()
         
         zoomLevel += zoomDirection * div * 0.7;
         if(zoomLevel < 0.1) zoomLevel = 0.1;
-
     }
 
     menu.update();
@@ -459,7 +445,7 @@ void LineDancer::update()
 
 void LineDancer::resize()
 {
-    menu.setPosition(vec2(getWindowWidth()-90,60));
+    menu.setPosition(vec2(getWindowWidth()-90, 60));
 }
 
 
@@ -479,7 +465,6 @@ void LineDancer::drawGrid(){
             
             vg.strokeWidth(0.7);
             vg.fill();
-            
         }
     }
 }
@@ -488,17 +473,15 @@ void LineDancer::drawGrid(){
 void LineDancer::draw()
 {
   
-    gl::clear();
-    gl::clear( ColorA( 1.0, 1.0, .0, 0.0 ) );
+    gl::clear( ColorA( 1.0, 1.0, 0.0, 0.0 ) );
 
     ivec2 size = mActiveComposition->getTexture()->getSize();
     
-    
+    // Drawing "the paper" at zoomlevel with offset.
     ci::gl::pushMatrices();
 
-        ci::gl::translate(zoomCenterPoint.x  ,zoomCenterPoint.y , 0);
+        ci::gl::translate(zoomCenterPoint.x, zoomCenterPoint.y, 0);
     
-
         ci::gl::scale(zoomLevel, zoomLevel);
         ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
 
@@ -509,17 +492,13 @@ void LineDancer::draw()
         screenMatrix = ci::gl::getModelViewProjection();
    
 
-
     ci::gl::popMatrices();
 
     
-    
+    // draw the screen pointer.
     if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0.0, 0.0);
     else ci::gl::color(0, 0.3, 1.0);
     ci::gl::drawStrokedCircle(vec2(lastWacomPoint.x,lastWacomPoint.y), 8, 2, 12);
-    ci::gl::drawString(toString(zoomLevel), vec2(20,10));
-    
-   // if(isHistoryVisible) mActiveComposition->drawHistory();
     
     
     auto& vg = *mNanoVG;
@@ -545,7 +524,18 @@ void LineDancer::draw()
 }
 
 
-
+// some parts based on http://discourse.libcinder.org/t/screen-to-world-coordinates/1014/2
+vec3 LineDancer::getLocalPoint(vec3& screenPoint){
+    
+    int w = ci::app::getWindowWidth();
+    int h = ci::app::getWindowHeight();
+    vec4 viewport = vec4( 0, h, w, -h ); // vertical flip is required
+    
+    vec3 localPoint = glm::unProject( screenPoint, mat4(), screenMatrix, viewport );
+    localPoint.z = screenPoint.z;
+    
+    return localPoint;
+}
 
 void LineDancer::drawTextMessages(){
     
@@ -565,20 +555,8 @@ void LineDancer::drawTextMessages(){
         vg.text(ci::app::getWindowCenter() +vec2(0,80), "toggle mouse (c)ursor on");
         vg.text(ci::app::getWindowCenter() +vec2(0,120), "toggle (m)ouse drawing on");
         vg.text(ci::app::getWindowCenter() +vec2(0,150), "<esc> exit");
-        
     }
 
-
-    if(time > 11 && time < 18 ){
-        vg.strokeColor(ci::Color(0,0,0));
-        vg.fillColor(ci::Color(0,0,0));
-        vg.textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
-        
-        vg.fontSize(60);
-        
-        vg.text(ci::app::getWindowCenter(), "HAVE FUN");
-        
-    }
 
 
     if(showGifSavedTimer < 10 && showGifSavedTimer > 0){
