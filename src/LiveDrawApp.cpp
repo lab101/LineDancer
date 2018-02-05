@@ -534,13 +534,13 @@ void LineDancer::drawTextMessages(){
     auto& vg = *mNanoVG;
 
     if(time < 6){
-        
+        vg.strokeColor(GS()->blue);
+        vg.fillColor(GS()->blue);
+
         vg.fontFace("standard");
         vg.fontSize(40);
         vg.text(ci::app::getWindowCenter(), "KEYS:");
         vg.fontSize(30);
-        vg.strokeColor(ci::Color(0,0,0));
-        vg.fillColor(ci::Color(0,0,0));
 
         vg.text(ci::app::getWindowCenter() +vec2(0,50), "toggle (f)ullscreen");
         vg.text(ci::app::getWindowCenter() +vec2(0,80), "toggle mouse (c)ursor on");
@@ -551,10 +551,11 @@ void LineDancer::drawTextMessages(){
 
 
     if(showGifSavedTimer < 10 && showGifSavedTimer > 0){
-        vg.strokeColor(ci::Color(1,1,1));
+        vg.strokeColor(GS()->blue);
         
         float flash = fabs(sin(ci::app::getElapsedSeconds() *10.0));
-        vg.fillColor(ci::ColorA(1,1,1,flash));
+        
+        vg.fillColor(ci::ColorA(GS()->blue.r,GS()->blue.g,GS()->blue.b,flash));
         vg.textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
         
         vg.fontSize(160);

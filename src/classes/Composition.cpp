@@ -11,7 +11,6 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Utilities.h"
 #include "Lab101Utils.h"
-#include "cinder/Rand.h"
 #include "cinder/Log.h"
 #include "GlobalSettings.h"
 
@@ -60,9 +59,13 @@ void Composition::clearScene(){
 
 void Composition::newComposition(){
 
-//    mLastDrawingTexture = nullptr;
-
     clearScene();
+    
+    if(mActiveFbo){
+        auto source = mActiveFbo->getColorTexture()->createSource();
+        mLastDrawingTexture = ci::gl::Texture::create(source);
+    }
+    
     mStepId =0;
     
     mGifInputFiles.clear();
@@ -273,16 +276,15 @@ void Composition::finished(){
                     }
                 }
                 
-                framesToGif(stepImages, mOutputFolder + "/step_" + toString(layerImages.size()) + ".gif");
+                framesToGif(stepImages, mOutputFolder + "/layer_" + getStringWithLeadingZero(layerImages.size(),3) + "_final.gif");
                 layerImages.push_back(stepImages.back());
             }
         }
     }
-    
-    framesToGif(layerImages, mOutputFolder + "/_final.gif");
-
-    
-   
+    // only write a layered final if user has been using layers
+    if(layerImages.size() > 1){
+        framesToGif(layerImages, mOutputFolder + "/_final.gif");
+    }
     
 }
 

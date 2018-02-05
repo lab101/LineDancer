@@ -88,6 +88,8 @@ bool DotButton::touchUp(){
     
     if(isPressed){
         onPressed.emit();
+        isPressed = false;
+
         return true;
     }
     

@@ -13,7 +13,7 @@ public:
 
     float zoomLevel;
     float maxWidth;
-    
+    ci::ColorA blue;
     
     ci::ivec2 compositionSize;
    
