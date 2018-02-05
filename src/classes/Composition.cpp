@@ -21,8 +21,11 @@
 using namespace ci;
 
 
-void Composition::setup(std::shared_ptr<ci::nvg::Context> nanoVGContext,bool hasHistory){
-    vg = nanoVGContext;
+void Composition::setup(ivec2 size){
+    
+    mSize        = size;
+    setFbo(mActiveFbo,size, 1);
+    
     newComposition();
 }
 
@@ -41,18 +44,30 @@ ci::vec3 Composition::getNormalisedPositionAtIndex(ci::Path2d& points, ci::Path2
 }
 
 
-void Composition::newComposition(){
+void Composition::clearScene(){
+    
+    if(mActiveFbo){
+        auto source = mActiveFbo->getColorTexture()->createSource();
+        mLastDrawingTexture = ci::gl::Texture::create(source);
+    }
     
     mPath.clear();
     mDepths.clear();
-
     interpolatedPointsToSave.clear();
+    clearFbo();
+
+}
+
+void Composition::newComposition(){
+
+//    mLastDrawingTexture = nullptr;
+
+    clearScene();
+    mStepId =0;
     
     mGifInputFiles.clear();
-    mId = getDateString();
-    mOutputFolder = getDocumentsDirectory().string() + "lineDancer/" + mId;
-    
-    clearFbo();
+    mCompositionId = getDateString();
+    mOutputFolder = getDocumentsDirectory().string() + "lineDancer/" + mCompositionId;
 }
 
 
@@ -61,8 +76,8 @@ void Composition::newLine(ci::vec3 pressurePoint){
     mPath.clear();
     mDepths.clear();
     
-    mPath.moveTo(vec2(pressurePoint.x,pressurePoint.y));
-    mDepths.moveTo(vec2(pressurePoint.x,pressurePoint.z));
+    mPath.moveTo(vec2(pressurePoint.x   ,pressurePoint.y));
+    mDepths.moveTo(vec2(pressurePoint.x ,pressurePoint.z));
     
     lastDrawDistance = 0;
     minDistance = 0;
@@ -70,7 +85,9 @@ void Composition::newLine(ci::vec3 pressurePoint){
 
 
 void Composition::endLine(){
-    newGifStep();
+   // newGifStep();
+    saveLineSegment();
+    mStepId++;
 }
 
 
@@ -82,24 +99,16 @@ void Composition::lineTo(ci::vec3 pressurePoint){
 }
 
 
-void Composition::setNewSize(ci::ivec2 size, float windowScale){
-    mSize        = size;
-    mWindowScale = windowScale;
-    
-    setFbo(mActiveFbo,size,windowScale);
-}
 
 
 void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
     
-    //setup fbo
-
     gl::Fbo::Format format;
     //format.setColorTextureFormat( gl::Texture2d::Format().internalFormat( GL_RGBA32F ) );
     
     gl::enableAlphaBlending();
    // format.setSamples( 4 );
-    fbo = gl::Fbo::create(size.x  * GS()->scale, size.y * GS()->scale ,format );
+    fbo = gl::Fbo::create(size.x, size.y ,format );
     
     clearFbo();
 
@@ -141,14 +150,13 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
         float newTime = path.calcTimeForDistance(newDrawPosition);
         if(newDrawPosition == 0) newTime = 0;
         
-        
         vec3 newPoint(path.getPosition(newTime),depths.getPosition(newTime).y);
         
         pointsToDraw.push_back(newPoint);
         // save them later to a file.
         interpolatedPointsToSave.push_back(newPoint);
        
-        minDistance = fmax(.8f,(newPoint.z * .17 /GS()->scale));// (scale*10);
+        minDistance = fmax(.8f,(newPoint.z * .17));
         
         lastDrawDistance = newDrawPosition;
         newDrawPosition = (lastDrawDistance + minDistance);
@@ -166,14 +174,34 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
 
 
 void Composition::draw(){
+
+    if(mLastDrawingTexture){
+        gl::color(1, 1, 1, 0.3);
+        gl::draw(mLastDrawingTexture);
+    }
     
     gl::color(1, 1, 1, 1);
+
+    ci::gl::enableAdditiveBlending();
+    //GL_BLEND(GL_ONE,GL_ONE_MINUS_DST_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendEquation(GL_FUNC_ADD);
+   // glBlendFunc(GL_ONE,GL_ONE_MINUS_DST_ALPHA);
+    
+    ci::gl::pushMatrices();
+  //  ci::gl::translate(10, 10, 0);
     gl::draw(mActiveFbo->getColorTexture());
+    ci::gl::enableAlphaBlending();
+    ci::gl::popMatrices();
+    
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
 }
 
 
-
-void Composition::finished(){
+void Composition::writeDataFile(){
     
     // write interpolated points to a data file in the output folder
     std::string dataFilePath = mOutputFolder + "/data.txt";
@@ -181,7 +209,7 @@ void Composition::finished(){
         std::ofstream dataFile;
         
         dataFile.open(dataFilePath);
-
+        
         for(vec3& p :  interpolatedPointsToSave){
             dataFile << p.x << "," << p.y << "," << p.z << std::endl;
         }
@@ -191,31 +219,73 @@ void Composition::finished(){
         CI_LOG_E( "couldn't write to path: " + dataFilePath);
     }
 
+}
 
+
+void Composition::framesToGif(std::vector<std::string>& inputFiles, std::string gifPath){
+    
     //writing out the gif file.
     std::vector<Magick::Image> frames;
     
-    for(auto &i: mGifInputFiles){
-            Magick::Image img;
-            img.read(i);
-            img.animationDelay(9);  // increase the delay if you want a slower gif.
-            img.animationIterations(-1);
-            frames.push_back(img);
+    for(auto &i: inputFiles){
+        Magick::Image img;
+        img.read(i);
+        img.animationDelay(19);  // increase the delay if you want a slower gif.
+        img.animationIterations(-1);
+        frames.push_back(img);
     }
     
     try{
-            std::string path = mOutputFolder + "/__" +  mId + "composition.gif";
-            CI_LOG_I(path);
-            Magick::writeImages(frames.begin(), frames.end(),path);
+        CI_LOG_I("writing gif:" + gifPath);
+        Magick::writeImages(frames.begin(), frames.end(), gifPath);
     }
     catch ( Magick::WarningConfigure & error)
     {
-            CI_LOG_E( error.what());
+        CI_LOG_E( error.what());
     }
- 
+}
+
+
+
+void Composition::finished(){
     
+    writeDataFile();
+    
+    std::string path = mOutputFolder + "/__" +  mCompositionId + "composition.gif";
+
+    std::vector<std::string> layerImages;
+    
+    for( fs::directory_iterator it( mOutputFolder); it != fs::directory_iterator(); ++it ){
+        {
+            if( is_directory( *it )){
+                std::cout << "layer: " << it->path() << std::endl;
+                std::vector<std::string> stepImages;
+
+                // found a layer folder now read the files;
+                for( fs::directory_iterator it2( it->path()); it2 != fs::directory_iterator(); ++it2 ){
+                    {
+                        if(it2->path().extension() == ".gif"){
+                            std::cout << "step: " << it2->path() << std::endl;
+                            stepImages.push_back(it2->path().string());
+                            
+                        }
+                        
+                    }
+                }
+                
+                framesToGif(stepImages, mOutputFolder + "/step_" + toString(layerImages.size()) + ".gif");
+                layerImages.push_back(stepImages.back());
+            }
+        }
+    }
+    
+    framesToGif(layerImages, mOutputFolder + "/_final.gif");
+
+    
+   
     
 }
+
 
 void Composition::clearFbo(){
     // clear the screen;
@@ -226,31 +296,42 @@ void Composition::clearFbo(){
 }
 
 
-void Composition::newGifStep(){
-    
+void Composition::saveLineSegment(){
     // check if output folder exists
-    if(!fs::exists(mOutputFolder)){
+    if(!fs::exists(mOutputFolder + "/layers/")){
         fs::create_directories(mOutputFolder);
     }
     
     // write the current drawing to a png image
-    std::string path = mOutputFolder + "/" + getStringWithLeadingZero(mImageLayerId,5) + ".gif";
+    std::string path = mOutputFolder + "/layer_" + getStringWithLeadingZero(mImageLayerId, 3)+ "/" + getStringWithLeadingZero(mStepId, 3) + ".gif";
+    
+    writeGifStep(path);
 
+}
+
+void Composition::saveLayer(){
+    mImageLayerId++;
+    mStepId = 0;
+}
+
+
+
+void Composition::writeGifStep(std::string fileName){
+    
     auto source = mActiveFbo->getColorTexture()->createSource();
 
     std::thread threadObj([=]{
      
             try{
-                writeImage(path, source);
-                mGifInputFiles.push_back(path);
+                writeImage(fileName, source);
+                mGifInputFiles.push_back(fileName);
             }catch(...){
-                CI_LOG_E("error writing GIF image file: " + path);
+                CI_LOG_E("error writing GIF image file: " + fileName);
             }
        
     });
 
     threadObj.detach();
-    mImageLayerId++;
 }
 
 

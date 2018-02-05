@@ -17,7 +17,6 @@ class DotButton{
     std::shared_ptr<ci::nvg::Context> vg;
 
     ci::vec2 mPosition;
-    float mRadius;
     bool isPressed;
     bool isHover;
     
@@ -26,15 +25,18 @@ class DotButton{
     
 public:
     
+    float mRadius;
+
     std::string mText;
     ci::signals::Signal<void()>         onPressed;
 
-    void setup(float radius,std::string text,std::shared_ptr<ci::nvg::Context> nanoVGContext);
-    void draw();
+    DotButton(float radius, std::string text);
+
+    void draw(std::shared_ptr<ci::nvg::Context> nanoVGContext);
     bool checkTouchDown(ci::vec2 point);
     bool checkHover(ci::vec2 point);
     
-    void touchUp();
+    bool touchUp();
     
     void setPosition(ci::vec2 position);
     void setColor(ci::Color color);

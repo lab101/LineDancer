@@ -18,7 +18,9 @@ using namespace ci;
 
 GlobalSettings::GlobalSettings(){
 
-    scale = 1.0;
+    zoomLevel = 1.0;
+    compositionSize = ci::ivec2(800,800);
+
 
 }
 

@@ -9,18 +9,15 @@
 #include "DotButton.hpp"
 
 
-void DotButton::setup(float radius,std::string text, std::shared_ptr<ci::nvg::Context> nanoVGContext){
-    
+DotButton::DotButton(float radius, std::string text){
     mText       = text;
     mRadius     = radius;
-    vg          = nanoVGContext;
     
     isPressed = false;
     isHover = false;
     mColor = ci::Color(0,0,0);
     
     mText = text;
-
 }
 
 
@@ -35,13 +32,14 @@ void DotButton::setColor(ci::Color color){
 
 
 
-void DotButton::draw(){
+void DotButton::draw(std::shared_ptr<ci::nvg::Context> vg){
     
+    //auto& vg = *mNanoVG;
+
     vg->beginPath();
     vg->strokeColor(mColor);
     vg->circle(mPosition,mRadius);
     vg->strokeWidth(4);
-    
     
     if(isPressed){
         vg->strokeWidth(10);
@@ -60,9 +58,15 @@ void DotButton::draw(){
     if(mText != ""){
         vg->strokeColor(mColor);
         vg->fillColor(mColor);
-        vg->textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
-        vg->fontSize(16);
-        vg->text(mPosition, mText);
+        vg->textAlign(NVG_ALIGN_TOP | NVG_ALIGN_CENTER);
+        
+        vg->fontSize(14);
+
+        // NVG_ALIGN_MIDDLE wasn't working, manually v-alliging it.
+        ci::Rectf rect = vg->textBoxBounds(mPosition.x - mRadius, mPosition.y - mRadius, mRadius * 2, mText);
+        vg->textBox(mPosition.x - mRadius, mPosition.y - (rect.getHeight() *0.5) , mRadius * 2, mText);
+        
+        
     }
     
 
@@ -70,22 +74,24 @@ void DotButton::draw(){
 
 
 bool DotButton::checkHover(ci::vec2 point){
-    isHover =  glm::distance(point, mPosition) < (mRadius * 2);
+    isHover =  glm::distance(point, mPosition) < mRadius;
     return isHover;
 }
 
 bool DotButton::checkTouchDown(ci::vec2 point){
-    isPressed =  glm::distance(point, mPosition) < (mRadius * 2);
+    isPressed =  glm::distance(point, mPosition) < mRadius;
     return isPressed;
 }
 
 
-void DotButton::touchUp(){
+bool DotButton::touchUp(){
     
     if(isPressed){
         onPressed.emit();
+        return true;
     }
     
     isPressed = false;
+    return false;
 }
 

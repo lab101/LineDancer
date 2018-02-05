@@ -25,22 +25,21 @@ class Menu{
     bool isBrushHover;
     bool isPressed;
     
+    std::vector<DotButton*> buttons;
     
 public:
     float brushScale;
-
-    DotButton btnSave;
-    DotButton btnUndo;
-    DotButton btnGif;
-
-    ci::signals::Signal<void(float)>    onBrushSizeChanged;
     
-    void setup(std::shared_ptr<ci::nvg::Context> nanoVGContext);
+
+    ci::signals::Signal<void(float)>          onBrushSizeChanged;
+    ci::signals::Signal<void(std::string)>    onNewCommand;
+
+    void setup();
     void update();
-    void draw();
+    void draw(std::shared_ptr<ci::nvg::Context> nanoVGContext);
     bool checkTouchDown(ci::vec2 point);
     bool checkHover(ci::vec2 point);
-    bool touchUp();
+    bool checkTouchUp();
     
     void setPosition(ci::vec2 position);
     void setBrushScale(float newScale);

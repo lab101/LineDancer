@@ -9,16 +9,21 @@
 #include "Menu.hpp"
 
 
-void Menu::setup(std::shared_ptr<ci::nvg::Context> nanoVGContext){
+void Menu::setup(){
+
+    DotButton* btnLayer = new DotButton(28, "NEW LAYER");
+    buttons.push_back(btnLayer);
+
+    DotButton* btnGif = new DotButton(28,"GIF");
+    btnGif->setColor(ci::Color(0,0.6,1.0));
+    buttons.push_back(btnGif);
     
-    vg = nanoVGContext;
-    
-    btnSave.setup(26,"NEW",nanoVGContext);
-//    btnUndo.setup(26,"UNDO",nanoVGContext);
-    btnGif.setup(26,"GIF", nanoVGContext);
-    
-//    btnUndo.setColor(ci::Color(1,0.3,0.6));
-    btnGif.setColor(ci::Color(0,0.6,1.0));
+    // setup commands
+    for(auto button : buttons){
+        button->onPressed.connect([=]{
+            onNewCommand.emit(button->mText);
+        });
+    }
     
     brushScale = 0.5;
     isBrushHover = false;
@@ -33,34 +38,39 @@ void Menu::update(){
 void Menu::setPosition(ci::vec2 position){
     
     mPosition = position;
-    
-    ci::vec2 elementPos = position;
-    ci::vec2 btnMargin(0,80);
-    
-    btnSave.setPosition(elementPos);
-//    btnUndo.setPosition(elementPos += btnMargin);
-    btnGif.setPosition(elementPos += btnMargin);
-    
-    brushScaleBoxOrig.set(elementPos.x -10, elementPos.y + btnMargin.y, elementPos.x + 10, elementPos.y + 460);
-    brushScaleBoxOrigCurrent= brushScaleBoxOrig;
 }
 
 
 
-void Menu::draw(){
+void Menu::draw(std::shared_ptr<ci::nvg::Context> vg){
     
-   // btnUndo.draw();
-    btnSave.draw();
-    btnGif.draw();
-    // bar
+    float yPos = 60;
+    for(auto button : buttons){
+        button->setPosition(ci::vec2(ci::app::getWindowWidth() - 40, yPos));
+        button->draw(vg);
+        yPos += (button->mRadius * 2) + 20;
+    }
+    
+ 
+    
+    ci::vec2 elementPos(ci::app::getWindowWidth() - 40, yPos);
+    ci::vec2 btnMargin(0,00);
+    
+    
+    brushScaleBoxOrig.set(elementPos.x -10, elementPos.y + btnMargin.y, elementPos.x + 10, elementPos.y + 460);
+    brushScaleBoxOrigCurrent= brushScaleBoxOrig;
+    
+    
     vg->beginPath();
     
     float width = brushScaleBoxOrigCurrent.getWidth();
     float height = brushScaleBoxOrigCurrent.getHeight();
     
     vg->rect(brushScaleBoxOrigCurrent.x2,brushScaleBoxOrigCurrent.y2, -width, -height * brushScale);
-    vg->fillColor(ci::Color(0,0,0));
-    vg->strokeColor(ci::Color(0,0,0));
+    
+    ci::ColorA barColor(0,0.0,0.0);
+    vg->fillColor(barColor);
+    vg->strokeColor(barColor);
     vg->fill();
     
     vg->strokeWidth(isBrushHover ? 3 : 2);
@@ -81,9 +91,10 @@ void Menu::setBrushScale(float newScale){
 bool Menu::checkHover(ci::vec2 point){
     // check for pressure box
     
-    btnSave.checkHover(point);
-    btnUndo.checkHover(point);
-    btnGif.checkHover(point);
+    for(auto button : buttons){
+        button->checkHover(point);
+    }
+    
     
     isBrushHover = false;
     brushScaleBoxOrigCurrent = brushScaleBoxOrig;
@@ -92,7 +103,6 @@ bool Menu::checkHover(ci::vec2 point){
         brushScale = ci::lmap<float>(point.y, brushScaleBoxOrigCurrent.y2, brushScaleBoxOrigCurrent.y1, 0.0f, 1.0f);
         brushScale = fmaxf(0, brushScale);
         brushScale = fminf(1, brushScale);
-        
         
         onBrushSizeChanged.emit(brushScale);
         
@@ -108,26 +118,24 @@ bool Menu::checkHover(ci::vec2 point){
 
 bool Menu::checkTouchDown(ci::vec2 point){
     
-
-    isPressed = btnSave.checkTouchDown(point);
-//    isPressed += btnUndo.checkTouchDown(point);
-    isPressed += btnGif.checkTouchDown(point);
+    bool isPressed = false;
     
-   
+    for(auto button : buttons){
+        isPressed += button->checkTouchDown(point);
+    }
+    
     return isPressed;
 }
 
 
-bool Menu::touchUp(){
+bool Menu::checkTouchUp(){
+    bool isPressed = false;
 
-    btnSave.touchUp();
-//    btnUndo.touchUp();
-    btnGif.touchUp();
+    for(auto button : buttons){
+       isPressed+= button->touchUp();
+    }
     
-    bool wasPressed = isPressed;
-    isPressed = false;
-    
-    return wasPressed;
+    return isPressed;
 }
 
 

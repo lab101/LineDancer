@@ -25,11 +25,13 @@ typedef std::vector<ci::vec3> pointVec;
 
 class Composition{
    
-    std::string                 mId;
+    std::string                 mCompositionId;
     std::string                 mOutputFolder;
     int                         mImageLayerId;
-    
+    int                         mStepId;
+
     ci::gl::FboRef              mActiveFbo;
+    ci::gl::TextureRef          mLastDrawingTexture;
     
     float                       mWindowScale;
     
@@ -42,6 +44,10 @@ class Composition{
     std::vector<std::string> mGifInputFiles;
     pointVec interpolatedPointsToSave;
 
+    void writeGifStep(std::string fileName);
+    void clearFbo();
+    void writeDataFile();
+    void framesToGif(std::vector<std::string>& paths, std::string gifPath);
 
 
 public:
@@ -57,8 +63,9 @@ public:
     ci::Path2d mPath;
     ci::Path2d mDepths;
     
-    void setup(std::shared_ptr<ci::nvg::Context> nanoVGContext, bool hasHistory = true);
+    void setup(ci::ivec2 size);
     void newComposition();
+    void clearScene();
 
     void setNewSize(ci::ivec2 size,float windowScale);
     void setFbo(ci::gl::FboRef& fbo, ci::ivec2 size,float windowScale);
@@ -72,12 +79,13 @@ public:
     void lineTo(ci::vec3 pressurePoint);
     void endLine();
     
+    void saveLineSegment();
+    void saveLayer();
+    
 
     
     ci::gl::TextureRef getTexture();
     void finished();
-    void newGifStep();
-    void clearFbo();
     void drawFadeout();
     
     

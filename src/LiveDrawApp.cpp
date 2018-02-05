@@ -47,7 +47,6 @@ class LineDancer : public App {
     Menu menu;
     PlayerLogo logo;
     
-    ci::gl::TextureRef              mPrevTexture;
     std::shared_ptr<Composition>    mActiveComposition;
     
     
@@ -134,23 +133,20 @@ void LineDancer::setup()
     mNanoVG->createFont("standard", font);
     mNanoVG->fontFace("standard");
 
-    menu.setup(mNanoVG);
-    menu.btnSave.onPressed.connect([=]{
-        mPrevTexture = ci::gl::Texture::create(mActiveComposition->getTexture()->createSource());
+    menu.setup();
+    menu.onNewCommand.connect([=](std::string command){
+        if(command == "NEW LAYER"){
+            mActiveComposition->saveLayer();
+            mActiveComposition->clearScene();
+        }else if(command == "GIF"){
+            mActiveComposition->finished();
+            mActiveComposition->newComposition();
+            
+            timeline().apply(&showGifSavedTimer,1,11,3.0f);
+        }
         
-        mActiveComposition->newComposition();
     });
     
-
-
-    
-    menu.btnGif.onPressed.connect([=](){
-        mPrevTexture.reset();
-        mActiveComposition->finished();
-        mActiveComposition->newComposition();
-        
-        timeline().apply(&showGifSavedTimer,1,11,3.0f);
-    });
 
     
     menu.onBrushSizeChanged.connect([&](float brushScale){
@@ -166,7 +162,7 @@ void LineDancer::setup()
     isMouseOnly =   false;
     isPenClose =    false;
     isCursorVisible  =false;
-    zoomLevel = 1.0;
+    zoomLevel = GS()->zoomLevel;
     zoomCenterPoint = ci::app::getWindowCenter();
     zoomAnchor = vec2(0.5,0.5);
     isMovingPaper = false;
@@ -202,8 +198,7 @@ void LineDancer::setup()
 void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool hasHistory){
     
     composition = make_shared<Composition>();
-    composition->setup(mNanoVG, hasHistory);
-    mActiveComposition->setNewSize(ivec2(800,800), getWindowContentScale());
+    composition->setup(GS()->compositionSize);
 
     // when the new points with correct spacing are calculated we send them to the other
     // clients we don't send rawpoints.
@@ -215,7 +210,7 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
 
 
 void LineDancer::onWacomData(TabletData& data){
-   // std::cout << " --- " << std::endl;
+//    std::cout << " --- " << std::endl;
 //    std::cout << data.pressure << std::endl;
 //    std::cout << data.pointerType << std::endl;
 //    std::cout << data.buttonMask << std::endl;
@@ -226,7 +221,7 @@ void LineDancer::onWacomData(TabletData& data){
     isPenClose = data.in_proximity;
     BrushManagerSingleton::Instance()->isEraserOn = data.buttonMask >= 2;
     
-    vec3 point(data.abs_screen[0] *getWindowWidth(), getWindowHeight() - data.abs_screen[1]*getWindowHeight(), data.pressure * BrushManagerSingleton::Instance()->brushScale * GS()->scale);
+    vec3 point(data.abs_screen[0] *getWindowWidth(), getWindowHeight() - data.abs_screen[1]*getWindowHeight(), data.pressure * BrushManagerSingleton::Instance()->brushScale);
     lastWacomPoint = point;
     
     
@@ -257,7 +252,7 @@ void LineDancer::onWacomData(TabletData& data){
         isPenDown = false;
         isDrawing = false;
         
-        isMenuHit = menu.touchUp();
+        isMenuHit = menu.checkTouchUp();
         
         if(!isMenuHit) penUp(mActiveComposition);
         return;
@@ -284,8 +279,6 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
     }
     
     isDrawing=true;
-    point.x *= 1 / GS()->scale;
-    point.y *= 1 / GS()->scale;
     composition->newLine(point);
 }
 
@@ -300,8 +293,6 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
         return;
     }
     
-    point.x *= 1 / GS()->scale;
-    point.y *= 1 / GS()->scale;
     composition->lineTo(point);
 }
 
@@ -309,9 +300,8 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
 void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
     if(isMovingPaper) return;
 
-    isDrawing=false;
+    isDrawing = false;
     composition->endLine();
-    menu.touchUp();
 }
 
 
@@ -473,7 +463,8 @@ void LineDancer::drawGrid(){
 void LineDancer::draw()
 {
   
-    gl::clear( ColorA( 1.0, 1.0, 0.0, 0.0 ) );
+    //gl::clear( ColorA( 1.0, 1.0, 0.0, 0.0 ) );
+    gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,0.0f));
 
     ivec2 size = mActiveComposition->getTexture()->getSize();
     
@@ -505,7 +496,7 @@ void LineDancer::draw()
 
     vg.beginFrame(getWindowSize(), getWindowContentScale());
     
-    menu.draw();
+    menu.draw(mNanoVG);
     logo.draw(false,vec2(30,30), ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr(), 0 ,vg);
     
     int i=0;

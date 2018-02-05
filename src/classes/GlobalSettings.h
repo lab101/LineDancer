@@ -11,13 +11,17 @@ class GlobalSettings{
 public:
 
 
-    float scale;
+    float zoomLevel;
     float maxWidth;
     
-	GlobalSettings();
+    
+    ci::ivec2 compositionSize;
    
+    GlobalSettings();
+    
 
 };
+
 
 
 typedef Singleton<GlobalSettings> GlobalSettingsSingleton;
