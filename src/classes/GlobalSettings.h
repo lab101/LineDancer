@@ -13,6 +13,10 @@ public:
 
     float zoomLevel;
     float maxWidth;
+    bool hasGifOutput;
+    bool hasClearButton;
+    bool hasLayerButton;
+
     ci::ColorA blue;
     
     ci::ivec2 compositionSize;

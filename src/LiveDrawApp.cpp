@@ -138,7 +138,11 @@ void LineDancer::setup()
         if(command == "NEW LAYER"){
             mActiveComposition->saveLayer();
             mActiveComposition->clearScene();
-        }else if(command == "GIF"){
+        }
+        else if(command == "CLEAR"){
+            mActiveComposition->clearScene(true);
+        }
+        else if(command == "GIF"){
             mActiveComposition->finished();
             mActiveComposition->newComposition();
             

@@ -7,16 +7,25 @@
 //
 
 #include "Menu.hpp"
-
+#include "GlobalSettings.h"
 
 void Menu::setup(){
 
-    DotButton* btnLayer = new DotButton(28, "NEW LAYER");
-    buttons.push_back(btnLayer);
+    if(GS()->hasLayerButton){
+        DotButton* btnLayer = new DotButton(28, "NEW LAYER");
+        buttons.push_back(btnLayer);
+    }
+    
+    if(GS()->hasClearButton){
+        DotButton* btnClear = new DotButton(28, "CLEAR");
+        buttons.push_back(btnClear);
+    }
 
-    DotButton* btnGif = new DotButton(28,"GIF");
-    btnGif->setColor(ci::Color(0,0.6,1.0));
-    buttons.push_back(btnGif);
+    if(GS()->hasGifOutput){
+        DotButton* btnGif = new DotButton(28,"GIF");
+        btnGif->setColor(ci::Color(0,0.6,1.0));
+        buttons.push_back(btnGif);
+    }
     
     // setup commands
     for(auto button : buttons){

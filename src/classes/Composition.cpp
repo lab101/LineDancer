@@ -43,9 +43,9 @@ ci::vec3 Composition::getNormalisedPositionAtIndex(ci::Path2d& points, ci::Path2
 }
 
 
-void Composition::clearScene(){
+void Composition::clearScene(bool clearOnionLayer){
     
-    if(mActiveFbo){
+    if(!clearOnionLayer && mActiveFbo){
         auto source = mActiveFbo->getColorTexture()->createSource();
         mLastDrawingTexture = ci::gl::Texture::create(source);
     }
@@ -54,6 +54,11 @@ void Composition::clearScene(){
     mDepths.clear();
     interpolatedPointsToSave.clear();
     clearFbo();
+    
+    if(clearOnionLayer && mActiveFbo){
+        auto source = mActiveFbo->getColorTexture()->createSource();
+        mLastDrawingTexture = ci::gl::Texture::create(source);
+    }
 
 }
 
@@ -88,8 +93,10 @@ void Composition::newLine(ci::vec3 pressurePoint){
 
 
 void Composition::endLine(){
-   // newGifStep();
-    saveLineSegment();
+
+    if(GS()->hasGifOutput){
+        saveLineSegmentForGif();
+    }
     mStepId++;
 }
 
@@ -283,7 +290,7 @@ void Composition::finished(){
     }
     // only write a layered final if user has been using layers
     if(layerImages.size() > 1){
-        framesToGif(layerImages, mOutputFolder + "/_final.gif");
+        framesToGif(layerImages, mOutputFolder + "/_" + mCompositionId + "_final.gif");
     }
     
 }
@@ -298,7 +305,7 @@ void Composition::clearFbo(){
 }
 
 
-void Composition::saveLineSegment(){
+void Composition::saveLineSegmentForGif(){
     // check if output folder exists
     if(!fs::exists(mOutputFolder + "/layers/")){
         fs::create_directories(mOutputFolder);

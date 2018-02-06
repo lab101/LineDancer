@@ -65,7 +65,7 @@ public:
     
     void setup(ci::ivec2 size);
     void newComposition();
-    void clearScene();
+    void clearScene(bool clearOnionLayer=false);
 
     void setNewSize(ci::ivec2 size,float windowScale);
     void setFbo(ci::gl::FboRef& fbo, ci::ivec2 size,float windowScale);
@@ -79,7 +79,7 @@ public:
     void lineTo(ci::vec3 pressurePoint);
     void endLine();
     
-    void saveLineSegment();
+    void saveLineSegmentForGif();
     void saveLayer();
     
 
