@@ -11,13 +11,11 @@
 
 #include <stdio.h>
 #include "cinder/Signals.h"
-#include "ci_nanovg_gl.hpp"
 
 #include "DotButton.hpp"
 
 class Menu{
   
-    std::shared_ptr<ci::nvg::Context> vg;
     ci::vec2 mPosition;
     
     ci::Rectf brushScaleBoxOrig;
@@ -36,7 +34,7 @@ public:
 
     void setup();
     void update();
-    void draw(std::shared_ptr<ci::nvg::Context> nanoVGContext);
+    void draw();
     bool checkTouchDown(ci::vec2 point);
     bool checkHover(ci::vec2 point);
     bool checkTouchUp();

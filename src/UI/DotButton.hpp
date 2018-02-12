@@ -8,20 +8,21 @@
 
 #ifndef DotButton_hpp
 #define DotButton_hpp
-#include "ci_nanovg_gl.hpp"
 
 #include <stdio.h>
 
 class DotButton{
-
-    std::shared_ptr<ci::nvg::Context> vg;
 
     ci::vec2 mPosition;
     bool isPressed;
     bool isHover;
     
     ci::Color mColor;
+    ci::gl::TextureRef mTexture;
     
+    ci::Rectf textBoundingScaled;
+    
+    void renderText();
     
 public:
     
@@ -32,7 +33,7 @@ public:
 
     DotButton(float radius, std::string text);
 
-    void draw(std::shared_ptr<ci::nvg::Context> nanoVGContext);
+    void draw();
     bool checkTouchDown(ci::vec2 point);
     bool checkHover(ci::vec2 point);
     

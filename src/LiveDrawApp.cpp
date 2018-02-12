@@ -3,7 +3,6 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Utilities.h"
 #include "cinder/Timeline.h"
-#include "ci_nanovg_gl.hpp"
 #include "cinder/Log.h"
 
 #include "ofxTablet.h"
@@ -15,7 +14,7 @@
 
 #include "NetworkHelper.hpp"
 #include "GlobalSettings.h"
-
+#include "SettingController.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -25,12 +24,10 @@ using namespace std;
 
 class LineDancer : public App {
     
-    std::shared_ptr<nvg::Context> mNanoVG;
-    
-    
     vec3 lastWacomPoint;
     TabletData lastDataPoint;
     
+    bool   isDebug;
     bool   isPenDown;
     bool   isPenClose;
     bool   isDrawing;
@@ -42,7 +39,8 @@ class LineDancer : public App {
     
     vec2 penMoveStart;
     
-    NetworkHelper   mNetworkHelper;
+    NetworkHelper       mNetworkHelper;
+    SettingController   mSettingController;
     
     Menu menu;
     PlayerLogo logo;
@@ -58,7 +56,6 @@ class LineDancer : public App {
     ci::vec2 zoomAnchor;
     
     int zoomDirection = 0;
-    float zoomLevel;
     vec2 zoomCenterPoint;
     
 public:
@@ -127,15 +124,9 @@ void LineDancer::setup()
     CI_LOG_I("finished ofxTablet");
 
     
-    CI_LOG_I("SETUP nanogvg");
-    mNanoVG = std::make_shared<nvg::Context>(nvg::createContextGL());
-    auto  font = ci::app::getResourceDirectory().string() + "/Roboto-Regular.ttf";
-    mNanoVG->createFont("standard", font);
-    mNanoVG->fontFace("standard");
-
     menu.setup();
     menu.onNewCommand.connect([=](std::string command){
-        if(command == "NEW LAYER"){
+        if(command == "+LAYER"){
             mActiveComposition->saveLayer();
             mActiveComposition->clearScene();
         }
@@ -166,12 +157,14 @@ void LineDancer::setup()
     isMouseOnly =   false;
     isPenClose =    false;
     isCursorVisible  =false;
-    zoomLevel = GS()->zoomLevel;
+    isDebug = false;
     zoomCenterPoint = ci::app::getWindowCenter();
     zoomAnchor = vec2(0.5,0.5);
     isMovingPaper = false;
     lastUpdateTime = ci::app::getElapsedSeconds();
     
+    mSettingController.setup();
+
     
     CI_LOG_I("SETUP brush");
     BrushManagerSingleton::Instance()->setup();
@@ -192,6 +185,8 @@ void LineDancer::setup()
         });
     }
 
+    logo.setup(false, ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr());
+    logo.setPosition(vec2(30,30));
     
     CI_LOG_I("finished SETUP");
     
@@ -315,6 +310,12 @@ void LineDancer::penHover(vec3 point,std::shared_ptr<Composition>& composition){
 
 void LineDancer::keyDown( KeyEvent event ){
     
+    
+    if (isDebug && mSettingController.checkKeyDown(event))
+    {
+        return;
+    }
+    
     bool calculateAnchor =false;
     
     if(!isMovingPaper&&  event.getCode() == event.KEY_SPACE ){
@@ -327,9 +328,11 @@ void LineDancer::keyDown( KeyEvent event ){
         calculateAnchor = true;
     }
     else if(event.getCode() == event.KEY_n){
-
         zoomDirection = -1;
         calculateAnchor = true;
+    }
+    else if(event.getCode() == event.KEY_s){
+        SettingManager::Instance()->writeSettings();
     }
     
     
@@ -367,12 +370,13 @@ void LineDancer::keyUp(KeyEvent event ){
         bool isEraserOn = BrushManagerSingleton::Instance()->isEraserOn;
         BrushManagerSingleton::Instance()->isEraserOn = !isEraserOn;
     }
-    
-    
-    else if(event.getCode() == event.KEY_m){
+    else if(event.getCode() == event.KEY_1){
         isMouseOnly = !isMouseOnly;
     }
-    
+    else if(event.getCode() == event.KEY_d){
+        isDebug = !isDebug;
+    }
+
 }
 
 
@@ -428,12 +432,24 @@ void LineDancer::update()
             zoomDirection *= 2.0;
         }
         
-        zoomLevel += zoomDirection * div * 0.7;
-        if(zoomLevel < 0.1) zoomLevel = 0.1;
+        GS()->zoomLevel.value() += zoomDirection * div * 0.7;
+        if(GS()->zoomLevel.value() < 0.1) GS()->zoomLevel.value() = 0.1;
     }
 
     menu.update();
     mNetworkHelper.update();
+    
+    if(GS()->doFadeOut.value()){
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendEquation(GL_FUNC_ADD);
+
+//        ci::gl::enableAlphaBlendingPremult();
+        
+        mActiveComposition->drawFadeOut();
+        GS()->fadeoutFactor = GS()->fadeoutFactorDrawing.value() / 10000;
+    }
 }
 
 
@@ -448,17 +464,11 @@ void LineDancer::drawGrid(){
     
     int const stepSize = 80;
     ci::ivec2 size = getWindowSize();
-    auto& vg = *mNanoVG;
+    ci::gl::color(0.8, .8f, .6f, 0.6);
 
-    for(int x =stepSize * 0.5; x < size.x; x+=stepSize){
-        for(int y = stepSize*0.5; y < size.y; y+=stepSize){
-            
-            vg.beginPath();
-            vg.fillColor(ColorAf{0.8, .8f, .6f, 0.6});
-            vg.circle(x, y, 2);
-            
-            vg.strokeWidth(0.7);
-            vg.fill();
+    for(int x =stepSize * 0.5; x < size.x; x += stepSize){
+        for(int y = stepSize*0.5; y < size.y; y += stepSize){
+            ci::gl::drawSolidCircle(vec2(x,y),2);
         }
     }
 }
@@ -467,9 +477,9 @@ void LineDancer::drawGrid(){
 void LineDancer::draw()
 {
   
-    //gl::clear( ColorA( 1.0, 1.0, 0.0, 0.0 ) );
-    gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,0.0f));
+    gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,1.0f));
 
+    
     ivec2 size = mActiveComposition->getTexture()->getSize();
     
     // Drawing "the paper" at zoomlevel with offset.
@@ -477,11 +487,10 @@ void LineDancer::draw()
 
         ci::gl::translate(zoomCenterPoint.x, zoomCenterPoint.y, 0);
     
-        ci::gl::scale(zoomLevel, zoomLevel);
+        ci::gl::scale(GS()->zoomLevel.value(), GS()->zoomLevel.value());
         ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
 
         mActiveComposition->draw();
-        ci::gl::color(1,0,0);
     
         // get the screenmatrix when all the transformations on the "paper" (fbo) or done.
         screenMatrix = ci::gl::getModelViewProjection();
@@ -489,6 +498,9 @@ void LineDancer::draw()
 
     ci::gl::popMatrices();
 
+    if(isDebug){
+        mSettingController.draw();
+    }
     
     // draw the screen pointer.
     if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0.0, 0.0);
@@ -496,25 +508,36 @@ void LineDancer::draw()
     ci::gl::drawStrokedCircle(vec2(lastWacomPoint.x,lastWacomPoint.y), 8, 2, 12);
     
     
-    auto& vg = *mNanoVG;
-
-    vg.beginFrame(getWindowSize(), getWindowContentScale());
-    
-    menu.draw(mNanoVG);
-    logo.draw(false,vec2(30,30), ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr(), 0 ,vg);
-    
-    int i=0;
-    for(auto client : mNetworkHelper.mAliveIps){
-        i+=60;
-        logo.draw(true,vec2(30, 30 + i), client.first, client.second,vg);
-    }
-    
     
     drawGrid();
-
+    menu.draw();
     drawTextMessages();
+
+    logo.draw(0 );
     
-    vg.endFrame();   
+    
+    return;
+    
+//    auto& vg = *mNanoVG;
+//
+//    vg.beginFrame(getWindowSize(), getWindowContentScale());
+//
+//    menu.draw(mNanoVG);
+//    logo.draw(false,vec2(30,30), ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr(), 0 ,vg);
+//
+//    int i=0;
+//    for(auto client : mNetworkHelper.mAliveIps){
+//        i+=60;
+//        logo.draw(true,vec2(30, 30 + i), client.first, client.second,vg);
+//    }
+    
+    
+//
+//    drawTextMessages();
+//    
+//    vg.endFrame();
+    
+  
     
 }
 
@@ -534,42 +557,27 @@ vec3 LineDancer::getLocalPoint(vec3& screenPoint){
 
 void LineDancer::drawTextMessages(){
     
-    const int time = ci::app::getElapsedSeconds();
-    auto& vg = *mNanoVG;
-
-    if(time < 6){
-        vg.strokeColor(GS()->blue);
-        vg.fillColor(GS()->blue);
-
-        vg.fontFace("standard");
-        vg.fontSize(40);
-        vg.text(ci::app::getWindowCenter(), "KEYS:");
-        vg.fontSize(30);
-
-        vg.text(ci::app::getWindowCenter() +vec2(0,50), "toggle (f)ullscreen");
-        vg.text(ci::app::getWindowCenter() +vec2(0,80), "toggle mouse (c)ursor on");
-        vg.text(ci::app::getWindowCenter() +vec2(0,120), "toggle (m)ouse drawing on");
-        vg.text(ci::app::getWindowCenter() +vec2(0,150), "<esc> exit");
-    }
-
-
 
     if(showGifSavedTimer < 10 && showGifSavedTimer > 0){
-        vg.strokeColor(GS()->blue);
+        
+        //vg.strokeColor(GS()->blue);
         
         float flash = fabs(sin(ci::app::getElapsedSeconds() *10.0));
         
-        vg.fillColor(ci::ColorA(GS()->blue.r,GS()->blue.g,GS()->blue.b,flash));
-        vg.textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
+        ci::gl::color(ci::ColorA(GS()->blue.r,GS()->blue.g,GS()->blue.b,flash));
         
-        vg.fontSize(160);
-        
-        vg.text(ci::app::getWindowCenter(), "GIF SAVED!");
+        string s = "GIF SAVED!";
+        float stringWidth = GS()->mLargeFont->measureString( s ).x * 0.25f;
+
+        GS()->mLargeFont->drawString( s, vec2( getWindowCenter().x - stringWidth, getWindowCenter().y  ),
+                          gl::TextureFont::DrawOptions().scale( 0.5f ).pixelSnap( true ) );
+
+
     }
 }
 
 
 
 
-CINDER_APP(LineDancer, RendererGl(RendererGl::Options().stencil().msaa(0)),
+CINDER_APP(LineDancer, RendererGl(RendererGl::Options().stencil().msaa(2)),
          [](App::Settings *settings) { settings->setHighDensityDisplayEnabled(); })

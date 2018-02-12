@@ -10,18 +10,26 @@
 #define PlayerLogo_hpp
 
 #include <stdio.h>
-#include "ci_nanovg_gl.hpp"
 
 
 class PlayerLogo{
     
     
+    ci::gl::TextureRef mTexture;
+    void renderText();
+    std::string mText;
+    int mRadius;
     
+    ci::Rectf textBoundingScaled;
+    ci::vec2 mPosition;
+
 public:
     
-    void setup();
+    void setPosition(ci::vec2 position);
+
+    void setup(bool fullShape, std::string ipNr);
     void update();
-    void draw(bool fullShape, ci::vec2 position, std::string ipNr,float time, ci::nvg::Context& vg);
+    void draw(float time);
 
     
 };

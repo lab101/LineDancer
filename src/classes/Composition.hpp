@@ -10,8 +10,8 @@
 #define Composition_hpp
 
 #include <stdio.h>
-#include "ci_nanovg_gl.hpp"
 #include "cinder/Signals.h"
+#include "cinder/gl/Shader.h"
 
 //#define magick;
 //
@@ -37,9 +37,7 @@ class Composition{
     
     float lastDrawDistance      = 0;
     float minDistance           = 0;
-    
-    std::shared_ptr<ci::nvg::Context> vg;
-    
+        
     
     std::vector<std::string> mGifInputFiles;
     pointVec interpolatedPointsToSave;
@@ -48,6 +46,8 @@ class Composition{
     void clearFbo();
     void writeDataFile();
     void framesToGif(std::vector<std::string>& paths, std::string gifPath);
+
+     ci::gl::GlslProgRef     mOnionShader;
 
 
 public:
@@ -78,6 +78,8 @@ public:
     void newLine(ci::vec3 pressurePoint);
     void lineTo(ci::vec3 pressurePoint);
     void endLine();
+    
+    void drawFadeOut();
     
     void saveLineSegmentForGif();
     void saveLayer();

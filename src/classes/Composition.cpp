@@ -22,6 +22,19 @@ using namespace ci;
 
 void Composition::setup(ivec2 size){
     
+    //setup onion shader
+    try{
+        mOnionShader = gl::GlslProg::create(ci::app::loadResource( "onionLayer.vert" ), ci::app::loadResource( "onionLayer.frag" ));
+    }
+    catch( gl::GlslProgCompileExc ex ) {
+        CI_LOG_E("error loading mask shader");
+        CI_LOG_E(ex.what());
+        
+        exit(-1);
+    }
+
+    
+    
     mSize        = size;
     setFbo(mActiveFbo,size, 1);
     
@@ -94,7 +107,7 @@ void Composition::newLine(ci::vec3 pressurePoint){
 
 void Composition::endLine(){
 
-    if(GS()->hasGifOutput){
+    if(GS()->hasGifOutput.value()){
         saveLineSegmentForGif();
     }
     mStepId++;
@@ -114,7 +127,7 @@ void Composition::lineTo(ci::vec3 pressurePoint){
 void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
     
     gl::Fbo::Format format;
-    //format.setColorTextureFormat( gl::Texture2d::Format().internalFormat( GL_RGBA32F ) );
+    format.setColorTextureFormat( gl::Texture2d::Format().internalFormat( GL_RGBA32F ) );
     
     gl::enableAlphaBlending();
    // format.setSamples( 4 );
@@ -127,18 +140,50 @@ void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
 
 void Composition::drawInFbo(std::vector<ci::vec3>& points){
     
-    gl::ScopedFramebuffer fbScp( mActiveFbo );
-    gl::ScopedViewport fbVP (mActiveFbo->getSize());
-    gl::setMatricesWindow( mActiveFbo->getSize() );
-
-    gl::color(1, 1, 1, 1);
-
-    if(points.size() > 0){
-        BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
-    }
     
-    gl::setMatricesWindow( ci::app::getWindowSize() );
+    if(points.size() > 0){
 
+        gl::ScopedFramebuffer fbScp( mActiveFbo );
+        gl::ScopedViewport fbVP (mActiveFbo->getSize());
+        gl::setMatricesWindow( mActiveFbo->getSize() );
+
+        gl::color(1, 1, 1, 1);
+       // ci::gl::enableAlphaBlending(false);
+        ci::gl::enableAlphaBlendingPremult();
+        
+        BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
+        
+        gl::setMatricesWindow( ci::app::getWindowSize() );
+    }
+
+}
+
+void Composition::drawFadeOut(){
+    
+    
+    
+  
+
+    //ci::gl::enableAlphaBlending();
+        gl::ScopedFramebuffer fbScp( mActiveFbo );
+        gl::ScopedViewport fbVP (mActiveFbo->getSize());
+        gl::setMatricesWindow( mActiveFbo->getSize() );
+        
+    
+    //gl::color(1, 1, 1, 1);
+        ci::gl::enableAlphaBlending();
+ //   ci::gl::enableAlphaBlendingPremult();
+        //ci::gl::enableAlphaBlending(false);
+        //ci::gl::enableAdditiveBlending();
+
+        ci::ColorA fade = GS()->fboBackground;
+        fade.a = GS()->fadeoutFactor;
+        gl::color(fade);
+        ci::gl::drawSolidRect(Rectf(0,0, mActiveFbo->getSize().x, mActiveFbo->getSize().y));
+        
+        gl::setMatricesWindow( ci::app::getWindowSize() );
+    
+    
 }
 
 
@@ -185,27 +230,24 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
 
 void Composition::draw(){
 
-    if(mLastDrawingTexture){
-        gl::color(1, 1, 1, 0.3);
-        gl::draw(mLastDrawingTexture);
-    }
-    
+   
     gl::color(1, 1, 1, 1);
-
-    ci::gl::enableAdditiveBlending();
-    //GL_BLEND(GL_ONE,GL_ONE_MINUS_DST_ALPHA);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendEquation(GL_FUNC_ADD);
-   // glBlendFunc(GL_ONE,GL_ONE_MINUS_DST_ALPHA);
-    
-    ci::gl::pushMatrices();
-  //  ci::gl::translate(10, 10, 0);
-    gl::draw(mActiveFbo->getColorTexture());
+   
     ci::gl::enableAlphaBlending();
-    ci::gl::popMatrices();
+
+    ci::gl::pushMatrices();
     
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gl::ScopedGlslProg glslProg( mOnionShader );
+        mOnionShader->uniform( "uTex0", 0 );
+        mOnionShader->uniform( "uTex1", 1 );
+        
+        mActiveFbo->getColorTexture()->bind(0);
+        mLastDrawingTexture->bind(1);
+        
+        gl::drawSolidRect(ci::Rectf(0,0,mActiveFbo->getWidth(),mActiveFbo->getHeight()));
+    
+    
+    ci::gl::popMatrices();
 
 
 }
@@ -265,26 +307,28 @@ void Composition::finished(){
 
     std::vector<std::string> layerImages;
     
-    for( fs::directory_iterator it( mOutputFolder); it != fs::directory_iterator(); ++it ){
-        {
-            if( is_directory( *it )){
-                std::cout << "layer: " << it->path() << std::endl;
-                std::vector<std::string> stepImages;
+    if(ci::fs::exists(mOutputFolder)){
+        for( fs::directory_iterator it( mOutputFolder); it != fs::directory_iterator(); ++it ){
+            {
+                if( is_directory( *it )){
+                    std::cout << "layer: " << it->path() << std::endl;
+                    std::vector<std::string> stepImages;
 
-                // found a layer folder now read the files;
-                for( fs::directory_iterator it2( it->path()); it2 != fs::directory_iterator(); ++it2 ){
-                    {
-                        if(it2->path().extension() == ".gif"){
-                            std::cout << "step: " << it2->path() << std::endl;
-                            stepImages.push_back(it2->path().string());
+                    // found a layer folder now read the files;
+                    for( fs::directory_iterator it2( it->path()); it2 != fs::directory_iterator(); ++it2 ){
+                        {
+                            if(it2->path().extension() == ".gif"){
+                                std::cout << "step: " << it2->path() << std::endl;
+                                stepImages.push_back(it2->path().string());
+                                
+                            }
                             
                         }
-                        
                     }
+                    
+                    framesToGif(stepImages, mOutputFolder + "/layer_" + getStringWithLeadingZero(layerImages.size(),3) + "_final.gif");
+                    layerImages.push_back(stepImages.back());
                 }
-                
-                framesToGif(stepImages, mOutputFolder + "/layer_" + getStringWithLeadingZero(layerImages.size(),3) + "_final.gif");
-                layerImages.push_back(stepImages.back());
             }
         }
     }
@@ -301,7 +345,7 @@ void Composition::clearFbo(){
     if(!mActiveFbo) return;
     
     gl::ScopedFramebuffer fbScp( mActiveFbo );
-    gl::clear( ColorA( 1, 1, 1, 1.0 ) );
+    gl::clear( GS()->fboBackground );
 }
 
 

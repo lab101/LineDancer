@@ -11,17 +11,17 @@
 
 void Menu::setup(){
 
-    if(GS()->hasLayerButton){
-        DotButton* btnLayer = new DotButton(28, "NEW LAYER");
+    if(GS()->hasLayerButton.value()){
+        DotButton* btnLayer = new DotButton(28, "+LAYER");
         buttons.push_back(btnLayer);
     }
     
-    if(GS()->hasClearButton){
+    if(GS()->hasClearButton.value()){
         DotButton* btnClear = new DotButton(28, "CLEAR");
         buttons.push_back(btnClear);
     }
 
-    if(GS()->hasGifOutput){
+    if(GS()->hasGifOutput.value()){
         DotButton* btnGif = new DotButton(28,"GIF");
         btnGif->setColor(ci::Color(0,0.6,1.0));
         buttons.push_back(btnGif);
@@ -51,45 +51,38 @@ void Menu::setPosition(ci::vec2 position){
 
 
 
-void Menu::draw(std::shared_ptr<ci::nvg::Context> vg){
-    
+void Menu::draw(){
     float yPos = 60;
     for(auto button : buttons){
         button->setPosition(ci::vec2(ci::app::getWindowWidth() - 40, yPos));
-        button->draw(vg);
+        button->draw();
         yPos += (button->mRadius * 2) + 20;
     }
     
- 
+    
     
     ci::vec2 elementPos(ci::app::getWindowWidth() - 40, yPos);
     ci::vec2 btnMargin(0,00);
     
     
     brushScaleBoxOrig.set(elementPos.x -10, elementPos.y + btnMargin.y, elementPos.x + 10, elementPos.y + 460);
-    brushScaleBoxOrigCurrent= brushScaleBoxOrig;
+    brushScaleBoxOrigCurrent = brushScaleBoxOrig;
     
     
-    vg->beginPath();
+    //    vg->beginPath();
     
     float width = brushScaleBoxOrigCurrent.getWidth();
     float height = brushScaleBoxOrigCurrent.getHeight();
     
-    vg->rect(brushScaleBoxOrigCurrent.x2,brushScaleBoxOrigCurrent.y2, -width, -height * brushScale);
-    
-    ci::ColorA barColor(0,0.0,0.0);
-    vg->fillColor(barColor);
-    vg->strokeColor(barColor);
-    vg->fill();
-    
-    vg->strokeWidth(isBrushHover ? 3 : 2);
+    ci::gl::color(0,0,0);
+    ci::gl::drawStrokedRect(brushScaleBoxOrigCurrent,3);
 
-    vg->beginPath();
-    vg->rect(brushScaleBoxOrigCurrent);
-    vg->stroke();
-
+    ci::Rectf cop = brushScaleBoxOrig;
+    cop.set(cop.x1, cop.y2 - ((cop.y2 - cop.y1) *  brushScale), cop.x2, cop.y2);
+    ci::gl::drawSolidRect(cop);
 
 }
+
 
 
 void Menu::setBrushScale(float newScale){

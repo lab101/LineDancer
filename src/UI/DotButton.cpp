@@ -7,7 +7,9 @@
 //
 
 #include "DotButton.hpp"
+#include "GlobalSettings.h"
 
+using namespace ci;
 
 DotButton::DotButton(float radius, std::string text){
     mText       = text;
@@ -18,60 +20,47 @@ DotButton::DotButton(float radius, std::string text){
     mColor = ci::Color(0,0,0);
     
     mText = text;
+    
+    
+    renderText();
+
 }
 
+
+void DotButton::renderText(){
+    TextBox tbox = TextBox().alignment( TextBox::CENTER ).font( GS()->mSmallFont ).size( ivec2( mRadius * 4, TextBox::GROW ) ).text( mText );
+    tbox.setColor( mColor );
+    mTexture = gl::Texture2d::create( tbox.render() );
+}
 
 
 void DotButton::setPosition(ci::vec2 position){
     mPosition = position;
+    
+    textBoundingScaled = Rectf(mPosition - vec2(mTexture->getWidth() * 0.5,mTexture->getHeight() * 0.5), mPosition + vec2(mTexture->getWidth() * 0.5,mTexture->getHeight() * 0.5));
+    textBoundingScaled.scaleCentered(0.5);
 }
 
 void DotButton::setColor(ci::Color color){
     mColor = color;
+    renderText();
 }
 
-
-
-void DotButton::draw(std::shared_ptr<ci::nvg::Context> vg){
+void DotButton::draw(){
     
-    //auto& vg = *mNanoVG;
-
-    vg->beginPath();
-    vg->strokeColor(mColor);
-    vg->circle(mPosition,mRadius);
-    vg->strokeWidth(4);
-    
+    ci::gl::color(mColor);
     if(isPressed){
-        vg->strokeWidth(10);
-        vg->fillColor(mColor);
-        vg->fill();
+        ci::gl::drawSolidCircle(mPosition, mRadius);
     }
     
-    if(isHover){
-        vg->strokeWidth(10);
+    ci::gl::color(mColor);
 
-    }
+    ci::gl::drawStrokedCircle(mPosition, mRadius,3, 90);
+
+    ci::gl::color(1,1,1);
+    ci::gl::draw(mTexture,textBoundingScaled);
     
-    vg->stroke();
-    
-
-    if(mText != ""){
-        vg->strokeColor(mColor);
-        vg->fillColor(mColor);
-        vg->textAlign(NVG_ALIGN_TOP | NVG_ALIGN_CENTER);
-        
-        vg->fontSize(14);
-
-        // NVG_ALIGN_MIDDLE wasn't working, manually v-alliging it.
-        ci::Rectf rect = vg->textBoxBounds(mPosition.x - mRadius, mPosition.y - mRadius, mRadius * 2, mText);
-        vg->textBox(mPosition.x - mRadius, mPosition.y - (rect.getHeight() *0.5) , mRadius * 2, mText);
-        
-        
-    }
-    
-
 }
-
 
 bool DotButton::checkHover(ci::vec2 point){
     isHover =  glm::distance(point, mPosition) < mRadius;
