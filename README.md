@@ -15,6 +15,8 @@ OSX binaries can be found here ==>
 Keys:
 - **v** and **n** to zoom in and out on the Wacom cursor.
 - **space** to grab the page.
+- **f** to toggle fullscreen.
+- **s** to save program settings to settings.json.
 
 
 Features:
