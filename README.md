@@ -6,6 +6,9 @@ Build using cinder.
 
 [example usecase](https://vimeo.com/207618159)
 
+Keys:
+v and n to zoom in and out on the Wacom cursor.
+space to grab the page.
 
 
 Features:

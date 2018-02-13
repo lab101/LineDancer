@@ -27,8 +27,8 @@ GlobalSettings::GlobalSettings(){
     doFadeOut = Setting<bool>("doFadeout",false);
     zoomLevel = Setting<float>("zoomlevel",0.9).setSteps(0.05);
     
-    compositionWidth = Setting<int>("compositionWidth",1200).setSteps(10);
-    compositionHeight = Setting<int>("compositionHeight",800).setSteps(10);
+    compositionWidth = Setting<int>("compositionWidth",850).setSteps(10);
+    compositionHeight = Setting<int>("compositionHeight",850).setSteps(10);
 
     addSetting(&hasGifOutput);
     addSetting(&hasClearButton);
