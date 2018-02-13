@@ -42,6 +42,8 @@ public:
     
     
     ci::signals::Signal<void(std::vector<ci::vec3>& , bool isEraserOn)>   onReceivePoints;
+    ci::signals::Signal<void(std::string&)>   onNewConnection;
+    ci::signals::Signal<void(std::string&)>   onAlivePing;
 
     
     std::map<std::string,float> mAliveIps;

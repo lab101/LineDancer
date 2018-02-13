@@ -14,16 +14,22 @@
 
 using namespace ci;
 
-void PlayerLogo::setup(bool fullShape, std::string ipNr){
-    mRadius = 20;
+void PlayerLogo::setup(bool fullShape, std::string ipNr, int radius){
+    mRadius = radius;
     mText = ipNr;
-    
+    isClient = fullShape;
     renderText();
+    
 }
 
 
 void PlayerLogo::update(){
     
+}
+
+
+void PlayerLogo::alive(){
+    lastAlive = ci::app::getElapsedSeconds();
 }
 
 
@@ -42,51 +48,24 @@ void PlayerLogo::renderText(){
 }
 
 
-void PlayerLogo::draw(float time){
+void PlayerLogo::draw(){
     
   
-    ci::gl::color(0,0,0);
 
+    if(isClient){
 
-//    if(isClient){
-//        float div = powf(ci::app::getElapsedSeconds() - time,1.6);
-//
-//        if(div > mRadius) div =mRadius;
-//
-//        ci::gl::drawStrokedCircle(position, mRadius -div);
-////
-////        vg.beginPath();
-////        vg.circle(position, 20 - div);
-////
-////        vg.fillColor(ci::Color(0.0,0.4,1.0));
-////        vg.fill();
-////        vg.fillColor(ci::Color(1.0,1.0,1.0));
-//
-//
-//    }else{
+        float div = powf((ci::app::getElapsedSeconds() - lastAlive) * 0.5,1.6);
+        div = glm::clamp(1-div, 0.15f , 1.0f);
+      
+        ci::gl::color(0.,0.,0.,div);
+        ci::gl::drawStrokedCircle(mPosition, mRadius  , 3 - div, 90);
+        
+    }else{
+        ci::gl::color(0.,0.,0.);
         ci::gl::drawStrokedCircle(mPosition, mRadius,3, 90);
-//
-////        vg.beginPath();
-////
-////        vg.circle(position, 24 );
-////
-////
-////        vg.strokeColor(ci::Color(0.0,0.0,0.0));
-////        vg.strokeWidth(4);
-////        vg.stroke();
-////        vg.fillColor(ci::Color(0.0,0.0,0.0));
-//
-//        //vg->strokeColor(ci::Color(1.0,0.0,0.0));
-//
-//    }
-
+    }
     
     ci::gl::draw(mTexture, textBoundingScaled);
-
-//    vg.textAlign(NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE );
-//    vg.fontSize(16);
-//
-//    vg.text(position, ipNr);
 
 
 }

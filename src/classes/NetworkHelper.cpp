@@ -57,7 +57,14 @@ void NetworkHelper::update(){
         // discard packages from other groups
         if(incomingGroupId == groupId){
 
+            
+            if(mAliveIps.find(remoteLastNr) == mAliveIps.end()){
+                onNewConnection.emit(remoteLastNr);
+            }
+            
             mAliveIps[remoteLastNr] = ci::app::getElapsedSeconds();
+            onAlivePing.emit(remoteLastNr);
+
 
             if(adress == "points"){
                 int totals = message.getNumArgs() ;

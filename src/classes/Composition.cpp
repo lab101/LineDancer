@@ -147,10 +147,11 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
         gl::ScopedViewport fbVP (mActiveFbo->getSize());
         gl::setMatricesWindow( mActiveFbo->getSize() );
 
-        gl::color(1, 1, 1, 1);
-       // ci::gl::enableAlphaBlending(false);
-        ci::gl::enableAlphaBlendingPremult();
+        gl::ScopedBlendPremult scpBlend;
+   
         
+        gl::color(1, 1, 1, 1);
+
         BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
         
         gl::setMatricesWindow( ci::app::getWindowSize() );
@@ -161,23 +162,17 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
 void Composition::drawFadeOut(){
     
     
-    
-  
 
-    //ci::gl::enableAlphaBlending();
         gl::ScopedFramebuffer fbScp( mActiveFbo );
         gl::ScopedViewport fbVP (mActiveFbo->getSize());
         gl::setMatricesWindow( mActiveFbo->getSize() );
         
     
-    //gl::color(1, 1, 1, 1);
-        ci::gl::enableAlphaBlending();
- //   ci::gl::enableAlphaBlendingPremult();
-        //ci::gl::enableAlphaBlending(false);
-        //ci::gl::enableAdditiveBlending();
+    // Enable pre-multiplied alpha blending.
+  //  gl::ScopedBlendPremult scpBlend;
 
         ci::ColorA fade = GS()->fboBackground;
-        fade.a = GS()->fadeoutFactor;
+    fade.a = GS()->fadeoutFactor;
         gl::color(fade);
         ci::gl::drawSolidRect(Rectf(0,0, mActiveFbo->getSize().x, mActiveFbo->getSize().y));
         
@@ -240,13 +235,14 @@ void Composition::draw(){
         gl::ScopedGlslProg glslProg( mOnionShader );
         mOnionShader->uniform( "uTex0", 0 );
         mOnionShader->uniform( "uTex1", 1 );
-        
+
         mActiveFbo->getColorTexture()->bind(0);
         mLastDrawingTexture->bind(1);
-        
+
         gl::drawSolidRect(ci::Rectf(0,0,mActiveFbo->getWidth(),mActiveFbo->getHeight()));
-    
-    
+  
+    // for debugging only
+//    ci::gl::draw(mActiveFbo->getColorTexture());
     ci::gl::popMatrices();
 
 

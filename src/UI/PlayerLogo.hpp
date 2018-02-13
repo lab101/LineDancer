@@ -19,17 +19,20 @@ class PlayerLogo{
     void renderText();
     std::string mText;
     int mRadius;
-    
+    float lastAlive;
     ci::Rectf textBoundingScaled;
     ci::vec2 mPosition;
+    
+    bool isClient;
 
 public:
     
     void setPosition(ci::vec2 position);
 
-    void setup(bool fullShape, std::string ipNr);
+    void setup(bool fullShape, std::string ipNr, int radius);
     void update();
-    void draw(float time);
+    void draw();
+    void alive();
 
     
 };

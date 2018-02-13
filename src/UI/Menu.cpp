@@ -69,11 +69,7 @@ void Menu::draw(){
     brushScaleBoxOrigCurrent = brushScaleBoxOrig;
     
     
-    //    vg->beginPath();
-    
-    float width = brushScaleBoxOrigCurrent.getWidth();
-    float height = brushScaleBoxOrigCurrent.getHeight();
-    
+  
     ci::gl::color(0,0,0);
     ci::gl::drawStrokedRect(brushScaleBoxOrigCurrent,3);
 

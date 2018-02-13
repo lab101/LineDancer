@@ -43,7 +43,9 @@ class LineDancer : public App {
     SettingController   mSettingController;
     
     Menu menu;
-    PlayerLogo logo;
+    PlayerLogo mOwnLogo;
+    std::map<std::string,PlayerLogo> mConnections;
+
     
     std::shared_ptr<Composition>    mActiveComposition;
     
@@ -152,11 +154,11 @@ void LineDancer::setup()
     CI_LOG_I("finished menu setup");
 
     
-    isPenDown =     false;
-    isDrawing =     false;
-    isMouseOnly =   false;
-    isPenClose =    false;
-    isCursorVisible  =false;
+    isPenDown =         false;
+    isDrawing =         false;
+    isMouseOnly =       false;
+    isPenClose =        false;
+    isCursorVisible  =  false;
     isDebug = false;
     zoomCenterPoint = ci::app::getWindowCenter();
     zoomAnchor = vec2(0.5,0.5);
@@ -183,10 +185,38 @@ void LineDancer::setup()
             BrushManagerSingleton::Instance()->isEraserOn = isEraserOn;
             mActiveComposition->drawInFbo(points);
         });
+        
+        
+        mNetworkHelper.onNewConnection.connect([=](std::string& remoteIp){
+        
+            PlayerLogo newClient;
+            newClient.setup(true,remoteIp ,14);
+            newClient.setPosition(vec2( 30,100 + (mConnections.size() * 45)));
+            mConnections[remoteIp] = newClient;
+            
+            
+            
+            std::string logc  = "e";
+            PlayerLogo newClient2;
+            newClient2.setup(true,logc ,14);
+            newClient2.setPosition(vec2( 30,100 + (mConnections.size() * 45)));
+            mConnections[logc] = newClient2;
+            
+             logc  = "eee";
+            PlayerLogo newClient3;
+            newClient3.setup(true,logc ,14);
+            newClient3.setPosition(vec2( 30,100 + (mConnections.size() * 45)));
+            mConnections[logc] = newClient3;
+            
+        });
+        
+        mNetworkHelper.onAlivePing.connect([=](std::string& remoteIp){
+            mConnections[remoteIp].alive();
+        });
     }
 
-    logo.setup(false, ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr());
-    logo.setPosition(vec2(30,30));
+    mOwnLogo.setup(false, ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr() , 20);
+    mOwnLogo.setPosition(vec2(30,52));
     
     CI_LOG_I("finished SETUP");
     
@@ -220,7 +250,7 @@ void LineDancer::onWacomData(TabletData& data){
     isPenClose = data.in_proximity;
     BrushManagerSingleton::Instance()->isEraserOn = data.buttonMask >= 2;
     
-    vec3 point(data.abs_screen[0] *getWindowWidth(), getWindowHeight() - data.abs_screen[1]*getWindowHeight(), data.pressure * BrushManagerSingleton::Instance()->brushScale);
+    vec3 point(data.abs_screen[0] * getWindowWidth(), getWindowHeight() - data.abs_screen[1]*getWindowHeight(), data.pressure * BrushManagerSingleton::Instance()->brushScale);
     lastWacomPoint = point;
     
     
@@ -440,13 +470,7 @@ void LineDancer::update()
     mNetworkHelper.update();
     
     if(GS()->doFadeOut.value()){
-//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glBlendEquation(GL_FUNC_ADD);
-
-//        ci::gl::enableAlphaBlendingPremult();
-        
+     
         mActiveComposition->drawFadeOut();
         GS()->fadeoutFactor = GS()->fadeoutFactorDrawing.value() / 10000;
     }
@@ -513,31 +537,13 @@ void LineDancer::draw()
     menu.draw();
     drawTextMessages();
 
-    logo.draw(0 );
+    mOwnLogo.draw();
+    // drawing connected clients
+    for(auto& l : mConnections){
+        l.second.draw();
+    }
     
-    
-    return;
-    
-//    auto& vg = *mNanoVG;
-//
-//    vg.beginFrame(getWindowSize(), getWindowContentScale());
-//
-//    menu.draw(mNanoVG);
-//    logo.draw(false,vec2(30,30), ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr(), 0 ,vg);
-//
-//    int i=0;
-//    for(auto client : mNetworkHelper.mAliveIps){
-//        i+=60;
-//        logo.draw(true,vec2(30, 30 + i), client.first, client.second,vg);
-//    }
-    
-    
-//
-//    drawTextMessages();
-//    
-//    vg.endFrame();
-    
-  
+ 
     
 }
 
@@ -555,9 +561,9 @@ vec3 LineDancer::getLocalPoint(vec3& screenPoint){
     return localPoint;
 }
 
+
 void LineDancer::drawTextMessages(){
     
-
     if(showGifSavedTimer < 10 && showGifSavedTimer > 0){
         
         //vg.strokeColor(GS()->blue);
@@ -579,5 +585,5 @@ void LineDancer::drawTextMessages(){
 
 
 
-CINDER_APP(LineDancer, RendererGl(RendererGl::Options().stencil().msaa(2)),
+CINDER_APP(LineDancer, RendererGl(RendererGl::Options().stencil().msaa(4)),
          [](App::Settings *settings) { settings->setHighDensityDisplayEnabled(); })

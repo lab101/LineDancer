@@ -7,9 +7,10 @@
 //
 
 #include "BrushManager.hpp"
-#include "cinder/app/app.h"
+#include "cinder/app/App.h"
 #include "cinder/ImageIo.h"
 #include "cinder/Log.h"
+#include "GlobalSettings.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -46,11 +47,10 @@ void BrushManager::drawBrush(std::vector<vec3>& points,float softness){
     
     for(vec3& p : points){
         mBatch->vertex( p );
-        mBatch->color(isEraserOn ? ci::ColorA(1,1,1,1)  : mActiveColor );
+        mBatch->color(isEraserOn ? GS()->fboBackground  : GS()->brushColor );
     }
     
     
-//    gl::setMatricesWindow( getWindowWidth(), getWindowHeight() );
     
     gl::ScopedGlslProg glslProg( mShader );
 

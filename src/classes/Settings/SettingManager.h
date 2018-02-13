@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include "cinder/Utilities.h"
 #include "cinder/Filesystem.h"
-#include "cinder/log.h"
+#include "cinder/Log.h"
 #include "cinder/app/App.h"
 #include "cinder/Signals.h"
 #include "cinder/Json.h"
@@ -63,51 +63,6 @@ public:
 };
 
 
-
-
-//template <typename T>
-//T toNumber(std::string const & text)
-//{
-//    T value;
-//    std::stringstream ss(text);
-//    ss >> value;
-//    return value;
-//}
-//
-
-//// SETTING TEMPLATED
-//template <typename T>
-//class Setting : public SettingBase{
-//
-//public:
-//
-//    T mValue;
-//
-//    Setting<T>(){
-//    }
-//
-//    Setting<T>(std::string key, T defaultValue, T stepSize = 1){
-//       mValue = defaultValue;
-//       SettingBase::setKey(key);
-//    }
-//
-//
-//    T& value(){
-//        return mValue;
-//    }
-//
-//    void setFromJson(ci::JsonTree value) override{
-//        mValue = value.getValue<T>();
-//    }
-//
-//
-//    ci::JsonTree toJson() override{
-//        ci::JsonTree json = ci::JsonTree(getKey(), mValue);
-//        return json;
-//    }
-//
-//
-//};
 
 
 
@@ -163,11 +118,11 @@ public:
         return *this;
     }
     
-    int  getSortOrder(){
+    int getSortOrder() override{
         return mSortOrder;
     }
     
-    std::string getCategory(){
+    std::string getCategory() override{
         return mCategory;
     }
     
@@ -175,11 +130,11 @@ public:
         mValue = value;
     }
     
-    void increaseStep(float multiplyier){
+    void increaseStep(float multiplyier) override{
         mValue += mTweakableSteps * multiplyier;
     }
     
-    void decreaseStep(float multiplyier){
+    void decreaseStep(float multiplyier) override{
         mValue -= mTweakableSteps * multiplyier;
     }
     
@@ -201,66 +156,15 @@ public:
     }
     
     
-    std::string getValueAsString() {
+    std::string getValueAsString() override {
         return ci::toString(mValue);
     };
     
     
-    
-    //virtual std::string getTweakableSettings() override{
-    //
-    //
-    //    return "{\"min\" : " + ci::toString(mTweakableMin) + ",\"max\" : " + ci::toString(mTweakableMax) + ",\"steps\" : " + ci::toString(mTweakableSteps) + ",\"category\" : \"" + mCategory + "\"}";
-    //}
+ 
     
 };
 
-
-
-
-
-
-
-
-
-//// VEC3
-//
-//class SettingVec3 : public SettingBase{
-//
-//public:
-//    ci::vec3 mValue;
-//
-//    SettingVec3(){}
-//
-//    SettingVec3(std::string key, ci::vec3 defaultValue){
-//        mValue = defaultValue;
-//        SettingBase::setKey(key);
-//    }
-//
-//
-//
-//
-//    void setFromJson(ci::JsonTree value) override{
-//
-//        if(value.getNumChildren() == 3){
-//            mValue.x = value.getChild("x").getValue<float>();
-//            mValue.y = value.getChild("y").getValue<float>();
-//            mValue.z = value.getChild("z").getValue<float>();
-//        }
-//
-//    }
-//
-//
-//
-//    ci::JsonTree toJson() override{
-//        ci::JsonTree data = ci::JsonTree::makeArray(getKey());
-//        data.addChild(ci::JsonTree("x",mValue.x));
-//        data.addChild(ci::JsonTree("y",mValue.y));
-//        data.addChild(ci::JsonTree("z",mValue.z));
-//        return data;
-//    }
-//
-//};
 
 
 
@@ -275,7 +179,7 @@ class SettingManager{
     ci::JsonTree storedSettingsJson;
     
     std::string const getSettingPath(){
-        return cinder::app::getAssetPath("//").string() + "settings.json";
+        return ci::app::getAppPath().string() + "/settings.json";
     }
     static SettingManager* instance;
     
@@ -285,8 +189,6 @@ class SettingManager{
 public:
     
     static SettingManager* Instance();
-    
-    //    ci::signals::Signal<void(std::pair<std::string, std::string>)> onSettingsUpdate;
     
     
     std::vector<SettingBase*> getSettings(){
