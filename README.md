@@ -13,8 +13,8 @@ OSX binaries can be found here ==>
 [Latest releases](https://github.com/lab101/LineDancer/releases)
 
 Keys:
-v and n to zoom in and out on the Wacom cursor.
-space to grab the page.
+- **v** and **n** to zoom in and out on the Wacom cursor.
+- **space** to grab the page.
 
 
 Features:
