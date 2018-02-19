@@ -45,7 +45,7 @@ GlobalSettings::GlobalSettings(){
     blue = ci::Color(0,0.6,1.0);
     
     fboBackground = ci::ColorA(1.0,1.0,1.0,1.0);
-    brushColor = ci::ColorA(.0,.0,.0,1.0);
+    brushColor = ci::ColorA(0.0, 0.0,.0,1.0);
 
     
     fadeoutFactorDrawing = Setting<float>("fadeoutFactorDrawing", 1).setMin(0).setMax(1000).setSteps(1);

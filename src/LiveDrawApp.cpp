@@ -428,6 +428,7 @@ void LineDancer::mouseUp( MouseEvent event )
 {
     if(!isMouseOnly) return;
     
+    menu.checkTouchUp();
     lastWacomPoint = vec3(event.getPos(),10);
     penUp(mActiveComposition);
 }
