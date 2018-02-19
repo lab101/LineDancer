@@ -17,6 +17,7 @@ Keys:
 - **space** to grab the page.
 - **f** to toggle fullscreen.
 - **s** to save program settings to settings.json.
+- **1** to toggle mouse on and off and disabling the wacom if connected.
 
 
 Features:
@@ -26,3 +27,7 @@ Features:
 - drawing in network with friends.
 - input by Wacom.
 
+Networking:
+By default the software sends all the points over broadcast with OSC.
+It will extract the broadcast adres from your subnet.
+There's a known issue when your subnet is 255.255.255.0 it will not calculate the correct broadcast adress.
