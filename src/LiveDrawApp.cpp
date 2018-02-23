@@ -195,19 +195,6 @@ void LineDancer::setup()
             mConnections[remoteIp] = newClient;
             
             
-            
-            std::string logc  = "e";
-            PlayerLogo newClient2;
-            newClient2.setup(true,logc ,14);
-            newClient2.setPosition(vec2( 30,100 + (mConnections.size() * 45)));
-            mConnections[logc] = newClient2;
-            
-             logc  = "eee";
-            PlayerLogo newClient3;
-            newClient3.setup(true,logc ,14);
-            newClient3.setPosition(vec2( 30,100 + (mConnections.size() * 45)));
-            mConnections[logc] = newClient3;
-            
         });
         
         mNetworkHelper.onAlivePing.connect([=](std::string& remoteIp){
