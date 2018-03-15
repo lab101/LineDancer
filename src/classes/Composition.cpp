@@ -65,7 +65,7 @@ void Composition::clearScene(bool clearOnionLayer){
     
     mPath.clear();
     mDepths.clear();
-    interpolatedPointsToSave.clear();
+    strokes.clear();
     clearFbo();
     
     if(clearOnionLayer && mActiveFbo){
@@ -102,6 +102,10 @@ void Composition::newLine(ci::vec3 pressurePoint){
     
     lastDrawDistance = 0;
     minDistance = 0;
+    
+    // adding new vector of strokes for data capture
+    pointVec newStrokes;
+    strokes.push_back(newStrokes);
 }
 
 
@@ -203,15 +207,20 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
         vec3 newPoint(path.getPosition(newTime),depths.getPosition(newTime).y);
         
         pointsToDraw.push_back(newPoint);
-        // save them later to a file.
-        interpolatedPointsToSave.push_back(newPoint);
-       
+
         minDistance = fmax(.8f,(newPoint.z * .17));
         
         lastDrawDistance = newDrawPosition;
         newDrawPosition = (lastDrawDistance + minDistance);
+        
+        // save them normalised later to a file.
+        newPoint.x /= mSize.x;
+        newPoint.y /= mSize.y;
+        strokes.back().push_back(newPoint);
+
     }
     
+
     
     if(pointsToDraw.size() > 0){
         // emmit to other listner in this case network
@@ -258,8 +267,11 @@ void Composition::writeDataFile(){
         
         dataFile.open(dataFilePath);
         
-        for(vec3& p :  interpolatedPointsToSave){
-            dataFile << p.x << "," << p.y << "," << p.z << std::endl;
+        for(pointVec s :  strokes){
+            for(vec3& p :  s){
+                dataFile << p.x << "," << p.y << "," << p.z << ";";
+            }
+            dataFile <<  std::endl;
         }
         
         dataFile.close();

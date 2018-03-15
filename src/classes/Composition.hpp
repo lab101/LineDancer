@@ -40,8 +40,8 @@ class Composition{
         
     
     std::vector<std::string> mGifInputFiles;
-    pointVec interpolatedPointsToSave;
-
+    std::vector<pointVec> strokes;
+    
     void writeGifStep(std::string fileName);
     void clearFbo();
     void writeDataFile();

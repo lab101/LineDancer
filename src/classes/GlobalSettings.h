@@ -35,6 +35,7 @@ public:
     Setting<bool>   hasClearButton;
     Setting<bool>   hasLayerButton;
     Setting<bool>   doFadeOut;
+    Setting<bool>   debugMode;
 
     ci::ColorA blue;
     ci::ColorA fboBackground;

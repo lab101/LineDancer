@@ -16,6 +16,9 @@
 #include "GlobalSettings.h"
 #include "SettingController.h"
 
+#include "NotificationManager.h"
+#include "NotificationLogger.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
@@ -23,6 +26,8 @@ using namespace std;
 
 
 class LineDancer : public App {
+    
+    
     
     vec3 lastWacomPoint;
     TabletData lastDataPoint;
@@ -108,6 +113,8 @@ void LineDancer::toggleCursor(){
 void LineDancer::setup()
 {
     
+    
+    
     setFullScreen(true);
 
     
@@ -115,6 +122,8 @@ void LineDancer::setup()
     
     
     log::makeLogger<log::LoggerFileRotating>(getAppPath(), "lineDancer.%Y.%m.%d.log", true);
+    ci::log::makeLogger<NotificationLogger>();
+    
     CI_LOG_I("START application");
 
     
@@ -415,9 +424,10 @@ void LineDancer::mouseUp( MouseEvent event )
 {
     if(!isMouseOnly) return;
     
-    menu.checkTouchUp();
-    lastWacomPoint = vec3(event.getPos(),10);
-    penUp(mActiveComposition);
+    if(!menu.checkTouchUp()){
+        lastWacomPoint = vec3(event.getPos(),10);
+        penUp(mActiveComposition);
+    }
 }
 
 
@@ -531,7 +541,11 @@ void LineDancer::draw()
         l.second.draw();
     }
     
- 
+    if(GS()->debugMode.value()){
+        ci::gl::enableAlphaBlending();
+        NotificationManagerSingleton::Instance()->draw();
+    }
+    
     
 }
 

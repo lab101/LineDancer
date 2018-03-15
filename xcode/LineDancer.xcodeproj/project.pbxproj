@@ -33,6 +33,8 @@
 		50504B45202C628B005292AA /* SettingManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50504B42202C628A005292AA /* SettingManager.cpp */; };
 		50504B4C20320AD0005292AA /* onionLayer.vert in Resources */ = {isa = PBXBuildFile; fileRef = 50504B4A20320AD0005292AA /* onionLayer.vert */; };
 		50504B4D20320AD0005292AA /* onionLayer.frag in Resources */ = {isa = PBXBuildFile; fileRef = 50504B4B20320AD0005292AA /* onionLayer.frag */; };
+		50573BF220407B7F00A4E4CF /* NotificationLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50573BEE20407B7E00A4E4CF /* NotificationLogger.cpp */; };
+		50573BF320407B7F00A4E4CF /* NotificationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50573BF020407B7E00A4E4CF /* NotificationManager.cpp */; };
 		50C6FD251F83B3C2004256C5 /* GlobalSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD231F83B3C1004256C5 /* GlobalSettings.cpp */; };
 		50E83DEB1F4770630070464D /* PlayerLogo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E83DE91F4770630070464D /* PlayerLogo.cpp */; };
 		50E83DEE1F4AA7FC0070464D /* NetworkHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */; };
@@ -101,6 +103,10 @@
 		50504B43202C628A005292AA /* SettingManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingManager.h; sourceTree = "<group>"; };
 		50504B4A20320AD0005292AA /* onionLayer.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = onionLayer.vert; sourceTree = "<group>"; };
 		50504B4B20320AD0005292AA /* onionLayer.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = onionLayer.frag; sourceTree = "<group>"; };
+		50573BEE20407B7E00A4E4CF /* NotificationLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationLogger.cpp; sourceTree = "<group>"; };
+		50573BEF20407B7E00A4E4CF /* NotificationLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationLogger.h; sourceTree = "<group>"; };
+		50573BF020407B7E00A4E4CF /* NotificationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationManager.cpp; sourceTree = "<group>"; };
+		50573BF120407B7E00A4E4CF /* NotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationManager.h; sourceTree = "<group>"; };
 		50C6FD231F83B3C1004256C5 /* GlobalSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalSettings.cpp; sourceTree = "<group>"; };
 		50C6FD241F83B3C2004256C5 /* GlobalSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalSettings.h; sourceTree = "<group>"; };
 		50E83DE91F4770630070464D /* PlayerLogo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerLogo.cpp; sourceTree = "<group>"; };
@@ -203,6 +209,7 @@
 		152D484E1D89ADAC00AB3610 /* classes */ = {
 			isa = PBXGroup;
 			children = (
+				50573BED20407B7E00A4E4CF /* Notifications */,
 				50504B3F202C628A005292AA /* Settings */,
 				50C6FD231F83B3C1004256C5 /* GlobalSettings.cpp */,
 				50C6FD241F83B3C2004256C5 /* GlobalSettings.h */,
@@ -311,6 +318,17 @@
 				50504B43202C628A005292AA /* SettingManager.h */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		50573BED20407B7E00A4E4CF /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				50573BEE20407B7E00A4E4CF /* NotificationLogger.cpp */,
+				50573BEF20407B7E00A4E4CF /* NotificationLogger.h */,
+				50573BF020407B7E00A4E4CF /* NotificationManager.cpp */,
+				50573BF120407B7E00A4E4CF /* NotificationManager.h */,
+			);
+			path = Notifications;
 			sourceTree = "<group>";
 		};
 		700AB6369E06421787E44F6B /* osc */ = {
@@ -456,12 +474,14 @@
 				50504B44202C628B005292AA /* SettingController.cpp in Sources */,
 				F60772C8C7444D378A4CB106 /* OscBundle.cpp in Sources */,
 				152D48661D89ADAC00AB3610 /* ofxTablet.cpp in Sources */,
+				50573BF220407B7F00A4E4CF /* NotificationLogger.cpp in Sources */,
 				9BDDCB2B82E949DD9FEC28A7 /* OscListener.cpp in Sources */,
 				152D48621D89ADAC00AB3610 /* Composition.cpp in Sources */,
 				05916BF8163443B68BBEAC07 /* OscMessage.cpp in Sources */,
 				EB516E9EF56A488D92BF5FC0 /* OscSender.cpp in Sources */,
 				152D48631D89ADAC00AB3610 /* Line.cpp in Sources */,
 				23E9BDB9A6214394B1157C43 /* IpEndpointName.cpp in Sources */,
+				50573BF320407B7F00A4E4CF /* NotificationManager.cpp in Sources */,
 				152D48641D89ADAC00AB3610 /* DotButton.cpp in Sources */,
 				152D48671D89ADAC00AB3610 /* tabletCocoa.mm in Sources */,
 				7DDD653CB74B4CB68C472BF7 /* OscOutboundPacketStream.cpp in Sources */,
