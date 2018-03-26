@@ -525,7 +525,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"\"$(CINDER_PATH)/lib/libcinder_d.a\"",
+					"\"$(CINDER_PATH)/lib/macosx/$(CONFIGURATION)/libcinder.a\"",
 					"../blocks/Imagemagick/lib/libMagickWand-7.Q16.a",
 					"../blocks/Imagemagick/lib/libMagick++-7.Q16.a",
 					"../blocks/Imagemagick/lib/libMagickCore-7.Q16.a",
@@ -565,7 +565,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_LDFLAGS = (
-					"\"$(CINDER_PATH)/lib/libcinder.a\"",
+					"\"$(CINDER_PATH)/lib/macosx/$(CONFIGURATION)/libcinder.a\"",
 					"../blocks/Imagemagick/lib/libMagick++-7.Q16.a",
 					"../blocks/Imagemagick/lib/libMagickCore-7.Q16.a",
 					"../blocks/Imagemagick/lib/libMagickWand-7.Q16.a",

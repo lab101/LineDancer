@@ -198,7 +198,8 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
     float newDrawPosition = lastDrawDistance + minDistance;
     
     pointVec pointsToDraw;
-    
+    pointVec pointsToDrawNormalised;
+
     while(newDrawPosition + minDistance < length){
         
         float newTime = path.calcTimeForDistance(newDrawPosition);
@@ -216,6 +217,8 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
         // save them normalised later to a file.
         newPoint.x /= mSize.x;
         newPoint.y /= mSize.y;
+        
+        pointsToDrawNormalised.push_back(newPoint);
         strokes.back().push_back(newPoint);
 
     }
@@ -224,7 +227,7 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
     
     if(pointsToDraw.size() > 0){
         // emmit to other listner in this case network
-        onNewPoints.emit(pointsToDraw);
+        onNewPoints.emit(pointsToDrawNormalised);
         // draw the new points into the fbo.
         drawInFbo(pointsToDraw);
     }
