@@ -192,6 +192,11 @@ void LineDancer::setup()
     if(mNetworkHelper.setup()){
         mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points, bool isEraserOn){
             BrushManagerSingleton::Instance()->isEraserOn = isEraserOn;
+            
+            for(auto&p : points){
+                p.x *= mActiveComposition->mSize.x;
+                p.y *= mActiveComposition->mSize.y;
+            }
             mActiveComposition->drawInFbo(points);
         });
         
