@@ -65,7 +65,7 @@ void NotificationManager::addMessage(std::string message, Color color){
         n->move(textureHeight);
     }
 
-    p->fadeIn(vec2(10,10));
+    p->fadeIn(vec2(520,10));
     }catch(...){
             
         }

@@ -342,7 +342,7 @@ void LineDancer::penHover(vec3 point,std::shared_ptr<Composition>& composition){
 void LineDancer::keyDown( KeyEvent event ){
     
     
-    if (isDebug && mSettingController.checkKeyDown(event))
+    if (mSettingController.checkKeyDown(event))
     {
         return;
     }
@@ -405,7 +405,7 @@ void LineDancer::keyUp(KeyEvent event ){
         isMouseOnly = !isMouseOnly;
     }
     else if(event.getCode() == event.KEY_d){
-        isDebug = !isDebug;
+        GS()->debugMode.value() = !GS()->debugMode.value();
     }
 
 }
@@ -525,10 +525,7 @@ void LineDancer::draw()
 
     ci::gl::popMatrices();
 
-    if(isDebug){
-        mSettingController.draw();
-    }
-    
+   
     // draw the screen pointer.
     if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0.0, 0.0);
     else ci::gl::color(0, 0.3, 1.0);
@@ -549,6 +546,8 @@ void LineDancer::draw()
     if(GS()->debugMode.value()){
         ci::gl::enableAlphaBlending();
         NotificationManagerSingleton::Instance()->draw();
+        mSettingController.draw();
+
     }
     
     
