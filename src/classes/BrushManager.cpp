@@ -24,7 +24,6 @@ void BrushManager::setup(){
     // setup shader
     try {
         mShader = gl::GlslProg::create(loadResource( "shader_es2.vert" ), loadResource("shader_es2.frag" ));
-//        mShader->uniform( "uRadius", 10.0f );
 
     }
     catch( gl::GlslProgCompileExc ex ) {

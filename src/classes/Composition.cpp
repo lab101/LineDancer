@@ -322,29 +322,38 @@ void Composition::finished(){
         for( fs::directory_iterator it( mOutputFolder); it != fs::directory_iterator(); ++it ){
             {
                 if( is_directory( *it )){
-                    std::cout << "layer: " << it->path() << std::endl;
+                    std::string layerName  = it->path().filename().string();
                     std::vector<std::string> stepImages;
 
                     // found a layer folder now read the files;
                     for( fs::directory_iterator it2( it->path()); it2 != fs::directory_iterator(); ++it2 ){
                         {
                             if(it2->path().extension() == ".gif"){
-                                std::cout << "step: " << it2->path() << std::endl;
+                                std::cout << "--- step: " << it2->path() << std::endl;
                                 stepImages.push_back(it2->path().string());
                                 
                             }
                             
                         }
                     }
-                    
-                    framesToGif(stepImages, mOutputFolder + "/layer_" + getStringWithLeadingZero(layerImages.size(),3) + "_final.gif");
+                    std::cout << "-------" << std::endl;
+                    std::cout << "---- writing ---" << std::endl;
+                    std::sort (stepImages.begin(), stepImages.end());
+                    framesToGif(stepImages, mOutputFolder + "/" + layerName + "_final.gif");
+                    for(auto s : stepImages){
+                        std::cout << s << std::endl;
+                    }
                     layerImages.push_back(stepImages.back());
+                    std::cout << "---- end ---" << std::endl;
+
                 }
             }
         }
     }
     // only write a layered final if user has been using layers
     if(layerImages.size() > 1){
+        std::sort (layerImages.begin(), layerImages.end());
+
         framesToGif(layerImages, mOutputFolder + "/_" + mCompositionId + "_final.gif");
     }
     
@@ -367,7 +376,7 @@ void Composition::saveLineSegmentForGif(){
     }
     
     // write the current drawing to a png image
-    std::string path = mOutputFolder + "/layer_" + getStringWithLeadingZero(mImageLayerId, 3)+ "/" + getStringWithLeadingZero(mStepId, 3) + ".gif";
+    std::string path = mOutputFolder + "/layer_" + getStringWithLeadingZero(mImageLayerId, 5)+ "/" + getStringWithLeadingZero(mStepId, 5) + ".gif";
     
     writeGifStep(path);
 
