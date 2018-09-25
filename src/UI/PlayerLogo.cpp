@@ -32,6 +32,10 @@ void PlayerLogo::alive(){
     lastAlive = ci::app::getElapsedSeconds();
 }
 
+void PlayerLogo::setText(std::string newText){
+    mText = newText;
+    renderText();
+}
 
 void PlayerLogo::setPosition(ci::vec2 position){
     mPosition = position;

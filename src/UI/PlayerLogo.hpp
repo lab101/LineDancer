@@ -28,7 +28,7 @@ class PlayerLogo{
 public:
     
     void setPosition(ci::vec2 position);
-
+    void setText(std::string text);
     void setup(bool fullShape, std::string ipNr, int radius);
     void update();
     void draw();

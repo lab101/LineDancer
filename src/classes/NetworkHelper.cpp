@@ -8,6 +8,7 @@
 
 #include "NetworkHelper.hpp"
 #include "cinder/Utilities.h"
+#include "GlobalSettings.h"
 
 using namespace ci;
 using namespace ci::osc;
@@ -28,7 +29,7 @@ bool NetworkHelper::setup(){
 }
 
 void NetworkHelper::setNextGroup(){
-    if(++groupId > 9) groupId = 0;
+    if(++groupId > GS()->maxGroups.value()-1) groupId = 0;
 }
 
 
@@ -91,7 +92,8 @@ std::string const NetworkHelper::getLastMyIpNr(){
 }
 
 int const NetworkHelper::getGroupId(){
-    return groupId;
+    // add one makes it nicer for non programmers
+    return groupId +1;
 }
 
 

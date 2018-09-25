@@ -29,6 +29,7 @@ public:
     Setting<float> zoomLevel;
     Setting<int> compositionWidth;
     Setting<int> compositionHeight;
+    Setting<int> maxGroups;
 
     
     Setting<bool>   hasGifOutput;

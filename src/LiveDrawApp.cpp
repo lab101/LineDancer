@@ -115,8 +115,8 @@ void LineDancer::setup()
     
     
     
-    setFullScreen(true);
-
+   // setFullScreen(true);
+    setWindowSize(1280, 980);
     
     showGifSavedTimer = -1;
     
@@ -394,8 +394,14 @@ void LineDancer::keyUp(KeyEvent event ){
         quit();
     }else if(event.getCode() == event.KEY_TAB){
         mNetworkHelper.setNextGroup();
+        std::string logoText =  ci::toString(mNetworkHelper.getGroupId()) + "|" + ci::toString(mNetworkHelper.getLastMyIpNr());
+        mOwnLogo.setText(logoText);
+        
     }
     else if(event.getCode() == event.KEY_c){
+        mActiveComposition->clearScene(true);
+    }
+    else if(event.getCode() == event.KEY_m){
         toggleCursor();
     }else if( event.getCode() == event.KEY_e){
         bool isEraserOn = BrushManagerSingleton::Instance()->isEraserOn;
