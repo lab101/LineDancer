@@ -52,14 +52,14 @@ void DotButton::draw(){
     if(isPressed){
         ci::gl::drawSolidCircle(mPosition, mRadius);
     }
-    
-    ci::gl::color(mColor);
+   
+   gl::color(mColor);
 
-    ci::gl::drawStrokedCircle(mPosition, mRadius,3, 90);
+   gl::drawStrokedCircle(mPosition, mRadius,3, 90);
 
-    ci::gl::color(1,1,1);
-    ci::gl::draw(mTexture,textBoundingScaled);
-    
+   gl::color(1,1,1);
+   gl::draw(mTexture,textBoundingScaled);
+   
 }
 
 bool DotButton::checkHover(ci::vec2 point){

@@ -115,7 +115,7 @@ void LineDancer::setup()
     
     
     
-   // setFullScreen(true);
+    setFullScreen(true);
     setWindowSize(1280, 980);
     
     showGifSavedTimer = -1;
@@ -160,6 +160,7 @@ void LineDancer::setup()
     });
     
     
+    
     CI_LOG_I("finished menu setup");
 
     
@@ -168,7 +169,7 @@ void LineDancer::setup()
     isMouseOnly =       false;
     isPenClose =        false;
     isCursorVisible  =  false;
-    isDebug = false;
+    isDebug =           false;
     zoomCenterPoint = ci::app::getWindowCenter();
     zoomAnchor = vec2(0.5,0.5);
     isMovingPaper = false;

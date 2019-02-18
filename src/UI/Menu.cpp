@@ -52,6 +52,9 @@ void Menu::setPosition(ci::vec2 position){
 
 
 void Menu::draw(){
+    
+    
+    // drawing the round buttons.
     float yPos = 60;
     for(auto button : buttons){
         button->setPosition(ci::vec2(ci::app::getWindowWidth() - 40, yPos));
@@ -60,10 +63,9 @@ void Menu::draw(){
     }
     
     
-    
+    // drawing the brushselector
     ci::vec2 elementPos(ci::app::getWindowWidth() - 40, yPos);
     ci::vec2 btnMargin(0,00);
-    
     
     brushScaleBoxOrig.set(elementPos.x -10, elementPos.y + btnMargin.y, elementPos.x + 10, elementPos.y + 460);
     brushScaleBoxOrigCurrent = brushScaleBoxOrig;
