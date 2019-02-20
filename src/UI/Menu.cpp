@@ -8,29 +8,62 @@
 
 #include "Menu.hpp"
 #include "GlobalSettings.h"
+#include "TextButton.hpp"
+#include "ColorButton.hpp"
 
 void Menu::setup(){
 
     if(GS()->hasLayerButton.value()){
-        DotButton* btnLayer = new DotButton(28, "+LAYER");
+        TextButton* btnLayer = new TextButton(28, "+LAYER", &(GS()->mSmallFont));
+        btnLayer->setArgument("CLEAR");
+
         buttons.push_back(btnLayer);
     }
     
     if(GS()->hasClearButton.value()){
-        DotButton* btnClear = new DotButton(28, "CLEAR");
+        TextButton* btnClear = new TextButton(28, "CLEAR",&(GS()->mSmallFont));
+        btnClear->setArgument("CLEAR");
+
         buttons.push_back(btnClear);
     }
 
     if(GS()->hasGifOutput.value()){
-        DotButton* btnGif = new DotButton(28,"GIF");
+        TextButton* btnGif = new TextButton(28,"GIF",&(GS()->mSmallFont));
+        btnGif->setArgument("GIF");
         btnGif->setColor(ci::Color(0,0.6,1.0));
         buttons.push_back(btnGif);
     }
     
+    
+    
+    // TEST PART for lennert
+    TextButton* btnTest = new TextButton(28, "TEST",&(GS()->mSmallFont));
+    buttons.push_back(btnTest);
+    
+    TextButton* test = new TextButton(28, "child lev1",&(GS()->mSmallFont));
+    btnTest->addChildNode(test);
+    test->setPosition(ci::vec2(-120,20));
+    
+    
+//    TextButton* test2 = new TextButton(28, "child lev2",&(GS()->mSmallFont));
+//    test->addChildNode(test2);
+//    test2->setPosition(ci::vec2(-120,20));
+//    
+    ColorButton* colorTest = new ColorButton(28, ci::Color(1,0.5,0));
+    
+    test->addChildNode(colorTest);
+    colorTest->setPosition(ci::vec2(-250,20));
+
+    
+    // END TEST
+    
+    
+    
+    
     // setup commands
     for(auto button : buttons){
         button->onPressed.connect([=]{
-            onNewCommand.emit(button->mText);
+            onNewCommand.emit(button->getArgument());
         });
     }
     
@@ -130,7 +163,7 @@ bool Menu::checkTouchDown(ci::vec2 point){
 
 bool Menu::checkTouchUp(){
     bool isPressed = false;
-
+    
     for(auto button : buttons){
        isPressed+= button->touchUp();
     }

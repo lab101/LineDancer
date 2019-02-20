@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include "cinder/Signals.h"
 
-#include "DotButton.hpp"
+#include "BaseButton.hpp"
 
 class Menu{
   
@@ -23,7 +23,7 @@ class Menu{
     bool isBrushHover;
     bool isPressed;
     
-    std::vector<DotButton*> buttons;
+    std::vector<BaseButton*> buttons;
     
 public:
     float brushScale;

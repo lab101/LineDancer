@@ -63,8 +63,11 @@ GlobalSettings::GlobalSettings(){
     addSetting(&fadeoutFactorReplay);
     addSetting(&replayStartTime);
     
-    mLargeFont = gl::TextureFont::create( Font( "Helvetica", 72 * 2 ), gl::TextureFont::Format().enableMipmapping() );
-    mSmallFont = Font( "Helvetica", 10 * 2 );
+    
+    float displayScale =  ci::app::getWindowContentScale();
+
+    mLargeFont = gl::TextureFont::create( Font( "Helvetica", 72 * displayScale ), gl::TextureFont::Format().enableMipmapping() );
+    mSmallFont = Font( "Helvetica", 10 * displayScale );
 
 
 }

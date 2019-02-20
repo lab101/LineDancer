@@ -19,7 +19,7 @@
 		152D48611D89ADAC00AB3610 /* BrushManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D484F1D89ADAC00AB3610 /* BrushManager.cpp */; };
 		152D48621D89ADAC00AB3610 /* Composition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48511D89ADAC00AB3610 /* Composition.cpp */; };
 		152D48631D89ADAC00AB3610 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48531D89ADAC00AB3610 /* Line.cpp */; };
-		152D48641D89ADAC00AB3610 /* DotButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48571D89ADAC00AB3610 /* DotButton.cpp */; };
+		152D48641D89ADAC00AB3610 /* TextButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48571D89ADAC00AB3610 /* TextButton.cpp */; };
 		152D48651D89ADAC00AB3610 /* Menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48591D89ADAC00AB3610 /* Menu.cpp */; };
 		152D48661D89ADAC00AB3610 /* ofxTablet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D485C1D89ADAC00AB3610 /* ofxTablet.cpp */; };
 		152D48671D89ADAC00AB3610 /* tabletCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 152D485F1D89ADAC00AB3610 /* tabletCocoa.mm */; };
@@ -35,7 +35,9 @@
 		50504B4D20320AD0005292AA /* onionLayer.frag in Resources */ = {isa = PBXBuildFile; fileRef = 50504B4B20320AD0005292AA /* onionLayer.frag */; };
 		50573BF220407B7F00A4E4CF /* NotificationLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50573BEE20407B7E00A4E4CF /* NotificationLogger.cpp */; };
 		50573BF320407B7F00A4E4CF /* NotificationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50573BF020407B7E00A4E4CF /* NotificationManager.cpp */; };
+		505FF9B1221ADDC300E4BD10 /* BaseButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 505FF9AF221ADDC300E4BD10 /* BaseButton.cpp */; };
 		50C6FD251F83B3C2004256C5 /* GlobalSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50C6FD231F83B3C1004256C5 /* GlobalSettings.cpp */; };
+		50CBBD0A221DEE3E0045106F /* ColorButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50CBBD09221DEE3E0045106F /* ColorButton.cpp */; };
 		50E83DEB1F4770630070464D /* PlayerLogo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E83DE91F4770630070464D /* PlayerLogo.cpp */; };
 		50E83DEE1F4AA7FC0070464D /* NetworkHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */; };
 		5117585F1B9B43BDB6061590 /* UdpSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460FE17A79E34A43810C32E9 /* UdpSocket.cpp */; };
@@ -72,8 +74,8 @@
 		152D48531D89ADAC00AB3610 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
 		152D48541D89ADAC00AB3610 /* Line.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Line.hpp; sourceTree = "<group>"; };
 		152D48551D89ADAC00AB3610 /* Singleton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Singleton.hpp; sourceTree = "<group>"; };
-		152D48571D89ADAC00AB3610 /* DotButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DotButton.cpp; sourceTree = "<group>"; };
-		152D48581D89ADAC00AB3610 /* DotButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DotButton.hpp; sourceTree = "<group>"; };
+		152D48571D89ADAC00AB3610 /* TextButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextButton.cpp; sourceTree = "<group>"; };
+		152D48581D89ADAC00AB3610 /* TextButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextButton.hpp; sourceTree = "<group>"; };
 		152D48591D89ADAC00AB3610 /* Menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Menu.cpp; sourceTree = "<group>"; };
 		152D485A1D89ADAC00AB3610 /* Menu.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Menu.hpp; sourceTree = "<group>"; };
 		152D485C1D89ADAC00AB3610 /* ofxTablet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTablet.cpp; sourceTree = "<group>"; };
@@ -107,8 +109,12 @@
 		50573BEF20407B7E00A4E4CF /* NotificationLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationLogger.h; sourceTree = "<group>"; };
 		50573BF020407B7E00A4E4CF /* NotificationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotificationManager.cpp; sourceTree = "<group>"; };
 		50573BF120407B7E00A4E4CF /* NotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationManager.h; sourceTree = "<group>"; };
+		505FF9AF221ADDC300E4BD10 /* BaseButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BaseButton.cpp; sourceTree = "<group>"; };
+		505FF9B0221ADDC300E4BD10 /* BaseButton.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BaseButton.hpp; sourceTree = "<group>"; };
 		50C6FD231F83B3C1004256C5 /* GlobalSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalSettings.cpp; sourceTree = "<group>"; };
 		50C6FD241F83B3C2004256C5 /* GlobalSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalSettings.h; sourceTree = "<group>"; };
+		50CBBD08221DEE3E0045106F /* ColorButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ColorButton.hpp; sourceTree = "<group>"; };
+		50CBBD09221DEE3E0045106F /* ColorButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorButton.cpp; sourceTree = "<group>"; };
 		50E83DE91F4770630070464D /* PlayerLogo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerLogo.cpp; sourceTree = "<group>"; };
 		50E83DEA1F4770630070464D /* PlayerLogo.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PlayerLogo.hpp; sourceTree = "<group>"; };
 		50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkHelper.cpp; sourceTree = "<group>"; };
@@ -231,12 +237,16 @@
 		152D48561D89ADAC00AB3610 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				152D48571D89ADAC00AB3610 /* DotButton.cpp */,
-				152D48581D89ADAC00AB3610 /* DotButton.hpp */,
+				50CBBD09221DEE3E0045106F /* ColorButton.cpp */,
+				50CBBD08221DEE3E0045106F /* ColorButton.hpp */,
+				152D48571D89ADAC00AB3610 /* TextButton.cpp */,
+				152D48581D89ADAC00AB3610 /* TextButton.hpp */,
 				152D48591D89ADAC00AB3610 /* Menu.cpp */,
 				152D485A1D89ADAC00AB3610 /* Menu.hpp */,
 				50E83DE91F4770630070464D /* PlayerLogo.cpp */,
 				50E83DEA1F4770630070464D /* PlayerLogo.hpp */,
+				505FF9AF221ADDC300E4BD10 /* BaseButton.cpp */,
+				505FF9B0221ADDC300E4BD10 /* BaseButton.hpp */,
 			);
 			name = UI;
 			path = ../src/UI;
@@ -482,7 +492,8 @@
 				152D48631D89ADAC00AB3610 /* Line.cpp in Sources */,
 				23E9BDB9A6214394B1157C43 /* IpEndpointName.cpp in Sources */,
 				50573BF320407B7F00A4E4CF /* NotificationManager.cpp in Sources */,
-				152D48641D89ADAC00AB3610 /* DotButton.cpp in Sources */,
+				50CBBD0A221DEE3E0045106F /* ColorButton.cpp in Sources */,
+				152D48641D89ADAC00AB3610 /* TextButton.cpp in Sources */,
 				152D48671D89ADAC00AB3610 /* tabletCocoa.mm in Sources */,
 				7DDD653CB74B4CB68C472BF7 /* OscOutboundPacketStream.cpp in Sources */,
 				50504B45202C628B005292AA /* SettingManager.cpp in Sources */,
@@ -493,6 +504,7 @@
 				50E83DEB1F4770630070464D /* PlayerLogo.cpp in Sources */,
 				51D2E6FA496846D0B35B38A4 /* NetworkingUtils.cpp in Sources */,
 				5117585F1B9B43BDB6061590 /* UdpSocket.cpp in Sources */,
+				505FF9B1221ADDC300E4BD10 /* BaseButton.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
