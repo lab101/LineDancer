@@ -19,9 +19,11 @@ class BaseButton{
     
     bool isHover;
     ci::Rectf mBoundingScaled;
-    
+    bool hideShowChildren;
     
     void calculateBoundingBox();
+    
+   
     
 protected:
     ci::Color mColor;
@@ -55,7 +57,8 @@ public:
     std::string getArgument();
 
     void addChildNode(BaseButton* childNode);
-    
+    void hideChildren();
+    void showChildren();
     
     void setPosition(ci::vec2 position);
     void setColor(ci::Color color);

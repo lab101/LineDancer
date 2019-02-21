@@ -27,7 +27,6 @@ class Menu{
     
 public:
     float brushScale;
-    
 
     ci::signals::Signal<void(float)>          onBrushSizeChanged;
     ci::signals::Signal<void(std::string)>    onNewCommand;

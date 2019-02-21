@@ -47,6 +47,10 @@
 		7DDD653CB74B4CB68C472BF7 /* OscOutboundPacketStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 147067216453433692B8272F /* OscOutboundPacketStream.cpp */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9BDDCB2B82E949DD9FEC28A7 /* OscListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D2B821EDB6D41D186FE86E5 /* OscListener.cpp */; };
+		9F1B4757221EC97800086DFF /* trump.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1B4756221EC97800086DFF /* trump.png */; };
+		9F1B4763221EE7A300086DFF /* Circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1B4760221EE7A200086DFF /* Circle.png */; };
+		9F1B4768221EE84E00086DFF /* Rect.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1B4766221EE84E00086DFF /* Rect.png */; };
+		9F1B4769221EE84E00086DFF /* Line.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1B4767221EE84E00086DFF /* Line.png */; };
 		AED73D58FB0D4129A14EE6C5 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FCFA9EB1C7B4617A7494920 /* OscTypes.cpp */; };
 		B97D7AF17DAA4CBCAEBF6F98 /* LiveDrawApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 610A7B04CB4747348DD4B8CA /* LiveDrawApp.cpp */; };
 		C2F73426A5474A2F86C89847 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2FC8D0C84BBF4AD6A8616B1A /* OscPrintReceivedElements.cpp */; };
@@ -129,6 +133,10 @@
 		8D1107320486CEB800E47090 /* LineDancer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LineDancer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FFDB72935DB4DB7BFB21121 /* OscPrintReceivedElements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OscPrintReceivedElements.h; path = ../blocks/OSC/src/osc/OscPrintReceivedElements.h; sourceTree = "<group>"; };
 		9D2B821EDB6D41D186FE86E5 /* OscListener.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = OscListener.cpp; path = ../blocks/OSC/src/OscListener.cpp; sourceTree = "<group>"; };
+		9F1B4756221EC97800086DFF /* trump.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = trump.png; path = ../resources/trump.png; sourceTree = "<group>"; };
+		9F1B4760221EE7A200086DFF /* Circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Circle.png; path = ../resources/Circle.png; sourceTree = "<group>"; };
+		9F1B4766221EE84E00086DFF /* Rect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Rect.png; path = ../resources/Rect.png; sourceTree = "<group>"; };
+		9F1B4767221EE84E00086DFF /* Line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Line.png; path = ../resources/Line.png; sourceTree = "<group>"; };
 		A07B93730E834C64A16C1070 /* NetworkingUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = NetworkingUtils.cpp; path = ../blocks/OSC/src/ip/posix/NetworkingUtils.cpp; sourceTree = "<group>"; };
 		A51705D56AB545D09653A077 /* OscReceivedElements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = OscReceivedElements.cpp; path = ../blocks/OSC/src/osc/OscReceivedElements.cpp; sourceTree = "<group>"; };
 		AB1ED3A377A844D196310048 /* TimerListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TimerListener.h; path = ../blocks/OSC/src/ip/TimerListener.h; sourceTree = "<group>"; };
@@ -298,6 +306,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F1B4767221EE84E00086DFF /* Line.png */,
+				9F1B4766221EE84E00086DFF /* Rect.png */,
+				9F1B4760221EE7A200086DFF /* Circle.png */,
+				9F1B4756221EC97800086DFF /* trump.png */,
 				50504B4B20320AD0005292AA /* onionLayer.frag */,
 				50504B4A20320AD0005292AA /* onionLayer.vert */,
 				501650951F680FB70019609E /* Roboto-Regular.ttf */,
@@ -461,12 +473,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F1B4768221EE84E00086DFF /* Rect.png in Resources */,
 				5DDF980637BE48FE89454814 /* CinderApp.icns in Resources */,
 				501650941F680FAE0019609E /* shader_es2.vert in Resources */,
 				50504B4C20320AD0005292AA /* onionLayer.vert in Resources */,
 				501650961F6815560019609E /* Roboto-Regular.ttf in Resources */,
+				9F1B4757221EC97800086DFF /* trump.png in Resources */,
 				501650931F680FAE0019609E /* shader_es2.frag in Resources */,
+				9F1B4769221EE84E00086DFF /* Line.png in Resources */,
 				50504B4D20320AD0005292AA /* onionLayer.frag in Resources */,
+				9F1B4763221EE7A300086DFF /* Circle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

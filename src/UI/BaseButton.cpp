@@ -12,12 +12,14 @@ using namespace ci;
 
 BaseButton::BaseButton(){
     
-  //  mRadius  = radius;
+    mRadius  = 28;
 
     isPressed = false;
     isHover = false;
     mColor = ci::Color(0,0,0);
     mArgument = "";
+    
+    hideShowChildren = false;
 }
 
 
@@ -51,6 +53,12 @@ void BaseButton::addChildNode(BaseButton* childNode){
     mChildren.push_back(childNode);
 }
 
+void BaseButton::hideChildren(){
+    hideShowChildren = false;
+}
+void BaseButton::showChildren(){
+   hideShowChildren = true;
+}
 
 
 void BaseButton::draw(){
@@ -76,10 +84,11 @@ void BaseButton::draw(){
 
     
     // DRAW children last
+    if(hideShowChildren){
     for(BaseButton* button : mChildren){
         button->draw();
     }
-
+    }
     
     gl::popMatrices();
     
@@ -117,6 +126,12 @@ bool BaseButton::touchUp(){
     }
     
     if(isPressed){
+        if(hideShowChildren){
+            hideChildren();
+        }else{
+            showChildren();
+        }
+        
         onPressed.emit();
         isPressed = false;
         

@@ -36,29 +36,44 @@ void Menu::setup(){
     
     
     
-    // TEST PART for lennert
-    TextButton* btnTest = new TextButton(28, "TEST",&(GS()->mSmallFont));
-    buttons.push_back(btnTest);
+  //add color btns
+    TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
+    buttons.push_back(btnColor);
     
-    TextButton* test = new TextButton(28, "child lev1",&(GS()->mSmallFont));
-    btnTest->addChildNode(test);
-    test->setPosition(ci::vec2(-120,20));
+    ColorButton* btnOrange = new ColorButton(28, ci::Color(1,0.5,0));
+    btnColor->addChildNode(btnOrange);
+    btnOrange->setPosition(ci::vec2((-2*btnOrange->mRadius)-10,0));
+   
+    ColorButton* btnBlue = new ColorButton(28, ci::Color(0,0,1));
+    btnColor->addChildNode(btnBlue);
+    btnBlue->setPosition(ci::vec2(((-2*btnBlue->mRadius)-10)*2,0));
     
+    ColorButton* btnG = new ColorButton(28, ci::Color(0,1,1));
+    btnColor->addChildNode(btnG);
+    btnG->setPosition(ci::vec2(((-2*btnG->mRadius)-10)*3,0));
     
-//    TextButton* test2 = new TextButton(28, "child lev2",&(GS()->mSmallFont));
-//    test->addChildNode(test2);
-//    test2->setPosition(ci::vec2(-120,20));
-//    
-    ColorButton* colorTest = new ColorButton(28, ci::Color(1,0.5,0));
-    
-    test->addChildNode(colorTest);
-    colorTest->setPosition(ci::vec2(-250,20));
-
-    
-    // END TEST
-    
+    //add shape buttons
+    TextButton* btnShape = new TextButton(28, "SHAPES",&(GS()->mSmallFont));
+    buttons.push_back(btnShape);
     
     
+    BaseButton* btnCircle = new BaseButton();
+    btnShape->addChildNode(btnCircle);
+    btnCircle->setPosition(ci::vec2((-2*28)-10,0));
+    ci::gl::TextureRef texCircle = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Circle.png")));
+    btnCircle->setTexture(texCircle);
+    
+    BaseButton* btnLine = new BaseButton();
+    btnShape->addChildNode(btnLine);
+    btnLine->setPosition(ci::vec2(((-2*28)-10)*2,0));
+    ci::gl::TextureRef texLine = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Line.png")));
+    btnLine->setTexture(texLine);
+    
+    BaseButton* btnRect = new BaseButton();
+    btnShape->addChildNode(btnRect);
+    btnRect->setPosition(ci::vec2(((-2*28)-10)*3,0));
+    ci::gl::TextureRef texRect = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Rect.png")));
+    btnRect->setTexture(texRect);
     
     // setup commands
     for(auto button : buttons){
@@ -154,6 +169,7 @@ bool Menu::checkTouchDown(ci::vec2 point){
     bool isPressed = false;
     
     for(auto button : buttons){
+        
         isPressed += button->checkTouchDown(point);
     }
     
