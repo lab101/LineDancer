@@ -40,17 +40,20 @@ void Menu::setup(){
     TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
     buttons.push_back(btnColor);
     
-    ColorButton* btnOrange = new ColorButton(28, ci::Color(1,0.5,0));
-    btnColor->addChildNode(btnOrange);
-    btnOrange->setPosition(ci::vec2((-2*btnOrange->mRadius)-10,0));
-   
-    ColorButton* btnBlue = new ColorButton(28, ci::Color(0,0,1));
-    btnColor->addChildNode(btnBlue);
-    btnBlue->setPosition(ci::vec2(((-2*btnBlue->mRadius)-10)*2,0));
+    ColorButton* btnR = new ColorButton(28, ci::Color(1,0,0));
+    btnColor->addChildNode(btnR);
+    btnR->setPosition(ci::vec2((-2*btnR->mRadius)-10,0));
+    btnR->setArgument("#ff0000");
     
-    ColorButton* btnG = new ColorButton(28, ci::Color(0,1,1));
+    ColorButton* btnG = new ColorButton(28, ci::Color(0,1,0));
     btnColor->addChildNode(btnG);
-    btnG->setPosition(ci::vec2(((-2*btnG->mRadius)-10)*3,0));
+    btnG->setPosition(ci::vec2(((-2*btnG->mRadius)-10)*2,0));
+     btnG->setArgument("#00ff00");
+    
+    ColorButton* btnB = new ColorButton(28, ci::Color(0,0,1));
+    btnColor->addChildNode(btnB);
+    btnB->setPosition(ci::vec2(((-2*btnB->mRadius)-10)*3,0));
+    btnB->setArgument("#0000ff");
     
     //add shape buttons
     TextButton* btnShape = new TextButton(28, "SHAPES",&(GS()->mSmallFont));
@@ -77,16 +80,37 @@ void Menu::setup(){
     
     // setup commands
     for(auto button : buttons){
-        button->onPressed.connect([=]{
-            onNewCommand.emit(button->getArgument());
-        });
+        ConnectEvents(button);
     }
+    
+    
+    
     
     brushScale = 0.5;
     isBrushHover = false;
 }
 
 
+void Menu::ConnectEvents(BaseButton* button){
+    std::string btnArg = button->getArgument();
+    
+    if(btnArg.length()> 0){
+    button->onPressed.connect([=]{
+        onNewCommand.emit(button->getArgument());
+    });
+    }
+    
+    for(auto childButton :  button->getChildren()){
+        ConnectEvents(childButton);
+    }
+    
+   
+    
+    
+    //check all children
+    //check if arg > 0
+    //check argument of button if 1 char is #
+}
 
 void Menu::update(){
     
@@ -97,11 +121,7 @@ void Menu::setPosition(ci::vec2 position){
     mPosition = position;
 }
 
-
-
 void Menu::draw(){
-    
-    
     // drawing the round buttons.
     float yPos = 60;
     for(auto button : buttons){

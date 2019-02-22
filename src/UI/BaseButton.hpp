@@ -55,7 +55,8 @@ public:
     
     void setArgument(std::string argument);
     std::string getArgument();
-
+    std::vector<BaseButton*> getChildren();
+    
     void addChildNode(BaseButton* childNode);
     void hideChildren();
     void showChildren();

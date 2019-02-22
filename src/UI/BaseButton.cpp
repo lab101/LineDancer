@@ -147,6 +147,10 @@ std::string BaseButton::getArgument(){
     return mArgument;
 }
 
+std::vector<BaseButton*> BaseButton::getChildren(){
+    return mChildren;
+}
+
 void BaseButton::setArgument(std::string argument){
     mArgument = argument;
 }

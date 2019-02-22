@@ -40,6 +40,7 @@ public:
     
     void setPosition(ci::vec2 position);
     void setBrushScale(float newScale);
+    void ConnectEvents(BaseButton* button);
 };
 
 
