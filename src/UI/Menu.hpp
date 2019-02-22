@@ -24,6 +24,8 @@ class Menu{
     bool isPressed;
     
     std::vector<BaseButton*> buttons;
+    ci::Color hexStringToColor(std::string hex);
+    int HexadecimalToDecimal(std::string hex);
     
 public:
     float brushScale;
