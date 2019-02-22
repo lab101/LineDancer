@@ -40,17 +40,17 @@ void Menu::setup(){
     TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
     buttons.push_back(btnColor);
     
-    ColorButton* btnR = new ColorButton(28, ci::Color(1,0,0));
+    ColorButton* btnR = new ColorButton(28, hexStringToColor("#ff0000"));
     btnColor->addChildNode(btnR);
     btnR->setPosition(ci::vec2((-2*btnR->mRadius)-10,0));
     btnR->setArgument("#ff0000");
     
-    ColorButton* btnG = new ColorButton(28, ci::Color(0,1,0));
+    ColorButton* btnG = new ColorButton(28, hexStringToColor("#00ff00"));
     btnColor->addChildNode(btnG);
     btnG->setPosition(ci::vec2(((-2*btnG->mRadius)-10)*2,0));
      btnG->setArgument("#00ff00");
     
-    ColorButton* btnB = new ColorButton(28, ci::Color(0,0,1));
+    ColorButton* btnB = new ColorButton(28, hexStringToColor("#0000ff"));
     btnColor->addChildNode(btnB);
     btnB->setPosition(ci::vec2(((-2*btnB->mRadius)-10)*3,0));
     btnB->setArgument("#0000ff");
@@ -94,6 +94,14 @@ void Menu::setup(){
 
 void Menu::ConnectEvents(BaseButton* button){
     std::string btnArg = button->getArgument();
+    
+    if(btnArg.length()> 0){
+        if(std::string(1,btnArg[0]) == "#"){
+            button->onPressed.connect([=]{
+                GS()->brushColor = hexStringToColor(btnArg);
+            });
+        }
+    }
     
     if(btnArg.length()> 0){
     button->onPressed.connect([=]{

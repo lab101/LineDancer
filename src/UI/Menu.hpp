@@ -24,12 +24,11 @@ class Menu{
     bool isPressed;
     
     std::vector<BaseButton*> buttons;
-    ci::Color hexStringToColor(std::string hex);
-    int HexadecimalToDecimal(std::string hex);
+    
     
 public:
     float brushScale;
-
+    
     ci::signals::Signal<void(float)>          onBrushSizeChanged;
     ci::signals::Signal<void(std::string)>    onNewCommand;
 
@@ -43,6 +42,9 @@ public:
     void setPosition(ci::vec2 position);
     void setBrushScale(float newScale);
     void ConnectEvents(BaseButton* button);
+    
+    ci::Color hexStringToColor(std::string hex);
+    int HexadecimalToDecimal(std::string hex);
 };
 
 

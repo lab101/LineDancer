@@ -129,7 +129,6 @@ void LineDancer::setup()
     
    // setWindowSize(1600, 800);
 
-    
     CI_LOG_I("START ofxTablet");
     ofxTablet::start();
     ofxTablet::onData.connect(bind(&LineDancer::onWacomData,this,std::placeholders::_1));
@@ -151,6 +150,7 @@ void LineDancer::setup()
             
             timeline().apply(&showGifSavedTimer,1,11,3.0f);
         }
+        
     });
     
 
