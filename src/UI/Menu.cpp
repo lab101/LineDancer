@@ -65,24 +65,28 @@ void Menu::setup(){
     btnCircle->setPosition(ci::vec2((-2*28)-10,0));
     ci::gl::TextureRef texCircle = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Circle.png")));
     btnCircle->setTexture(texCircle);
+    btnCircle->setArgument("CIRCLE");
     
     BaseButton* btnLine = new BaseButton();
     btnShape->addChildNode(btnLine);
     btnLine->setPosition(ci::vec2(((-2*28)-10)*2,0));
     ci::gl::TextureRef texLine = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Line.png")));
     btnLine->setTexture(texLine);
+    btnLine->setArgument("LINE");
     
     BaseButton* btnRect = new BaseButton();
     btnShape->addChildNode(btnRect);
     btnRect->setPosition(ci::vec2(((-2*28)-10)*3,0));
     ci::gl::TextureRef texRect = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Rect.png")));
     btnRect->setTexture(texRect);
+    btnRect->setArgument("RECT");
     
-    BaseButton* btnPoly = new BaseButton();
-    btnShape->addChildNode(btnPoly);
-    btnPoly->setPosition(ci::vec2(((-2*28)-10)*4,0));
-    ci::gl::TextureRef texPoly = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Polygon.png")));
-    btnPoly->setTexture(texPoly);
+//    BaseButton* btnPoly = new BaseButton();
+//    btnShape->addChildNode(btnPoly);
+//    btnPoly->setPosition(ci::vec2(((-2*28)-10)*4,0));
+//    ci::gl::TextureRef texPoly = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Polygon.png")));
+//    btnPoly->setTexture(texPoly);
+    
     
     // setup commands
     for(auto button : buttons){

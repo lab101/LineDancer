@@ -218,7 +218,7 @@ void LineDancer::setup()
     mOwnLogo.setup(false, ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr() , 20);
     mOwnLogo.setPosition(vec2(30,52));
     
-    currentState = 3;
+    currentState = 1;
     
     CI_LOG_I("finished SETUP");
     
@@ -337,7 +337,7 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
                 break;
             }
             case CIRCLE:{
-                //
+                 currentPoint = vec3(point.x,point.y,1.0f);
                 break;
             }
                 
@@ -371,12 +371,11 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
             break;
         }
         case CIRCLE:{
-            //
+             composition->drawCircle(firstPoint ,currentPoint);
             break;
         }
             
         case RECT:{
-           // auto p1 = currentPoint
           composition->drawRectangle(firstPoint ,currentPoint );
             
             break;
@@ -393,6 +392,7 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
     }
     isDrawing = false;
     composition->endLine();
+    currentState =0;
 }
 
 
@@ -596,7 +596,10 @@ void LineDancer::draw()
             break;
         }
         case CIRCLE:{
-            //
+            ci::gl::color(Color(0,0,0));
+            float dist = glm::distance(currentPoint,firstPoint);
+            ci::gl::drawStrokedCircle(vec2(firstPoint.x, firstPoint.y),dist);
+            
             break;
         }
             

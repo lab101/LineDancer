@@ -122,7 +122,27 @@ void Composition::lineTo(ci::vec3 pressurePoint){
     mPath.lineTo(vec2(pressurePoint.x,pressurePoint.y));
     mDepths.lineTo(vec2(pressurePoint.x,pressurePoint.z));
     
-    calculatePath(mPath,mDepths);
+    calculatePath(mPath,mDepths,true);
+}
+
+void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2){
+    gl::ScopedFramebuffer fbScp( mActiveFbo );
+    gl::ScopedViewport fbVP (mActiveFbo->getSize());
+    gl::setMatricesWindow( mActiveFbo->getSize() );
+    
+    gl::ScopedBlendPremult scpBlend;
+    
+    
+    gl::color(GS()->brushColor);
+    
+    
+    ci::gl::drawSolidCircle(vec2(point1.x,point1.y), glm::distance(point1, point2));
+    
+    
+    gl::setMatricesWindow( ci::app::getWindowSize() );
+    
+   //DRAW CIRCLE STROKE
+    
 }
 
 void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
@@ -134,7 +154,7 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
     gl::ScopedBlendPremult scpBlend;
 
 
-    gl::color(0, 0, 0, 1);
+    gl::color(GS()->brushColor);
     
         Rectf rect( point1.x, point1.y, point2.x , point2.y);
       ci::gl::drawSolidRect(rect);
@@ -147,23 +167,17 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
      newLine(point1);
     mPath.lineTo(vec2(point2.x,point1.y));
     mDepths.lineTo(vec2(point2.x,brushSize));
-   calculatePath(mPath,mDepths);
+   calculatePath(mPath,mDepths,false);
     mPath.lineTo(vec2(point2.x,point2.y));
      mDepths.lineTo(vec2(point2.x,brushSize));
-    calculatePath(mPath,mDepths);
+    calculatePath(mPath,mDepths,false);
     mPath.lineTo(vec2(point1.x,point2.y));
     mDepths.lineTo(vec2(point1.x,brushSize));
-    calculatePath(mPath,mDepths);
+    calculatePath(mPath,mDepths,false);
     mPath.lineTo(vec2(point1.x,point1.y));
     mDepths.lineTo(vec2(point1.x,brushSize));
-    calculatePath(mPath,mDepths);
+    calculatePath(mPath,mDepths,false);
     endLine();
-    
-//
-    
-//
-    
-
 }
 
 
@@ -229,7 +243,7 @@ void Composition::drawFadeOut(){
 
 
 
-void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
+void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitTrueOrFalse){
     
     
     float length = path.calcLength();
@@ -266,7 +280,7 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths){
     
 
     
-    if(pointsToDraw.size() > 0){
+    if(pointsToDraw.size() > 0  && emmitTrueOrFalse){
         // emmit to other listner in this case network
         onNewPoints.emit(pointsToDrawNormalised);
         // draw the new points into the fbo.
