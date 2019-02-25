@@ -27,8 +27,6 @@ using namespace std;
 
 class LineDancer : public App {
     
-    
-    
     vec3 lastWacomPoint;
     TabletData lastDataPoint;
     
@@ -43,6 +41,9 @@ class LineDancer : public App {
     float lastUpdateTime;
     
     vec2 penMoveStart;
+    vec3 firstPoint; // L-----L-----L-----L-----L-----L-----L-----L
+    vec3 currentPoint;
+    
     
     NetworkHelper       mNetworkHelper;
     SettingController   mSettingController;
@@ -51,12 +52,9 @@ class LineDancer : public App {
     PlayerLogo mOwnLogo;
     std::map<std::string,PlayerLogo> mConnections;
 
-    
     std::shared_ptr<Composition>    mActiveComposition;
     
-    
     ci::Anim<int> showGifSavedTimer;
-
 
     ci::mat4 screenMatrix;
     ci::vec3 localCoordinate;
@@ -65,8 +63,10 @@ class LineDancer : public App {
     int zoomDirection = 0;
     vec2 zoomCenterPoint;
     
-public:
+    enum  shapeState { BRUSH = 0, CIRCLE = 1, LINE = 2, RECT = 3, POLY = 4 };
+    int currentState;
     
+public:
     void setup() override;
 
     void mouseDown( MouseEvent event ) override;
@@ -112,9 +112,7 @@ void LineDancer::toggleCursor(){
 
 void LineDancer::setup()
 {
-    
-    
-    
+   
     setFullScreen(true);
     setWindowSize(1280, 980);
     
@@ -220,7 +218,10 @@ void LineDancer::setup()
     mOwnLogo.setup(false, ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr() , 20);
     mOwnLogo.setPosition(vec2(30,52));
     
+    currentState = 3;
+    
     CI_LOG_I("finished SETUP");
+    
     
 }
 
@@ -246,6 +247,7 @@ void LineDancer::onWacomData(TabletData& data){
 //    std::cout << data.pointerType << std::endl;
 //    std::cout << data.buttonMask << std::endl;
 
+   
     
     lastDataPoint = data;
     
@@ -295,18 +297,24 @@ void LineDancer::onWacomData(TabletData& data){
     if((isDrawing || isMovingPaper) && !isMenuHit){
         penMove(localCoordinate,mActiveComposition);
     }
+    
+    
 }
 
 
 
 
 void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
+    firstPoint = vec3(point.x,point.y,1.0f);
     if(isMovingPaper)
     {
+       
         vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
         penMoveStart = p2;
 
         return;
+        
+        
     }
     
     isDrawing=true;
@@ -321,16 +329,68 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
         vec2 div =(penMoveStart - p2) ;
         zoomCenterPoint -=div;
         penMoveStart = p2;
-        return;
+        
+    }else{
+        switch (currentState) {
+            case BRUSH:{
+                composition->lineTo(point);
+                break;
+            }
+            case CIRCLE:{
+                //
+                break;
+            }
+                
+            case RECT:{
+               currentPoint = vec3(point.x,point.y,1.0f);
+                
+                break;
+            }
+            case LINE:{
+                //
+                break;
+            }
+                
+            default:{
+                //
+                break;
+            }
+        }
+        
     }
-    
-    composition->lineTo(point);
+
 }
 
 
 void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
     if(isMovingPaper) return;
-
+    
+    switch (currentState) {
+        case BRUSH:{
+            //
+            break;
+        }
+        case CIRCLE:{
+            //
+            break;
+        }
+            
+        case RECT:{
+           // auto p1 = currentPoint
+          composition->drawRectangle(firstPoint ,currentPoint );
+            
+            break;
+        }
+        case LINE:{
+            //
+            break;
+        }
+            
+        default:{
+            //
+            break;
+        }
+    }
     isDrawing = false;
     composition->endLine();
 }
@@ -510,9 +570,14 @@ void LineDancer::drawGrid(){
 
 void LineDancer::draw()
 {
-  
+    
+    
+    
+    
     gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,1.0f));
 
+    
+    
     
     ivec2 size = mActiveComposition->getTexture()->getSize();
     
@@ -523,8 +588,36 @@ void LineDancer::draw()
     
         ci::gl::scale(GS()->zoomLevel.value(), GS()->zoomLevel.value());
         ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
-
         mActiveComposition->draw();
+    
+    switch (currentState) {
+        case BRUSH:{
+            //
+            break;
+        }
+        case CIRCLE:{
+            //
+            break;
+        }
+            
+        case RECT:{
+            ci::gl::color(Color(0,0,0));
+            Rectf rect( firstPoint.x, firstPoint.y, currentPoint.x , currentPoint.y);
+            cout<<rect<<endl;
+            ci::gl::drawStrokedRect(rect);
+            
+            break;
+        }
+        case LINE:{
+            //
+            break;
+        }
+            
+        default:{
+            //
+            break;
+        }
+    }
     
         // get the screenmatrix when all the transformations on the "paper" (fbo) or done.
         screenMatrix = ci::gl::getModelViewProjection();

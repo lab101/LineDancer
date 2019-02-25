@@ -36,10 +36,10 @@ void Menu::setup(){
     
     
     
-  //add color btns
+//add color btns
     TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
     buttons.push_back(btnColor);
-    
+    //-- color children
     ColorButton* btnR = new ColorButton(28, hexStringToColor("#ff0000"));
     btnColor->addChildNode(btnR);
     btnR->setPosition(ci::vec2((-2*btnR->mRadius)-10,0));
@@ -55,11 +55,11 @@ void Menu::setup(){
     btnB->setPosition(ci::vec2(((-2*btnB->mRadius)-10)*3,0));
     btnB->setArgument("#0000ff");
     
-    //add shape buttons
+//add shape buttons
     TextButton* btnShape = new TextButton(28, "SHAPES",&(GS()->mSmallFont));
     buttons.push_back(btnShape);
     
-    
+    //--shape children
     BaseButton* btnCircle = new BaseButton();
     btnShape->addChildNode(btnCircle);
     btnCircle->setPosition(ci::vec2((-2*28)-10,0));
@@ -78,15 +78,16 @@ void Menu::setup(){
     ci::gl::TextureRef texRect = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Rect.png")));
     btnRect->setTexture(texRect);
     
+    BaseButton* btnPoly = new BaseButton();
+    btnShape->addChildNode(btnPoly);
+    btnPoly->setPosition(ci::vec2(((-2*28)-10)*4,0));
+    ci::gl::TextureRef texPoly = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Polygon.png")));
+    btnPoly->setTexture(texPoly);
+    
     // setup commands
     for(auto button : buttons){
         ConnectEvents(button);
     }
-    //std::cout << hexStringToColor("#ffffff") << std::endl;
-    hexStringToColor("#2a5df7");
-    
-    
-    
     brushScale = 0.5;
     isBrushHover = false;
 }
@@ -100,25 +101,17 @@ void Menu::ConnectEvents(BaseButton* button){
             button->onPressed.connect([=]{
                 GS()->brushColor = hexStringToColor(btnArg);
             });
+        }else{
+            button->onPressed.connect([=]{
+                onNewCommand.emit(button->getArgument());
+            });
         }
+        
     }
-    
-    if(btnArg.length()> 0){
-    button->onPressed.connect([=]{
-        onNewCommand.emit(button->getArgument());
-    });
-    }
-    
     for(auto childButton :  button->getChildren()){
         ConnectEvents(childButton);
     }
     
-   
-    
-    
-    //check all children
-    //check if arg > 0
-    //check argument of button if 1 char is #
 }
 
 void Menu::update(){

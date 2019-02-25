@@ -79,6 +79,8 @@ public:
     void lineTo(ci::vec3 pressurePoint);
     void endLine();
     
+     void drawRectangle(ci::vec3 point1,ci::vec3 point2);
+    
     void drawFadeOut();
     
     void saveLineSegmentForGif();

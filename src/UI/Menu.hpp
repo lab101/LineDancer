@@ -42,6 +42,8 @@ public:
     void setPosition(ci::vec2 position);
     void setBrushScale(float newScale);
     void ConnectEvents(BaseButton* button);
+   
+    
     
     ci::Color hexStringToColor(std::string hex);
     int HexadecimalToDecimal(std::string hex);

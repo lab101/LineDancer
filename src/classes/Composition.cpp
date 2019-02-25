@@ -125,6 +125,47 @@ void Composition::lineTo(ci::vec3 pressurePoint){
     calculatePath(mPath,mDepths);
 }
 
+void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
+   
+    gl::ScopedFramebuffer fbScp( mActiveFbo );
+    gl::ScopedViewport fbVP (mActiveFbo->getSize());
+    gl::setMatricesWindow( mActiveFbo->getSize() );
+
+    gl::ScopedBlendPremult scpBlend;
+
+
+    gl::color(0, 0, 0, 1);
+    
+        Rectf rect( point1.x, point1.y, point2.x , point2.y);
+      ci::gl::drawSolidRect(rect);
+    //BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
+    
+    gl::setMatricesWindow( ci::app::getWindowSize() );
+    
+    const int brushSize = 10;
+    point1.z = brushSize;
+     newLine(point1);
+    mPath.lineTo(vec2(point2.x,point1.y));
+    mDepths.lineTo(vec2(point2.x,brushSize));
+   calculatePath(mPath,mDepths);
+    mPath.lineTo(vec2(point2.x,point2.y));
+     mDepths.lineTo(vec2(point2.x,brushSize));
+    calculatePath(mPath,mDepths);
+    mPath.lineTo(vec2(point1.x,point2.y));
+    mDepths.lineTo(vec2(point1.x,brushSize));
+    calculatePath(mPath,mDepths);
+    mPath.lineTo(vec2(point1.x,point1.y));
+    mDepths.lineTo(vec2(point1.x,brushSize));
+    calculatePath(mPath,mDepths);
+    endLine();
+    
+//
+    
+//
+    
+
+}
+
 
 
 
