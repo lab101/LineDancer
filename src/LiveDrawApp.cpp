@@ -269,7 +269,7 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
         mNetworkHelper.sendTwoPointShape(p[0], p[1], "CIRCLE");
     });
     composition->onNewLine.connect([=] (pointVec p){
-        mNetworkHelper.sendTwoPointShape(p[0], p[1], "RECT");
+        mNetworkHelper.sendTwoPointShape(p[0], p[1], "LINE");
     });
 }
 
