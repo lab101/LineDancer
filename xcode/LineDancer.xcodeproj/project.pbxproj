@@ -50,6 +50,7 @@
 		9F1B4768221EE84E00086DFF /* Rect.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1B4766221EE84E00086DFF /* Rect.png */; };
 		9F1B4769221EE84E00086DFF /* Line.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1B4767221EE84E00086DFF /* Line.png */; };
 		9F4E9FFB2223F88A005D58C5 /* Polygon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F4E9FFA2223F88A005D58C5 /* Polygon.png */; };
+		9FBE4A4D2226E903001126AC /* Brush.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBE4A4C2226E903001126AC /* Brush.png */; };
 		AED73D58FB0D4129A14EE6C5 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FCFA9EB1C7B4617A7494920 /* OscTypes.cpp */; };
 		B97D7AF17DAA4CBCAEBF6F98 /* LiveDrawApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 610A7B04CB4747348DD4B8CA /* LiveDrawApp.cpp */; };
 		C2F73426A5474A2F86C89847 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2FC8D0C84BBF4AD6A8616B1A /* OscPrintReceivedElements.cpp */; };
@@ -134,6 +135,7 @@
 		9F1B4766221EE84E00086DFF /* Rect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Rect.png; path = ../resources/Rect.png; sourceTree = "<group>"; };
 		9F1B4767221EE84E00086DFF /* Line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Line.png; path = ../resources/Line.png; sourceTree = "<group>"; };
 		9F4E9FFA2223F88A005D58C5 /* Polygon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Polygon.png; path = ../resources/Polygon.png; sourceTree = "<group>"; };
+		9FBE4A4C2226E903001126AC /* Brush.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Brush.png; path = ../resources/Brush.png; sourceTree = "<group>"; };
 		A07B93730E834C64A16C1070 /* NetworkingUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = NetworkingUtils.cpp; path = ../blocks/OSC/src/ip/posix/NetworkingUtils.cpp; sourceTree = "<group>"; };
 		A51705D56AB545D09653A077 /* OscReceivedElements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = OscReceivedElements.cpp; path = ../blocks/OSC/src/osc/OscReceivedElements.cpp; sourceTree = "<group>"; };
 		AB1ED3A377A844D196310048 /* TimerListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TimerListener.h; path = ../blocks/OSC/src/ip/TimerListener.h; sourceTree = "<group>"; };
@@ -301,6 +303,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FBE4A4C2226E903001126AC /* Brush.png */,
 				9F4E9FFA2223F88A005D58C5 /* Polygon.png */,
 				9F1B4767221EE84E00086DFF /* Line.png */,
 				9F1B4766221EE84E00086DFF /* Rect.png */,
@@ -473,6 +476,7 @@
 				9F4E9FFB2223F88A005D58C5 /* Polygon.png in Resources */,
 				501650941F680FAE0019609E /* shader_es2.vert in Resources */,
 				50504B4C20320AD0005292AA /* onionLayer.vert in Resources */,
+				9FBE4A4D2226E903001126AC /* Brush.png in Resources */,
 				501650961F6815560019609E /* Roboto-Regular.ttf in Resources */,
 				501650931F680FAE0019609E /* shader_es2.frag in Resources */,
 				9F1B4769221EE84E00086DFF /* Line.png in Resources */,

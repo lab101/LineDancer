@@ -146,6 +146,8 @@ void LineDancer::setup()
             mActiveComposition->newComposition();
             
             timeline().apply(&showGifSavedTimer,1,11,3.0f);
+        }else if(command == "BRUSH"){
+            currentState = 0;
         }else if(command == "CIRCLE"){
             currentState = 1;
         }else if(command == "LINE"){
@@ -350,6 +352,7 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
     }
     if(!menu.checkTouchUp()){
     firstPoint = vec3(point.x,point.y,1.0f);
+        currentPoint =vec3(point.x,point.y,1.0f);
         isDrawing=true;
         composition->newLine(point);
     }
@@ -412,7 +415,7 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
              composition->drawCircle(firstPoint ,currentPoint,false);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
-            currentState = BRUSH;
+        
             break;
         }
             
@@ -420,14 +423,14 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
           composition->drawRectangle(firstPoint ,currentPoint,false);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
-             currentState = BRUSH;
+            
             break;
         }
         case LINE:{
             composition->drawLine(firstPoint ,currentPoint,false);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
-            currentState = BRUSH;
+           
             break;
         }
             

@@ -16,14 +16,12 @@ void Menu::setup(){
     if(GS()->hasLayerButton.value()){
         TextButton* btnLayer = new TextButton(28, "+LAYER", &(GS()->mSmallFont));
         btnLayer->setArgument("CLEAR");
-
         buttons.push_back(btnLayer);
     }
     
     if(GS()->hasClearButton.value()){
         TextButton* btnClear = new TextButton(28, "CLEAR",&(GS()->mSmallFont));
         btnClear->setArgument("CLEAR");
-
         buttons.push_back(btnClear);
     }
 
@@ -40,7 +38,6 @@ void Menu::setup(){
     TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
     buttons.push_back(btnColor);
     //-- color children
-    
     std::vector<std::string> color;
     color.push_back("#112F41");
     color.push_back("#F2B134");
@@ -83,6 +80,13 @@ void Menu::setup(){
     ci::gl::TextureRef texRect = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Rect.png")));
     btnRect->setTexture(texRect);
     btnRect->setArgument("RECT");
+    
+    BaseButton* btnBrush = new BaseButton();
+    btnShape->addChildNode(btnBrush);
+    btnBrush->setPosition(ci::vec2(((-2*28)-10)*4,0));
+    ci::gl::TextureRef textBrush = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Brush.png")));
+    btnBrush->setTexture(textBrush);
+    btnBrush->setArgument("BRUSH");
     
 //    BaseButton* btnPoly = new BaseButton();
 //    btnShape->addChildNode(btnPoly);
@@ -243,11 +247,8 @@ bool Menu::checkTouchUp(){
             b -= 48;
         else if (b >= 65 && b <= 70)
             b -= 55;
-
-        dec += b * std::pow(16, ((hexLength - i) - 1));
-        
+        dec += b * std::pow(16, ((hexLength - i) - 1))
     }
-    
     return (int)dec;
 }
 
