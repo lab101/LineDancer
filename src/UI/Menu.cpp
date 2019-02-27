@@ -247,7 +247,7 @@ bool Menu::checkTouchUp(){
             b -= 48;
         else if (b >= 65 && b <= 70)
             b -= 55;
-        dec += b * std::pow(16, ((hexLength - i) - 1))
+        dec += b * std::pow(16, ((hexLength - i) - 1));
     }
     return (int)dec;
 }
