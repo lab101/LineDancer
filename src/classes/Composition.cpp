@@ -195,6 +195,23 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
     mDepths.lineTo(vec2(point1.x,brushSize));
     calculatePath(mPath,mDepths,false);
     endLine();
+    
+    
+    std::vector<vec3> pointsToDrawNormalised;
+    
+    vec3 newPoint1 = vec3(point1);
+    vec3 newPoint2 = vec3(point2);
+    
+    newPoint1.x /= mSize.x;
+    newPoint1.y /= mSize.y;
+    
+    newPoint2.x /= mSize.x;
+    newPoint2.y /= mSize.y;
+    
+     pointsToDrawNormalised.push_back(newPoint1);
+     pointsToDrawNormalised.push_back(newPoint2);
+    
+    onNewRectangle.emit(pointsToDrawNormalised);
 }
 
 
@@ -244,8 +261,8 @@ void Composition::drawFadeOut(){
         gl::setMatricesWindow( mActiveFbo->getSize() );
         
     
-    // Enable pre-multiplied alpha blending.
-  //  gl::ScopedBlendPremult scpBlend;
+        // Enable pre-multiplied alpha blending.
+        //  gl::ScopedBlendPremult scpBlend;
 
         ci::ColorA fade = GS()->fboBackground;
     fade.a = GS()->fadeoutFactor;

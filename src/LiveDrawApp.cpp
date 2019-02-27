@@ -223,7 +223,7 @@ void LineDancer::setup()
     mOwnLogo.setup(false, ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr() , 20);
     mOwnLogo.setPosition(vec2(30,52));
     
-    currentState = 1;
+    currentState = 0;
     
     CI_LOG_I("finished SETUP");
     
@@ -241,6 +241,10 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
     // clients we don't send rawpoints.
     composition->onNewPoints.connect([=] (pointVec p){
         mNetworkHelper.sendPoints(p, BrushManagerSingleton::Instance()->isEraserOn);
+    });
+    
+    composition->onNewRectangle.connect([=] (pointVec p){
+        mNetworkHelper.sendTwoPointShape(p[0], p[1], "RECT");
     });
 }
 
@@ -549,6 +553,7 @@ void LineDancer::update()
 
     menu.update();
     mNetworkHelper.update();
+
     
     if(GS()->doFadeOut.value()){
      

@@ -42,6 +42,7 @@ void NetworkHelper::update(){
     
     
     while( mListener.hasWaitingMessages() ) {
+        
         osc::Message message;
         mListener.getNextMessage( &message );
         
@@ -52,6 +53,8 @@ void NetworkHelper::update(){
         
         std::string remoteLastNr = extractLastIpNr(remoteIp);
         std::string const adress = message.getAddress();
+        
+        
         
         int incomingGroupId =  message.getArgAsInt32(0);
         
@@ -78,6 +81,13 @@ void NetworkHelper::update(){
                 }
                 
                 onReceivePoints.emit(points,isEraserOn);
+            }else if(adress == "shape"){
+                std::vector<ci::vec3> points;
+                for(int i=2;i < 6;i+=3){
+                    points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
+                }
+                std::string shape = message.getArgAsString(7);
+               // onReceiveShapes.emit(point1,point2,shape);
             }
         }
         
@@ -156,6 +166,24 @@ void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn){
     lastBroadcast = app::getElapsedSeconds();
 
 
+}
+
+void NetworkHelper::sendTwoPointShape(vec3& point1,vec3& point2, std::string shape){
+    osc::Message message;
+    message.setAddress("shape");
+    message.addIntArg(groupId);
+    
+    message.addStringArg(shape);
+    
+    message.addFloatArg(point1.x);
+    message.addFloatArg(point1.y);
+    message.addFloatArg(point1.z);
+    message.addFloatArg(point2.x);
+    message.addFloatArg(point2.y);
+    message.addFloatArg(point2.z);
+    
+    mSender.sendMessage(message);
+    lastBroadcast = app::getElapsedSeconds();
 }
 
 
