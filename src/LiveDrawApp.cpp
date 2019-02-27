@@ -213,13 +213,13 @@ void LineDancer::setup()
             point2.y *= mActiveComposition->mSize.y;
     
             if(shape == "RECT"){
-                mActiveComposition->drawRectangle(point1, point2);
+                mActiveComposition->drawRectangle(point1, point2,true);
             }
            else if(shape == "CIRCLE"){
-                mActiveComposition->drawCircle(point1, point2);
+                mActiveComposition->drawCircle(point1, point2,true);
             }
            else if(shape == "LINE"){
-                mActiveComposition->drawLine(point1, point2);
+                mActiveComposition->drawLine(point1, point2,true);
             }
         });
         
@@ -409,18 +409,18 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
             break;
         }
         case CIRCLE:{
-             composition->drawCircle(firstPoint ,currentPoint);
+             composition->drawCircle(firstPoint ,currentPoint,false);
             currentState = BRUSH;
             break;
         }
             
         case RECT:{
-          composition->drawRectangle(firstPoint ,currentPoint);
+          composition->drawRectangle(firstPoint ,currentPoint,false);
              currentState = BRUSH;
             break;
         }
         case LINE:{
-            composition->drawLine(firstPoint ,currentPoint);
+            composition->drawLine(firstPoint ,currentPoint,false);
             currentState = BRUSH;
             break;
         }

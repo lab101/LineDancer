@@ -40,20 +40,20 @@ void Menu::setup(){
     TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
     buttons.push_back(btnColor);
     //-- color children
-    ColorButton* btnR = new ColorButton(28, hexStringToColor("#7FFFC7"));
-    btnColor->addChildNode(btnR);
-    btnR->setPosition(ci::vec2((-2*btnR->mRadius)-10,0));
-    btnR->setArgument("#7FFFC7");
+    ColorButton* btn1 = new ColorButton(28, hexStringToColor("#112F41"));
+    btnColor->addChildNode(btn1);
+    btn1->setPosition(ci::vec2((-2*btn1->mRadius)-10,0));
+    btn1->setArgument("#112F41");
     
-    ColorButton* btnG = new ColorButton(28, hexStringToColor("#FFC050"));
-    btnColor->addChildNode(btnG);
-    btnG->setPosition(ci::vec2(((-2*btnG->mRadius)-10)*2,0));
-     btnG->setArgument("#FFC050");
+    ColorButton* btn2 = new ColorButton(28, hexStringToColor("#F2B134"));
+    btnColor->addChildNode(btn2);
+    btn2->setPosition(ci::vec2(((-2*btn2->mRadius)-10)*2,0));
+     btn2->setArgument("#F2B134");
     
-    ColorButton* btnB = new ColorButton(28, hexStringToColor("#E8463D"));
-    btnColor->addChildNode(btnB);
-    btnB->setPosition(ci::vec2(((-2*btnB->mRadius)-10)*3,0));
-    btnB->setArgument("#E8463D");
+    ColorButton* btn3 = new ColorButton(28, hexStringToColor("#ED553B"));
+    btnColor->addChildNode(btn3);
+    btn3->setPosition(ci::vec2(((-2*btn3->mRadius)-10)*3,0));
+    btn3->setArgument("#ED553B");
     
 //add shape buttons
     TextButton* btnShape = new TextButton(28, "SHAPES",&(GS()->mSmallFont));

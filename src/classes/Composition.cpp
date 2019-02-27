@@ -124,7 +124,7 @@ void Composition::lineTo(ci::vec3 pressurePoint){
     calculatePath(mPath,mDepths,true);
 }
 
-void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2){
+void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved ){
 //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
@@ -153,23 +153,11 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2){
     endLine();
 
     //-----------------------------------------------------------------------OSC
-    std::vector<vec3> pointsToDrawNormalised;
-    
-    vec3 newPoint1 = vec3(point1);
-    vec3 newPoint2 = vec3(point2);
-    
-    newPoint1.x /= mSize.x;
-    newPoint1.y /= mSize.y;
-    
-    newPoint2.x /= mSize.x;
-    newPoint2.y /= mSize.y;
-    
-    pointsToDrawNormalised.push_back(newPoint1);
-    pointsToDrawNormalised.push_back(newPoint2);
-    
-    onNewCircle.emit(pointsToDrawNormalised);
+    if(!recieved){
+        emitShape(point1, point2);
+    }
 }
-void Composition::drawLine(ci::vec3 point1,ci::vec3 point2){
+void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved){
     const int brushSize = 10;
     point1.z = brushSize;
     newLine(point1);
@@ -178,24 +166,13 @@ void Composition::drawLine(ci::vec3 point1,ci::vec3 point2){
     calculatePath(mPath,mDepths,false);
     
     //-----------------------------------------------------------------------OSC
-    std::vector<vec3> pointsToDrawNormalised;
+    if(!recieved){
+        emitShape(point1, point2);
+    }
     
-    vec3 newPoint1 = vec3(point1);
-    vec3 newPoint2 = vec3(point2);
-    
-    newPoint1.x /= mSize.x;
-    newPoint1.y /= mSize.y;
-    
-    newPoint2.x /= mSize.x;
-    newPoint2.y /= mSize.y;
-    
-    pointsToDrawNormalised.push_back(newPoint1);
-    pointsToDrawNormalised.push_back(newPoint2);
-    
-    onNewLine.emit(pointsToDrawNormalised);
 }
 
-void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
+void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved){
 //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
@@ -228,21 +205,9 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
     endLine();
     
     //-----------------------------------------------------------------------OSC
-    std::vector<vec3> pointsToDrawNormalised;
-    
-    vec3 newPoint1 = vec3(point1);
-    vec3 newPoint2 = vec3(point2);
-    
-    newPoint1.x /= mSize.x;
-    newPoint1.y /= mSize.y;
-    
-    newPoint2.x /= mSize.x;
-    newPoint2.y /= mSize.y;
-    
-     pointsToDrawNormalised.push_back(newPoint1);
-     pointsToDrawNormalised.push_back(newPoint2);
-    
-    onNewRectangle.emit(pointsToDrawNormalised);
+    if(!recieved){
+        emitShape(point1, point2);
+    }
 }
 
 
@@ -305,7 +270,23 @@ void Composition::drawFadeOut(){
     
 }
 
-
+void Composition::emitShape(ci::vec3 point1 , ci::vec3 point2){
+    std::vector<vec3> pointsToDrawNormalised;
+    
+    vec3 newPoint1 = vec3(point1);
+    vec3 newPoint2 = vec3(point2);
+    
+    newPoint1.x /= mSize.x;
+    newPoint1.y /= mSize.y;
+    
+    newPoint2.x /= mSize.x;
+    newPoint2.y /= mSize.y;
+    
+    pointsToDrawNormalised.push_back(newPoint1);
+    pointsToDrawNormalised.push_back(newPoint2);
+    
+    onNewRectangle.emit(pointsToDrawNormalised);
+}
 
 
 void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitTrueOrFalse){

@@ -82,10 +82,11 @@ public:
     void lineTo(ci::vec3 pressurePoint);
     void endLine();
     
-     void drawRectangle(ci::vec3 point1,ci::vec3 point2);
-    void drawCircle(ci::vec3 point1,ci::vec3 point2);
-    void drawLine(ci::vec3 point1,ci::vec3 point2);
+     void drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved);
+    void drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved);
+    void drawLine(ci::vec3 point1,ci::vec3 point2, bool recieved);
     void drawFadeOut();
+    void emitShape(ci::vec3 point1, ci::vec3 point2);
     
     void saveLineSegmentForGif();
     void saveLayer();
