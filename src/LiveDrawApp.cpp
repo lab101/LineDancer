@@ -6,7 +6,6 @@
 #include "cinder/Log.h"
 
 #include "ofxTablet.h"
-#include "Line.hpp"
 #include "Menu.hpp"
 #include "Composition.hpp"
 #include "BrushManager.hpp"
@@ -311,21 +310,21 @@ void LineDancer::onWacomData(TabletData& data){
 
 
 void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
-    firstPoint = vec3(point.x,point.y,1.0f);
+
     if(isMovingPaper)
     {
        
         vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
         penMoveStart = p2;
-
         return;
-        
-        
+  
+    }
+    if(!menu.checkTouchUp()){
+    firstPoint = vec3(point.x,point.y,1.0f);
+        isDrawing=true;
+        composition->newLine(point);
     }
    
-
-    isDrawing=true;
-    composition->newLine(point);
 }
 
 
@@ -337,7 +336,9 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
         zoomCenterPoint -=div;
         penMoveStart = p2;
         
-    }else{
+    }
+   
+    if(!menu.checkTouchUp()){
         switch (currentState) {
             case BRUSH:{
                 composition->lineTo(point);
@@ -354,7 +355,7 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
                 break;
             }
             case LINE:{
-                //
+               currentPoint = vec3(point.x,point.y,1.0f);
                 break;
             }
                 
@@ -371,33 +372,35 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
 
 void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
     if(isMovingPaper) return;
-    
+   
     switch (currentState) {
         case BRUSH:{
-            //
+            firstPoint = vec3(0,0,0);
+            currentPoint = vec3(0,0,0);
             break;
         }
         case CIRCLE:{
-             composition->drawCircle(firstPoint ,currentPoint );
+             composition->drawCircle(firstPoint ,currentPoint);
             currentState = BRUSH;
             break;
         }
             
         case RECT:{
           composition->drawRectangle(firstPoint ,currentPoint);
+             currentState = BRUSH;
             break;
         }
         case LINE:{
-            //
+            composition->drawLine(firstPoint ,currentPoint);
+            currentState = BRUSH;
             break;
         }
             
         default:{
-            //
+           currentState = BRUSH;
             break;
         }
     }
-    
     
     composition->endLine();
 }
@@ -529,6 +532,7 @@ void LineDancer::mouseMove( MouseEvent event )
 
 void LineDancer::update()
 {
+   
     const float div = ci::app::getElapsedSeconds() - lastUpdateTime;
     lastUpdateTime = ci::app::getElapsedSeconds();
     
@@ -577,15 +581,9 @@ void LineDancer::drawGrid(){
 
 void LineDancer::draw()
 {
-    
-    
-    
-    
-    gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,1.0f));
 
-    
-    
-    
+    gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,1.0f));
+  
     ivec2 size = mActiveComposition->getTexture()->getSize();
     
     // Drawing "the paper" at zoomlevel with offset.
@@ -599,11 +597,11 @@ void LineDancer::draw()
     
     switch (currentState) {
         case BRUSH:{
-            //
+            
             break;
         }
         case CIRCLE:{
-            ci::gl::color(Color(0,0,0));
+            ci::gl::color(Color(0,0,1));
             float dist = glm::distance(currentPoint,firstPoint);
             ci::gl::drawStrokedCircle(vec2(firstPoint.x, firstPoint.y),dist);
             
@@ -611,15 +609,15 @@ void LineDancer::draw()
         }
             
         case RECT:{
-            ci::gl::color(Color(0,0,0));
+            ci::gl::color(Color(0,0,1));
             Rectf rect( firstPoint.x, firstPoint.y, currentPoint.x , currentPoint.y);
-            cout<<rect<<endl;
             ci::gl::drawStrokedRect(rect);
             
             break;
         }
         case LINE:{
-            //
+            ci::gl::color(Color(0,0,1));
+            ci::gl::drawLine(vec2(firstPoint.x, firstPoint.y), vec2(currentPoint.x , currentPoint.y));
             break;
         }
             

@@ -18,7 +18,6 @@
 		05916BF8163443B68BBEAC07 /* OscMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B354717387F140839D69908A /* OscMessage.cpp */; };
 		152D48611D89ADAC00AB3610 /* BrushManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D484F1D89ADAC00AB3610 /* BrushManager.cpp */; };
 		152D48621D89ADAC00AB3610 /* Composition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48511D89ADAC00AB3610 /* Composition.cpp */; };
-		152D48631D89ADAC00AB3610 /* Line.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48531D89ADAC00AB3610 /* Line.cpp */; };
 		152D48641D89ADAC00AB3610 /* TextButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48571D89ADAC00AB3610 /* TextButton.cpp */; };
 		152D48651D89ADAC00AB3610 /* Menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D48591D89ADAC00AB3610 /* Menu.cpp */; };
 		152D48661D89ADAC00AB3610 /* ofxTablet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 152D485C1D89ADAC00AB3610 /* ofxTablet.cpp */; };
@@ -75,8 +74,6 @@
 		152D48501D89ADAC00AB3610 /* BrushManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BrushManager.hpp; sourceTree = "<group>"; };
 		152D48511D89ADAC00AB3610 /* Composition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Composition.cpp; sourceTree = "<group>"; };
 		152D48521D89ADAC00AB3610 /* Composition.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Composition.hpp; sourceTree = "<group>"; };
-		152D48531D89ADAC00AB3610 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
-		152D48541D89ADAC00AB3610 /* Line.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Line.hpp; sourceTree = "<group>"; };
 		152D48551D89ADAC00AB3610 /* Singleton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Singleton.hpp; sourceTree = "<group>"; };
 		152D48571D89ADAC00AB3610 /* TextButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextButton.cpp; sourceTree = "<group>"; };
 		152D48581D89ADAC00AB3610 /* TextButton.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TextButton.hpp; sourceTree = "<group>"; };
@@ -232,8 +229,6 @@
 				152D48501D89ADAC00AB3610 /* BrushManager.hpp */,
 				152D48511D89ADAC00AB3610 /* Composition.cpp */,
 				152D48521D89ADAC00AB3610 /* Composition.hpp */,
-				152D48531D89ADAC00AB3610 /* Line.cpp */,
-				152D48541D89ADAC00AB3610 /* Line.hpp */,
 				152D48551D89ADAC00AB3610 /* Singleton.hpp */,
 				50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */,
 				50E83DED1F4AA7FC0070464D /* NetworkHelper.hpp */,
@@ -505,7 +500,6 @@
 				152D48621D89ADAC00AB3610 /* Composition.cpp in Sources */,
 				05916BF8163443B68BBEAC07 /* OscMessage.cpp in Sources */,
 				EB516E9EF56A488D92BF5FC0 /* OscSender.cpp in Sources */,
-				152D48631D89ADAC00AB3610 /* Line.cpp in Sources */,
 				23E9BDB9A6214394B1157C43 /* IpEndpointName.cpp in Sources */,
 				50573BF320407B7F00A4E4CF /* NotificationManager.cpp in Sources */,
 				50CBBD0A221DEE3E0045106F /* ColorButton.cpp in Sources */,

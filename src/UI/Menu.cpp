@@ -40,20 +40,20 @@ void Menu::setup(){
     TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
     buttons.push_back(btnColor);
     //-- color children
-    ColorButton* btnR = new ColorButton(28, hexStringToColor("#ff0000"));
+    ColorButton* btnR = new ColorButton(28, hexStringToColor("#7FFFC7"));
     btnColor->addChildNode(btnR);
     btnR->setPosition(ci::vec2((-2*btnR->mRadius)-10,0));
-    btnR->setArgument("#ff0000");
+    btnR->setArgument("#7FFFC7");
     
-    ColorButton* btnG = new ColorButton(28, hexStringToColor("#00ff00"));
+    ColorButton* btnG = new ColorButton(28, hexStringToColor("#FFC050"));
     btnColor->addChildNode(btnG);
     btnG->setPosition(ci::vec2(((-2*btnG->mRadius)-10)*2,0));
-     btnG->setArgument("#00ff00");
+     btnG->setArgument("#FFC050");
     
-    ColorButton* btnB = new ColorButton(28, hexStringToColor("#0000ff"));
+    ColorButton* btnB = new ColorButton(28, hexStringToColor("#E8463D"));
     btnColor->addChildNode(btnB);
     btnB->setPosition(ci::vec2(((-2*btnB->mRadius)-10)*3,0));
-    btnB->setArgument("#0000ff");
+    btnB->setArgument("#E8463D");
     
 //add shape buttons
     TextButton* btnShape = new TextButton(28, "SHAPES",&(GS()->mSmallFont));
@@ -91,7 +91,14 @@ void Menu::setup(){
     // setup commands
     for(auto button : buttons){
         ConnectEvents(button);
+        
     }
+    btnColor->onPressed.connect([=]{
+        btnColor->toggleChildrenOnOff();
+    });
+    btnShape->onPressed.connect([=]{
+        btnShape->toggleChildrenOnOff();
+    });
     brushScale = 0.5;
     isBrushHover = false;
 }
@@ -144,8 +151,6 @@ void Menu::draw(){
     brushScaleBoxOrig.set(elementPos.x -10, elementPos.y + btnMargin.y, elementPos.x + 10, elementPos.y + 460);
     brushScaleBoxOrigCurrent = brushScaleBoxOrig;
     
-    
-  
     ci::gl::color(0,0,0);
     ci::gl::drawStrokedRect(brushScaleBoxOrigCurrent,3);
 
@@ -156,8 +161,6 @@ void Menu::draw(){
     
     
 }
-
-
 
 void Menu::setBrushScale(float newScale){
     brushScale = newScale;
@@ -197,7 +200,6 @@ bool Menu::checkTouchDown(ci::vec2 point){
     bool isPressed = false;
     
     for(auto button : buttons){
-        
         isPressed += button->checkTouchDown(point);
     }
     
@@ -220,22 +222,19 @@ bool Menu::checkTouchUp(){
  int Menu::HexadecimalToDecimal(std::string hex) { //https://www.programmingalgorithms.com/algorithm/hexadecimal-to-rgb?lang=C%2B%2B
     int hexLength = hex.length();
     double dec = 0;
-     std::string hexChars[6] =  {"a","b","c","d","e","f"};
-     
-     
-     
-     
+     std::string hexChars[6] =  {"A","B","C","D","E","F"};
+  
     for (int i = 0; i < hexLength; ++i)
     {
         
-       char b = hex[i];
+        float b ;
         for(int j = 0;j<6;j++){
             if(std::string(1,hex[i]) == hexChars[j]){
                 b = j+10;
+            }else{
+                b = hex[i] - 0.0f; // to int
             }
         };
-        
-       
 
         if (b >= 48 && b <= 57)
             b -= 48;
@@ -256,8 +255,11 @@ ci::Color Menu::hexStringToColor(std::string hex){
     unsigned char r = (unsigned char)HexadecimalToDecimal(hex.substr(0, 2));
     unsigned char g = (unsigned char)HexadecimalToDecimal(hex.substr(2, 2));
     unsigned char b = (unsigned char)HexadecimalToDecimal(hex.substr(4, 2));
-    
-    return ci::Color(r, g, b);
+    float R = r/255.0f;
+    float G = g/255.0f;
+    float B = b/255.0f;
+    std::cout<<ci::Color(R, G, B) << std::endl;
+    return ci::Color(R, G, B);
 }
 
 

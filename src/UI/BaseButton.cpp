@@ -19,7 +19,7 @@ BaseButton::BaseButton(){
     mColor = ci::Color(0,0,0);
     mArgument = "";
     
-    hideShowChildren = false;
+    isChildrenVisible = false;
 }
 
 
@@ -54,10 +54,14 @@ void BaseButton::addChildNode(BaseButton* childNode){
 }
 
 void BaseButton::hideChildren(){
-    hideShowChildren = false;
+    isChildrenVisible = false;
 }
 void BaseButton::showChildren(){
-   hideShowChildren = true;
+   isChildrenVisible = true;
+}
+
+void BaseButton::toggleChildrenOnOff(){
+    isChildrenVisible = !isChildrenVisible;
 }
 
 
@@ -84,7 +88,7 @@ void BaseButton::draw(){
 
     
     // DRAW children last
-    if(hideShowChildren){
+    if(isChildrenVisible){
     for(BaseButton* button : mChildren){
         button->draw();
     }
@@ -103,38 +107,31 @@ bool BaseButton::checkHover(ci::vec2 point){
 
 bool BaseButton::checkTouchDown(ci::vec2 point){
     
-    int pressCount = 0;
+    //int pressCount = 0;
     
     for(auto button : mChildren){
-        isPressed+= button->checkTouchDown(point - mPosition);
+         bool isHit = button->checkTouchDown(point - mPosition);
+        if(isHit){
+             isPressed = true;
+            return true;
+        }
     }
-    
-
-    if(pressCount > 0) return true;
-    
-    pressCount +=  glm::distance(point, mPosition) < mRadius;
-    isPressed = pressCount > 0;
+     isPressed = glm::distance(point, mPosition) < mRadius;
     return isPressed;
 }
 
 
 bool BaseButton::touchUp(){
-    
-    
     for(auto button : mChildren){
-        button->touchUp();
-    }
-    
-    if(isPressed){
-        if(hideShowChildren){
-            hideChildren();
-        }else{
-            showChildren();
+        bool isHit = button->touchUp();
+        if(isHit){
+            isPressed = false;
+            return true;
         }
-        
+    }
+    if(isPressed){
         onPressed.emit();
         isPressed = false;
-        
         return true;
     }
     

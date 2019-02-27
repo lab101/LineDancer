@@ -81,7 +81,7 @@ public:
     
      void drawRectangle(ci::vec3 point1,ci::vec3 point2);
     void drawCircle(ci::vec3 point1,ci::vec3 point2);
-    
+    void drawLine(ci::vec3 point1,ci::vec3 point2);
     void drawFadeOut();
     
     void saveLineSegmentForGif();
