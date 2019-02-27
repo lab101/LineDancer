@@ -410,17 +410,23 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
         }
         case CIRCLE:{
              composition->drawCircle(firstPoint ,currentPoint,false);
+            firstPoint = vec3(0,0,0);
+            currentPoint = vec3(0,0,0);
             currentState = BRUSH;
             break;
         }
             
         case RECT:{
           composition->drawRectangle(firstPoint ,currentPoint,false);
+            firstPoint = vec3(0,0,0);
+            currentPoint = vec3(0,0,0);
              currentState = BRUSH;
             break;
         }
         case LINE:{
             composition->drawLine(firstPoint ,currentPoint,false);
+            firstPoint = vec3(0,0,0);
+            currentPoint = vec3(0,0,0);
             currentState = BRUSH;
             break;
         }
