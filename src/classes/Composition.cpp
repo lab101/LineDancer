@@ -154,7 +154,21 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved ){
 
     //-----------------------------------------------------------------------OSC
     if(!recieved){
-        emitShape(point1, point2);
+        std::vector<vec3> pointsToDrawNormalised;
+        
+        vec3 newPoint1 = vec3(point1);
+        vec3 newPoint2 = vec3(point2);
+        
+        newPoint1.x /= mSize.x;
+        newPoint1.y /= mSize.y;
+        
+        newPoint2.x /= mSize.x;
+        newPoint2.y /= mSize.y;
+        
+        pointsToDrawNormalised.push_back(newPoint1);
+        pointsToDrawNormalised.push_back(newPoint2);
+        
+        onNewCircle.emit(pointsToDrawNormalised);
     }
 }
 void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved){
@@ -167,7 +181,21 @@ void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved){
     
     //-----------------------------------------------------------------------OSC
     if(!recieved){
-        emitShape(point1, point2);
+        std::vector<vec3> pointsToDrawNormalised;
+        
+        vec3 newPoint1 = vec3(point1);
+        vec3 newPoint2 = vec3(point2);
+        
+        newPoint1.x /= mSize.x;
+        newPoint1.y /= mSize.y;
+        
+        newPoint2.x /= mSize.x;
+        newPoint2.y /= mSize.y;
+        
+        pointsToDrawNormalised.push_back(newPoint1);
+        pointsToDrawNormalised.push_back(newPoint2);
+        
+        onNewLine.emit(pointsToDrawNormalised);
     }
     
 }
@@ -206,7 +234,21 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved){
     
     //-----------------------------------------------------------------------OSC
     if(!recieved){
-        emitShape(point1, point2);
+        std::vector<vec3> pointsToDrawNormalised;
+        
+        vec3 newPoint1 = vec3(point1);
+        vec3 newPoint2 = vec3(point2);
+        
+        newPoint1.x /= mSize.x;
+        newPoint1.y /= mSize.y;
+        
+        newPoint2.x /= mSize.x;
+        newPoint2.y /= mSize.y;
+        
+        pointsToDrawNormalised.push_back(newPoint1);
+        pointsToDrawNormalised.push_back(newPoint2);
+        
+        onNewRectangle.emit(pointsToDrawNormalised);
     }
 }
 
@@ -271,21 +313,7 @@ void Composition::drawFadeOut(){
 }
 
 void Composition::emitShape(ci::vec3 point1 , ci::vec3 point2){
-    std::vector<vec3> pointsToDrawNormalised;
-    
-    vec3 newPoint1 = vec3(point1);
-    vec3 newPoint2 = vec3(point2);
-    
-    newPoint1.x /= mSize.x;
-    newPoint1.y /= mSize.y;
-    
-    newPoint2.x /= mSize.x;
-    newPoint2.y /= mSize.y;
-    
-    pointsToDrawNormalised.push_back(newPoint1);
-    pointsToDrawNormalised.push_back(newPoint2);
-    
-    onNewRectangle.emit(pointsToDrawNormalised);
+  
 }
 
 
