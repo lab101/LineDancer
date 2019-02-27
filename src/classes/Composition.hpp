@@ -56,6 +56,8 @@ public:
     ci::signals::Signal<void(pointVec)>   onNewPoints;
 
     ci::signals::Signal<void(pointVec)> onNewRectangle;
+    ci::signals::Signal<void(pointVec)> onNewLine;
+    ci::signals::Signal<void(pointVec)> onNewCircle;
     ci::vec2    mSize;
     
     ci::vec3 getNormalisedPositionAtIndex(ci::Path2d& points, ci::Path2d depths,int index);

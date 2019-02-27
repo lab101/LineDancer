@@ -48,6 +48,7 @@ void NetworkHelper::update(){
         
         // return from our own broadcast
         std::string remoteIp = message.getRemoteIp();
+        
         if( remoteIp ==  mOwnIpAdress)
             continue;
         
@@ -83,11 +84,11 @@ void NetworkHelper::update(){
                 onReceivePoints.emit(points,isEraserOn);
             }else if(adress == "shape"){
                 std::vector<ci::vec3> points;
-                for(int i=2;i < 6;i+=3){
+                for(int i=2;i <message.getNumArgs();i+=3){
                     points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
                 }
-                std::string shape = message.getArgAsString(7);
-               // onReceiveShapes.emit(point1,point2,shape);
+                std::string shape = message.getArgAsString(1);
+               onReceiveShapes.emit(points[0],points[1],shape);
             }
         }
         

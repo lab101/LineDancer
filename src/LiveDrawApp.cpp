@@ -204,6 +204,25 @@ void LineDancer::setup()
             mActiveComposition->drawInFbo(points);
         });
         
+        mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape){
+           
+            point1.x *= mActiveComposition->mSize.x;
+            point1.y *= mActiveComposition->mSize.y;
+            
+            point2.x *= mActiveComposition->mSize.x;
+            point2.y *= mActiveComposition->mSize.y;
+    
+            if(shape == "RECT"){
+                mActiveComposition->drawRectangle(point1, point2);
+            }
+           else if(shape == "CIRCLE"){
+                mActiveComposition->drawCircle(point1, point2);
+            }
+           else if(shape == "LINE"){
+                mActiveComposition->drawLine(point1, point2);
+            }
+        });
+        
         
         mNetworkHelper.onNewConnection.connect([=](std::string& remoteIp){
         
@@ -244,6 +263,12 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
     });
     
     composition->onNewRectangle.connect([=] (pointVec p){
+        mNetworkHelper.sendTwoPointShape(p[0], p[1], "RECT");
+    });
+    composition->onNewCircle.connect([=] (pointVec p){
+        mNetworkHelper.sendTwoPointShape(p[0], p[1], "CIRCLE");
+    });
+    composition->onNewLine.connect([=] (pointVec p){
         mNetworkHelper.sendTwoPointShape(p[0], p[1], "RECT");
     });
 }

@@ -145,7 +145,6 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2){
         circumference.push_back(vec3(x,y,brushSize));
     }
     newLine(circumference[0]);
-    std::cout<<(circumference.size()-1) << std::endl;;
     for(int j =1 ; j< circumference.size();j++){
         mPath.lineTo(vec2(circumference[j].x,circumference[j].y));
         mDepths.lineTo(vec2(circumference[j].x,brushSize));
@@ -153,7 +152,22 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2){
     }
     endLine();
 
+    //-----------------------------------------------------------------------OSC
+    std::vector<vec3> pointsToDrawNormalised;
     
+    vec3 newPoint1 = vec3(point1);
+    vec3 newPoint2 = vec3(point2);
+    
+    newPoint1.x /= mSize.x;
+    newPoint1.y /= mSize.y;
+    
+    newPoint2.x /= mSize.x;
+    newPoint2.y /= mSize.y;
+    
+    pointsToDrawNormalised.push_back(newPoint1);
+    pointsToDrawNormalised.push_back(newPoint2);
+    
+    onNewCircle.emit(pointsToDrawNormalised);
 }
 void Composition::drawLine(ci::vec3 point1,ci::vec3 point2){
     const int brushSize = 10;
@@ -162,6 +176,23 @@ void Composition::drawLine(ci::vec3 point1,ci::vec3 point2){
     mPath.lineTo(vec2(point2.x,point2.y));
     mDepths.lineTo(vec2(point2.x,brushSize));
     calculatePath(mPath,mDepths,false);
+    
+    //-----------------------------------------------------------------------OSC
+    std::vector<vec3> pointsToDrawNormalised;
+    
+    vec3 newPoint1 = vec3(point1);
+    vec3 newPoint2 = vec3(point2);
+    
+    newPoint1.x /= mSize.x;
+    newPoint1.y /= mSize.y;
+    
+    newPoint2.x /= mSize.x;
+    newPoint2.y /= mSize.y;
+    
+    pointsToDrawNormalised.push_back(newPoint1);
+    pointsToDrawNormalised.push_back(newPoint2);
+    
+    onNewLine.emit(pointsToDrawNormalised);
 }
 
 void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
@@ -196,7 +227,7 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2){
     calculatePath(mPath,mDepths,false);
     endLine();
     
-    
+    //-----------------------------------------------------------------------OSC
     std::vector<vec3> pointsToDrawNormalised;
     
     vec3 newPoint1 = vec3(point1);
