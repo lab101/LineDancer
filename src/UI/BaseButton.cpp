@@ -36,7 +36,6 @@ void BaseButton::setPosition(ci::vec2 position){
 void BaseButton::calculateBoundingBox(){
     
     float displayScale = 1 /  ci::app::getWindowContentScale();
-    
     vec2 size = mTexture->getSize();
     mBoundingScaled = Rectf(vec2(size.x * -displayScale, size.y * -displayScale), vec2(size.x * displayScale, size.y * displayScale) );
     mBoundingScaled.scaleCentered(displayScale);
@@ -107,7 +106,6 @@ bool BaseButton::checkHover(ci::vec2 point){
 
 bool BaseButton::checkTouchDown(ci::vec2 point){
     
-    //int pressCount = 0;
     
     for(auto button : mChildren){
          bool isHit = button->checkTouchDown(point - mPosition);
