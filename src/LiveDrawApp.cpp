@@ -530,10 +530,8 @@ void LineDancer::keyUp(KeyEvent event ){
 void LineDancer::mouseDown( MouseEvent event )
 {
     if(!isMouseOnly) return;
-    
     lastWacomPoint = vec3(event.getPos(),10);
     localCoordinate = getLocalPoint(lastWacomPoint);
-
     if(!menu.checkTouchDown(ci::vec2(lastWacomPoint.x,lastWacomPoint.y))){
         penDown(localCoordinate, mActiveComposition);
     }
@@ -543,7 +541,6 @@ void LineDancer::mouseDown( MouseEvent event )
 void LineDancer::mouseUp( MouseEvent event )
 {
     if(!isMouseOnly) return;
-    
     if(!menu.checkTouchUp()){
         lastWacomPoint = vec3(event.getPos(),10);
         penUp(mActiveComposition);

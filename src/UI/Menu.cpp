@@ -15,7 +15,7 @@ void Menu::setup(){
 
     if(GS()->hasLayerButton.value()){
         TextButton* btnLayer = new TextButton(28, "+LAYER", &(GS()->mSmallFont));
-        btnLayer->setArgument("CLEAR");
+        btnLayer->setArgument("LAYER");
         buttons.push_back(btnLayer);
     }
     
@@ -37,8 +37,9 @@ void Menu::setup(){
 //add color btns
     TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
     buttons.push_back(btnColor);
-    //-- color children
+//-- color children
     std::vector<std::string> color;
+    color.push_back("#FFFFFF");
     color.push_back("#112F41");
     color.push_back("#F2B134");
     color.push_back("#ED553B");
@@ -51,15 +52,11 @@ void Menu::setup(){
         btnTemp->setArgument(color[i]);
     }
 
-    
-    
-    
-    
 //add shape buttons
     TextButton* btnShape = new TextButton(28, "SHAPES",&(GS()->mSmallFont));
     buttons.push_back(btnShape);
     
-    //--shape children
+//--shape children
     BaseButton* btnCircle = new BaseButton();
     btnShape->addChildNode(btnCircle);
     btnCircle->setPosition(ci::vec2((-2*28)-10,0));
@@ -100,6 +97,16 @@ void Menu::setup(){
         ConnectEvents(button);
         
     }
+    for(auto btnColorChild : btnColor->getChildren()){
+        btnColorChild->onPressed.connect([=]{
+            btnColor->toggleChildrenOnOff();
+        });
+    }
+    for(auto btnColorChild : btnShape->getChildren()){
+        btnColorChild->onPressed.connect([=]{
+            btnShape->toggleChildrenOnOff();
+        });
+    }
     btnColor->onPressed.connect([=]{
         btnColor->toggleChildrenOnOff();
     });
@@ -137,7 +144,6 @@ void Menu::update(){
 }
 
 void Menu::setPosition(ci::vec2 position){
-    
     mPosition = position;
 }
 
@@ -149,8 +155,7 @@ void Menu::draw(){
         button->draw();
         yPos += (button->mRadius * 2) + 20;
     }
-    
-    
+
     // drawing the brushselector
     ci::vec2 elementPos(ci::app::getWindowWidth() - 40, yPos);
     ci::vec2 btnMargin(0,00);
@@ -196,7 +201,6 @@ bool Menu::checkHover(ci::vec2 point){
         brushScaleBoxOrigCurrent.scaleCentered(ci::vec2(1,1));
         return true;
     }
-    
     return false;
 
 }
@@ -205,11 +209,9 @@ bool Menu::checkHover(ci::vec2 point){
 bool Menu::checkTouchDown(ci::vec2 point){
     
     bool isPressed = false;
-    
     for(auto button : buttons){
         isPressed += button->checkTouchDown(point);
     }
-    
     return isPressed;
 }
 
@@ -252,7 +254,7 @@ bool Menu::checkTouchUp(){
     return (int)dec;
 }
 
-ci::Color Menu::hexStringToColor(std::string hex){
+ci::Color Menu::hexStringToColor(std::string hex){//https://www.programmingalgorithms.com/algorithm/hexadecimal-to-rgb?lang=C%2B%2B
     if (hex[0] == '#')
         hex = hex.erase(0, 1);
     
