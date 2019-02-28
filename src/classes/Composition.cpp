@@ -273,7 +273,7 @@ void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
 
 void Composition::drawInFbo(std::vector<ci::vec3>& points,std::string _color){
     
-    ci::Color color = hexStringToColor(_color);
+    ci::Color color = GS()->brushColor;
     if(_color != "0"){
     color = hexStringToColor(_color);
     }

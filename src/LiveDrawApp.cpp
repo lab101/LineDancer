@@ -205,7 +205,7 @@ void LineDancer::setup()
                 p.x *= mActiveComposition->mSize.x;
                 p.y *= mActiveComposition->mSize.y;
             }
-            mActiveComposition->drawInFbo(points,"0");
+            mActiveComposition->drawInFbo(points,"#ff0000");
         });
         
         mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape){
