@@ -124,7 +124,7 @@ void Composition::lineTo(ci::vec3 pressurePoint){
     calculatePath(mPath,mDepths,true);
 }
 
-void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved ){
+void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color ){
 
 //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
@@ -133,7 +133,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved ){
     
     gl::ScopedBlendPremult scpBlend;
 //------------------------------------------------------------------------DRAW
-    gl::color(GS()->brushColor);
+    gl::color(color);
     ci::gl::drawSolidCircle(vec2(point1.x,point1.y), glm::distance(point1, point2));
 
     gl::setMatricesWindow(ci::app::getWindowSize());//------------------------FBO END
@@ -172,7 +172,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved ){
         onNewCircle.emit(pointsToDrawNormalised);
     }
 }
-void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved){
+void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved, ci::Color color){
     
     const int brushSize = 10;
     point1.z = brushSize;
@@ -207,9 +207,7 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, 
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
     gl::setMatricesWindow( mActiveFbo->getSize() );
-
     gl::ScopedBlendPremult scpBlend;
-
 //------------------------------------------------------------------------DRAW
     gl::color(color);
     Rectf rect( point1.x, point1.y, point2.x , point2.y);
@@ -233,7 +231,6 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, 
     mDepths.lineTo(vec2(point1.x,brushSize));
     calculatePath(mPath,mDepths,false);
     endLine();
-    
     //-----------------------------------------------------------------------OSC
     if(!recieved){
         std::vector<vec3> pointsToDrawNormalised;

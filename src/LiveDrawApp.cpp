@@ -221,10 +221,10 @@ void LineDancer::setup()
                 mActiveComposition->drawRectangle(point1, point2,true, hexStringToColor("#ff0000"));
             }
            else if(shape == "CIRCLE"){
-                mActiveComposition->drawCircle(point1, point2,true);
+                mActiveComposition->drawCircle(point1, point2,true,hexStringToColor("#ff0000"));
             }
            else if(shape == "LINE"){
-                mActiveComposition->drawLine(point1, point2,true);
+                mActiveComposition->drawLine(point1, point2,true,hexStringToColor("#ff0000"));
             }
         });
         
@@ -413,7 +413,7 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
             break;
         }
         case CIRCLE:{
-             composition->drawCircle(firstPoint ,currentPoint,false);
+             composition->drawCircle(firstPoint ,currentPoint,false,GS()->brushColor);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
             break;
@@ -425,7 +425,7 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
             break;
         }
         case LINE:{
-            composition->drawLine(firstPoint ,currentPoint,false);
+            composition->drawLine(firstPoint ,currentPoint,false,GS()->brushColor);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
            
