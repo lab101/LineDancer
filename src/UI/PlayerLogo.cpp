@@ -53,8 +53,6 @@ void PlayerLogo::renderText(){
 
 
 void PlayerLogo::draw(){
-    
-  
 
     if(isClient){
 
@@ -70,6 +68,5 @@ void PlayerLogo::draw(){
     }
     
     ci::gl::draw(mTexture, textBoundingScaled);
-
 
 }

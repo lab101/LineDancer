@@ -39,7 +39,6 @@ void BaseButton::calculateBoundingBox(){
     vec2 size = mTexture->getSize();
     mBoundingScaled = Rectf(vec2(size.x * -displayScale, size.y * -displayScale), vec2(size.x * displayScale, size.y * displayScale) );
     mBoundingScaled.scaleCentered(displayScale);
-    
 }
 
 
@@ -87,13 +86,9 @@ void BaseButton::draw(){
         gl::color(mColor);
         ci::gl::drawStrokedCircle(vec2(0,0), mRadius,3, 60);
     }
-    
-    
-    
-    
+
     gl::color(1,1,1);
     gl::draw(mTexture,mBoundingScaled);
-    
     
     // DRAW children last
     
@@ -122,7 +117,6 @@ bool BaseButton::checkHover(ci::vec2 point){
 
 bool BaseButton::checkTouchDown(ci::vec2 point){
     if(!isActive)return false;
-    
     for(auto button : mChildren){
         bool isHit = button->checkTouchDown(point - mPosition);
         if(isHit){
@@ -137,7 +131,6 @@ bool BaseButton::checkTouchDown(ci::vec2 point){
 
 bool BaseButton::touchUp(){
     if(!isActive)return false;
-    
     for(auto button : mChildren){
         bool isHit = button->touchUp();
         if(isHit){
@@ -150,7 +143,6 @@ bool BaseButton::touchUp(){
         isPressed = false;
         return true;
     }
-    
     isPressed = false;
     return false;
 }
