@@ -84,7 +84,7 @@ void NetworkHelper::update(){
                 onReceivePoints.emit(points,isEraserOn,color);
             }else if(adress == "shape"){
                 std::vector<ci::vec3> points;
-                for(int i=2;i <message.getNumArgs();i+=3){
+                for(int i=3;i <message.getNumArgs();i+=3){
                     points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
                 }
                 std::string shape = message.getArgAsString(1);
