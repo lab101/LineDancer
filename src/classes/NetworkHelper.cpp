@@ -74,21 +74,22 @@ void NetworkHelper::update(){
             if(adress == "points"){
                 int totals = message.getNumArgs() ;
                 bool isEraserOn = message.getArgAsInt32(1);
-
+                std::string color = message.getArgAsString(2);
                 
                 std::vector<ci::vec3> points;
-                for(int i=2;i < totals;i+=3){
+                for(int i=3;i < totals;i+=3){
                     points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
                 }
                 
-                onReceivePoints.emit(points,isEraserOn);
+                onReceivePoints.emit(points,isEraserOn,color);
             }else if(adress == "shape"){
                 std::vector<ci::vec3> points;
                 for(int i=2;i <message.getNumArgs();i+=3){
                     points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
                 }
                 std::string shape = message.getArgAsString(1);
-               onReceiveShapes.emit(points[0],points[1],shape);
+                 std::string color = message.getArgAsString(2);
+               onReceiveShapes.emit(points[0],points[1],shape,color);
             }
         }
         
@@ -151,12 +152,12 @@ void NetworkHelper::sendAlive(){
 
 
 
-void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn){
+void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn,std::string color){
     osc::Message message;
     message.setAddress("points");
     message.addIntArg(groupId);
     message.addIntArg(isEraserOn);
-
+    message.addStringArg(color);
     for(vec3& p : points){
         message.addFloatArg(p.x);
         message.addFloatArg(p.y);
@@ -169,13 +170,13 @@ void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn){
 
 }
 
-void NetworkHelper::sendTwoPointShape(vec3& point1,vec3& point2, std::string shape){
+void NetworkHelper::sendTwoPointShape(vec3& point1,vec3& point2, std::string shape,std::string color){
     osc::Message message;
     message.setAddress("shape");
     message.addIntArg(groupId);
     
     message.addStringArg(shape);
-    
+     message.addStringArg(color);
     message.addFloatArg(point1.x);
     message.addFloatArg(point1.y);
     message.addFloatArg(point1.z);

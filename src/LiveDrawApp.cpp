@@ -199,17 +199,17 @@ void LineDancer::setup()
     
 
     if(mNetworkHelper.setup()){
-        mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points, bool isEraserOn){
+        mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points, bool isEraserOn, std::string color){
             BrushManagerSingleton::Instance()->isEraserOn = isEraserOn;
             
             for(auto&p : points){
                 p.x *= mActiveComposition->mSize.x;
                 p.y *= mActiveComposition->mSize.y;
             }
-            mActiveComposition->drawInFbo(points, hexStringToColor("#ff0000"));
+            mActiveComposition->drawInFbo(points, hexStringToColor(color));
         });
         
-        mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape){
+        mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape, std::string color){
            
             point1.x *= mActiveComposition->mSize.x;
             point1.y *= mActiveComposition->mSize.y;
@@ -218,13 +218,13 @@ void LineDancer::setup()
             point2.y *= mActiveComposition->mSize.y;
     
             if(shape == "RECT"){
-                mActiveComposition->drawRectangle(point1, point2,true, hexStringToColor("#ff0000"));
+                mActiveComposition->drawRectangle(point1, point2,true, hexStringToColor(color));
             }
            else if(shape == "CIRCLE"){
-                mActiveComposition->drawCircle(point1, point2,true,hexStringToColor("#ff0000"));
+                mActiveComposition->drawCircle(point1, point2,true,hexStringToColor(color));
             }
            else if(shape == "LINE"){
-                mActiveComposition->drawLine(point1, point2,true,hexStringToColor("#ff0000"));
+                mActiveComposition->drawLine(point1, point2,true,hexStringToColor(color));
             }
         });
         
@@ -264,17 +264,17 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
     // when the new points with correct spacing are calculated we send them to the other
     // clients we don't send rawpoints.
     composition->onNewPoints.connect([=] (pointVec p){
-        mNetworkHelper.sendPoints(p, BrushManagerSingleton::Instance()->isEraserOn);
+        mNetworkHelper.sendPoints(p, BrushManagerSingleton::Instance()->isEraserOn, GS()->brushColorHex);
     });
     
     composition->onNewRectangle.connect([=] (pointVec p){
-        mNetworkHelper.sendTwoPointShape(p[0], p[1], "RECT");
+        mNetworkHelper.sendTwoPointShape(p[0], p[1], "RECT", GS()->brushColorHex);
     });
     composition->onNewCircle.connect([=] (pointVec p){
-        mNetworkHelper.sendTwoPointShape(p[0], p[1], "CIRCLE");
+        mNetworkHelper.sendTwoPointShape(p[0], p[1], "CIRCLE", GS()->brushColorHex);
     });
     composition->onNewLine.connect([=] (pointVec p){
-        mNetworkHelper.sendTwoPointShape(p[0], p[1], "LINE");
+        mNetworkHelper.sendTwoPointShape(p[0], p[1], "LINE",GS()->brushColorHex);
     });
 }
 

@@ -41,6 +41,7 @@ public:
     ci::ColorA blue;
     ci::ColorA fboBackground;
     ci::ColorA brushColor;
+    std::string brushColorHex;
 
     ci::ivec2 compositionSize;
     ci::gl::TextureFontRef    mLargeFont;

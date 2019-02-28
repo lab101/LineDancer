@@ -41,8 +41,8 @@ class NetworkHelper{
 public:
     
     
-    ci::signals::Signal<void(std::vector<ci::vec3>& , bool isEraserOn)>   onReceivePoints;
-    ci::signals::Signal<void(cinder::vec3& point1,cinder::vec3& point2, std::string shape)>  onReceiveShapes;
+    ci::signals::Signal<void(std::vector<ci::vec3>& , bool isEraserOn, std::string color)>   onReceivePoints;
+    ci::signals::Signal<void(cinder::vec3& point1,cinder::vec3& point2, std::string shape,std::string color )>  onReceiveShapes;
     ci::signals::Signal<void(std::string&)>   onNewConnection;
     ci::signals::Signal<void(std::string&)>   onAlivePing;
 
@@ -57,8 +57,8 @@ public:
     int const getGroupId();
 
     void sendOscMessage(std::string command,ci::vec3 point);
-    void sendPoints(std::vector<ci::vec3>& points,bool isEraserOn);
-    void sendTwoPointShape(cinder::vec3& point1,cinder::vec3& point2, std::string shape);
+    void sendPoints(std::vector<ci::vec3>& points,bool isEraserOn,std::string color);
+    void sendTwoPointShape(cinder::vec3& point1,cinder::vec3& point2, std::string shape,std::string color);
 
     
 };

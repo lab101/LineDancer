@@ -54,6 +54,7 @@ void Menu::setup(){
         
         if(i == color.size()-1){
             GS()->brushColor = hexStringToColor(color[i]);
+            GS()->brushColorHex = color[i];
             btnTemp->selectBtn();
         }
        
@@ -143,6 +144,7 @@ void Menu::ConnectEvents(BaseButton* button){
         if(std::string(1,btnArg[0]) == "#"){
             button->onPressed.connect([=]{
                 GS()->brushColor = hexStringToColor(btnArg);
+                 GS()->brushColorHex = btnArg;
             });
         }else{
             button->onPressed.connect([=]{

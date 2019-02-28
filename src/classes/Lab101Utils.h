@@ -176,6 +176,4 @@ inline ci::Color hexStringToColor(std::string hex){//https://www.programmingalgo
     float B = b/255.0f;
     return ci::Color(R, G, B);
 }
-
-
 #endif
