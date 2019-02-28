@@ -10,6 +10,7 @@
 #include "Composition.hpp"
 #include "BrushManager.hpp"
 #include "PlayerLogo.hpp"
+#include "Lab101Utils.h"
 
 #include "NetworkHelper.hpp"
 #include "GlobalSettings.h"
@@ -205,7 +206,7 @@ void LineDancer::setup()
                 p.x *= mActiveComposition->mSize.x;
                 p.y *= mActiveComposition->mSize.y;
             }
-            mActiveComposition->drawInFbo(points,"#ff0000");
+            mActiveComposition->drawInFbo(points);
         });
         
         mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape){
@@ -217,7 +218,7 @@ void LineDancer::setup()
             point2.y *= mActiveComposition->mSize.y;
     
             if(shape == "RECT"){
-                mActiveComposition->drawRectangle(point1, point2,true);
+                mActiveComposition->drawRectangle(point1, point2,true, hexStringToColor("#ff0000"));
             }
            else if(shape == "CIRCLE"){
                 mActiveComposition->drawCircle(point1, point2,true);
@@ -418,7 +419,7 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
             break;
         }
         case RECT:{
-          composition->drawRectangle(firstPoint ,currentPoint,false);
+          composition->drawRectangle(firstPoint ,currentPoint,false,GS()->brushColor);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
             break;

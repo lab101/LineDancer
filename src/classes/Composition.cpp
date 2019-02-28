@@ -202,7 +202,7 @@ void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved){
     
 }
 
-void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved){
+void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color){
 //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
@@ -211,7 +211,7 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved){
     gl::ScopedBlendPremult scpBlend;
 
 //------------------------------------------------------------------------DRAW
-    gl::color(GS()->brushColor);
+    gl::color(color);
     Rectf rect( point1.x, point1.y, point2.x , point2.y);
     ci::gl::drawSolidRect(rect);
 
@@ -271,13 +271,8 @@ void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
 }
 
 
-void Composition::drawInFbo(std::vector<ci::vec3>& points,std::string _color){
+void Composition::drawInFbo(std::vector<ci::vec3>& points){
     
-    ci::Color color = GS()->brushColor;
-    if(_color != "0"){
-    color = hexStringToColor(_color);
-    }
-   
     
     if(points.size() > 0){
 
@@ -288,7 +283,7 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points,std::string _color){
         gl::ScopedBlendPremult scpBlend;
    
         
-        gl::color(color);
+        gl::color(1, 1, 1, 1);
 
         BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
         
@@ -361,7 +356,7 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitT
         // emmit to other listner in this case network
        if(emmitTrueOrFalse) onNewPoints.emit(pointsToDrawNormalised);
         // draw the new points into the fbo.
-        drawInFbo(pointsToDraw ,"#112F41");
+        drawInFbo(pointsToDraw);
     }
 }
 
