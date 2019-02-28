@@ -13,9 +13,7 @@
 using namespace ci;
 using namespace ci::osc;
 
-
 bool NetworkHelper::setup(){
-    
     try{
         setupOSCSender();
         mListener.setup(3000);
@@ -23,9 +21,7 @@ bool NetworkHelper::setup(){
     }catch(...){
         return false;
     }
-    
     return true;
-
 }
 
 void NetworkHelper::setNextGroup(){
@@ -34,15 +30,12 @@ void NetworkHelper::setNextGroup(){
 
 
 void NetworkHelper::update(){
-    
     if(ci::app::getElapsedSeconds() - lastBroadcast > 4){
         sendAlive();
         lastBroadcast = app::getElapsedSeconds();
     }
     
-    
     while( mListener.hasWaitingMessages() ) {
-        
         osc::Message message;
         mListener.getNextMessage( &message );
         
@@ -55,32 +48,25 @@ void NetworkHelper::update(){
         std::string remoteLastNr = extractLastIpNr(remoteIp);
         std::string const adress = message.getAddress();
         
-        
-        
         int incomingGroupId =  message.getArgAsInt32(0);
         
         // discard packages from other groups
         if(incomingGroupId == groupId){
 
-            
             if(mAliveIps.find(remoteLastNr) == mAliveIps.end()){
                 onNewConnection.emit(remoteLastNr);
             }
-            
             mAliveIps[remoteLastNr] = ci::app::getElapsedSeconds();
             onAlivePing.emit(remoteLastNr);
-
 
             if(adress == "points"){
                 int totals = message.getNumArgs() ;
                 bool isEraserOn = message.getArgAsInt32(1);
                 std::string color = message.getArgAsString(2);
-                
                 std::vector<ci::vec3> points;
                 for(int i=3;i < totals;i+=3){
                     points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
                 }
-                
                 onReceivePoints.emit(points,isEraserOn,color);
             }else if(adress == "shape"){
                 std::vector<ci::vec3> points;
@@ -92,10 +78,7 @@ void NetworkHelper::update(){
                onReceiveShapes.emit(points[0],points[1],shape,color);
             }
         }
-        
-        
     }
-
 }
 
 
@@ -110,40 +93,30 @@ int const NetworkHelper::getGroupId(){
 
 
 std::string NetworkHelper::extractLastIpNr(std::string& fullIp){
-
     std::vector<std::string> hostSplit = ci::split(fullIp, ".");
     return hostSplit.back();
-
 }
 
 
 
 void NetworkHelper::setupOSCSender(){
-    
     mOwnIpAdress = System::getIpAddress();
     std::vector<std::string> hostSplit = ci::split(mOwnIpAdress, ".");
     std::vector<std::string> subnetSplit = ci::split(System::getSubnetMask(), ".");
-    
     mLastIpNr =  hostSplit.back(); // getLastNummerIp(System::getIpAddress());
-    
     std::string broadcast = "";
-    
     for(int i=0; i < subnetSplit.size();++i){
         broadcast += subnetSplit[i] == "0" ? "255" : hostSplit[i];
         if(i < subnetSplit.size()-1) broadcast += ".";
     }
-    
     int port = 3000;
-    
     mSender.setup( broadcast, port, true );
     lastBroadcast = app::getElapsedSeconds();
-    
 }
 
 
 
 void NetworkHelper::sendAlive(){
-    
     osc::Message message;
     message.setAddress("alive");
     message.addIntArg(groupId);
@@ -163,20 +136,18 @@ void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn,st
         message.addFloatArg(p.y);
         message.addFloatArg(p.z);
     }
-    
     mSender.sendMessage(message);
     lastBroadcast = app::getElapsedSeconds();
-
-
 }
 
 void NetworkHelper::sendTwoPointShape(vec3& point1,vec3& point2, std::string shape,std::string color){
     osc::Message message;
     message.setAddress("shape");
-    message.addIntArg(groupId);
     
+    message.addIntArg(groupId);
     message.addStringArg(shape);
      message.addStringArg(color);
+    
     message.addFloatArg(point1.x);
     message.addFloatArg(point1.y);
     message.addFloatArg(point1.z);
