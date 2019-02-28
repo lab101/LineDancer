@@ -39,7 +39,7 @@ void BaseButton::calculateBoundingBox(){
     vec2 size = mTexture->getSize();
     mBoundingScaled = Rectf(vec2(size.x * -displayScale, size.y * -displayScale), vec2(size.x * displayScale, size.y * displayScale) );
     mBoundingScaled.scaleCentered(displayScale);
-
+    
 }
 
 
@@ -57,9 +57,9 @@ void BaseButton::addChildNode(BaseButton* childNode){
 void BaseButton::toggleChildrenOnOff(){
     for (auto btn : getChildren()){
         btn->toggleActiveInactive();
-         btn->toggleChildrenOnOff();
+        btn->toggleChildrenOnOff();
     }
-   
+    
 }
 
 
@@ -85,24 +85,24 @@ void BaseButton::draw(){
         ci::gl::drawStrokedCircle(vec2(0,0), mRadius + std::abs(std::sin(app::getElapsedSeconds()))*2 ,4, 60);
     }else{
         gl::color(mColor);
-         ci::gl::drawStrokedCircle(vec2(0,0), mRadius,3, 60);
+        ci::gl::drawStrokedCircle(vec2(0,0), mRadius,3, 60);
     }
     
-   
+    
     
     
     gl::color(1,1,1);
     gl::draw(mTexture,mBoundingScaled);
-
+    
     
     // DRAW children last
-   
+    
     for(BaseButton* button : mChildren){
         button->draw();
     }
     gl::popMatrices();
     
- }
+}
 
 void BaseButton::selectBtn(){
     isSelected = true;
@@ -124,13 +124,13 @@ bool BaseButton::checkTouchDown(ci::vec2 point){
     if(!isActive)return false;
     
     for(auto button : mChildren){
-         bool isHit = button->checkTouchDown(point - mPosition);
+        bool isHit = button->checkTouchDown(point - mPosition);
         if(isHit){
-             isPressed = true;
+            isPressed = true;
             return true;
         }
     }
-     isPressed = glm::distance(point, mPosition) < mRadius;
+    isPressed = glm::distance(point, mPosition) < mRadius;
     return isPressed;
 }
 

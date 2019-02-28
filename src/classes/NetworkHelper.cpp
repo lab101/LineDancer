@@ -52,13 +52,12 @@ void NetworkHelper::update(){
         
         // discard packages from other groups
         if(incomingGroupId == groupId){
-
+            
             if(mAliveIps.find(remoteLastNr) == mAliveIps.end()){
                 onNewConnection.emit(remoteLastNr);
             }
             mAliveIps[remoteLastNr] = ci::app::getElapsedSeconds();
             onAlivePing.emit(remoteLastNr);
-
             if(adress == "points"){
                 int totals = message.getNumArgs() ;
                 bool isEraserOn = message.getArgAsInt32(1);
@@ -74,8 +73,8 @@ void NetworkHelper::update(){
                     points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
                 }
                 std::string shape = message.getArgAsString(1);
-                 std::string color = message.getArgAsString(2);
-               onReceiveShapes.emit(points[0],points[1],shape,color);
+                std::string color = message.getArgAsString(2);
+                onReceiveShapes.emit(points[0],points[1],shape,color);
             }
         }
     }
@@ -123,8 +122,6 @@ void NetworkHelper::sendAlive(){
     mSender.sendMessage(message);
 }
 
-
-
 void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn,std::string color){
     osc::Message message;
     message.setAddress("points");
@@ -146,7 +143,7 @@ void NetworkHelper::sendTwoPointShape(vec3& point1,vec3& point2, std::string sha
     
     message.addIntArg(groupId);
     message.addStringArg(shape);
-     message.addStringArg(color);
+    message.addStringArg(color);
     
     message.addFloatArg(point1.x);
     message.addFloatArg(point1.y);

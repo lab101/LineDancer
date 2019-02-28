@@ -29,12 +29,9 @@ void Composition::setup(ivec2 size){
     catch( gl::GlslProgCompileExc ex ) {
         CI_LOG_E("error loading mask shader");
         CI_LOG_E(ex.what());
-        
         exit(-1);
     }
 
-    
-    
     mSize        = size;
     setFbo(mActiveFbo,size, 1);
     
@@ -50,7 +47,7 @@ ci::vec3 Composition::getNormalisedPositionAtIndex(int index){
 ci::vec3 Composition::getNormalisedPositionAtIndex(ci::Path2d& points, ci::Path2d depths,int index){
     ci::vec2 p = points.getPoints()[index] / mSize;
     ci::vec2 d = depths.getPoints()[index];
-
+    
     return ci::vec3(p.x,p.y,d.y);
     
 }
@@ -72,11 +69,11 @@ void Composition::clearScene(bool clearOnionLayer){
         auto source = mActiveFbo->getColorTexture()->createSource();
         mLastDrawingTexture = ci::gl::Texture::create(source);
     }
-
+    
 }
 
 void Composition::newComposition(){
-
+    
     clearScene();
     
     if(mActiveFbo){
@@ -109,7 +106,7 @@ void Composition::newLine(ci::vec3 pressurePoint){
 
 
 void Composition::endLine(){
-
+    
     if(GS()->hasGifOutput.value()){
         saveLineSegmentForGif();
     }
@@ -125,19 +122,19 @@ void Composition::lineTo(ci::vec3 pressurePoint,ci::ColorA color){
 }
 
 void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color ){
-
-//------------------------------------------------------------------------FBO
+    
+    //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
     gl::setMatricesWindow( mActiveFbo->getSize() );
     
     gl::ScopedBlendPremult scpBlend;
-//------------------------------------------------------------------------DRAW
+    //------------------------------------------------------------------------DRAW
     gl::color(color);
     ci::gl::drawSolidCircle(vec2(point1.x,point1.y), glm::distance(point1, point2));
-
+    
     gl::setMatricesWindow(ci::app::getWindowSize());//------------------------FBO END
-//------------------------------------------------------------------------DRAW STROKE
+    //------------------------------------------------------------------------DRAW STROKE
     std::vector<vec3> circumference;
     const int brushSize = 15;
     for(float i = 0; i< 362.0f ; i+=1){
@@ -152,7 +149,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
         calculatePath(mPath,mDepths,false,color);
     }
     endLine();
-
+    
     //-----------------------------------------------------------------------OSC
     if(!recieved){
         std::vector<vec3> pointsToDrawNormalised;
@@ -203,18 +200,18 @@ void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved, ci::
 }
 
 void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color){
-//------------------------------------------------------------------------FBO
+    //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
     gl::setMatricesWindow( mActiveFbo->getSize() );
     gl::ScopedBlendPremult scpBlend;
-//------------------------------------------------------------------------DRAW
+    //------------------------------------------------------------------------DRAW
     gl::color(color);
     Rectf rect( point1.x, point1.y, point2.x , point2.y);
     ci::gl::drawSolidRect(rect);
-
+    
     gl::setMatricesWindow( ci::app::getWindowSize() );//----------------------FBO END
-//------------------------------------------------------------------------DRAW STROKE
+    //------------------------------------------------------------------------DRAW STROKE
     const int brushSize = 10;
     point1.z = brushSize;
     newLine(point1);
@@ -260,11 +257,11 @@ void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
     format.setColorTextureFormat( gl::Texture2d::Format().internalFormat( GL_RGBA32F ) );
     
     gl::enableAlphaBlending();
-   // format.setSamples( 4 );
+    // format.setSamples( 4 );
     fbo = gl::Fbo::create(size.x, size.y ,format );
     
     clearFbo();
-
+    
 }
 
 
@@ -272,52 +269,52 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points,ci::ColorA color){
     
     
     if(points.size() > 0){
-
+        
         gl::ScopedFramebuffer fbScp( mActiveFbo );
         gl::ScopedViewport fbVP (mActiveFbo->getSize());
         gl::setMatricesWindow( mActiveFbo->getSize() );
-
+        
         gl::ScopedBlendPremult scpBlend;
-   
+        
         
         gl::color(1, 1, 1, 1);
-
+        
         BrushManagerSingleton::Instance()->drawBrush(points, 0.98,color);
         
         gl::setMatricesWindow( ci::app::getWindowSize() );
     }
-
+    
 }
 
 void Composition::drawFadeOut(){
     
     
-
-        gl::ScopedFramebuffer fbScp( mActiveFbo );
-        gl::ScopedViewport fbVP (mActiveFbo->getSize());
-        gl::setMatricesWindow( mActiveFbo->getSize() );
-        
     
-        // Enable pre-multiplied alpha blending.
-        //  gl::ScopedBlendPremult scpBlend;
-
-        ci::ColorA fade = GS()->fboBackground;
+    gl::ScopedFramebuffer fbScp( mActiveFbo );
+    gl::ScopedViewport fbVP (mActiveFbo->getSize());
+    gl::setMatricesWindow( mActiveFbo->getSize() );
+    
+    
+    // Enable pre-multiplied alpha blending.
+    //  gl::ScopedBlendPremult scpBlend;
+    
+    ci::ColorA fade = GS()->fboBackground;
     fade.a = GS()->fadeoutFactor;
-        gl::color(fade);
-        ci::gl::drawSolidRect(Rectf(0,0, mActiveFbo->getSize().x, mActiveFbo->getSize().y));
-        
-        gl::setMatricesWindow( ci::app::getWindowSize() );
+    gl::color(fade);
+    ci::gl::drawSolidRect(Rectf(0,0, mActiveFbo->getSize().x, mActiveFbo->getSize().y));
+    
+    gl::setMatricesWindow( ci::app::getWindowSize() );
     
     
 }
 
 void Composition::emitShape(ci::vec3 point1 , ci::vec3 point2){
-  
+    
 }
 
 
 void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitTrueOrFalse, ci::ColorA color){
-
+    
     float length = path.calcLength();
     if(length <= minDistance) return;
     
@@ -325,7 +322,7 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitT
     
     pointVec pointsToDraw;
     pointVec pointsToDrawNormalised;
-
+    
     while(newDrawPosition + minDistance < length){
         
         float newTime = path.calcTimeForDistance(newDrawPosition);
@@ -334,7 +331,7 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitT
         vec3 newPoint(path.getPosition(newTime),depths.getPosition(newTime).y);
         
         pointsToDraw.push_back(newPoint);
-
+        
         minDistance = fmax(.8f,(newPoint.z * .17));
         
         lastDrawDistance = newDrawPosition;
@@ -346,12 +343,12 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitT
         
         pointsToDrawNormalised.push_back(newPoint);
         strokes.back().push_back(newPoint);
-
+        
     }
     
     if(pointsToDraw.size() > 0 ){
         // emmit to other listner in this case network
-       if(emmitTrueOrFalse) onNewPoints.emit(pointsToDrawNormalised);
+        if(emmitTrueOrFalse) onNewPoints.emit(pointsToDrawNormalised);
         // draw the new points into the fbo.
         drawInFbo(pointsToDraw,color);
     }
@@ -360,28 +357,28 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitT
 
 
 void Composition::draw(){
-
-   
+    
+    
     gl::color(1, 1, 1, 1);
-   
+    
     ci::gl::enableAlphaBlending();
-
+    
     ci::gl::pushMatrices();
     
-        gl::ScopedGlslProg glslProg( mOnionShader );
-        mOnionShader->uniform( "uTex0", 0 );
-        mOnionShader->uniform( "uTex1", 1 );
-
-        mActiveFbo->getColorTexture()->bind(0);
-        mLastDrawingTexture->bind(1);
-
-        gl::drawSolidRect(ci::Rectf(0,0,mActiveFbo->getWidth(),mActiveFbo->getHeight()));
-  
+    gl::ScopedGlslProg glslProg( mOnionShader );
+    mOnionShader->uniform( "uTex0", 0 );
+    mOnionShader->uniform( "uTex1", 1 );
+    
+    mActiveFbo->getColorTexture()->bind(0);
+    mLastDrawingTexture->bind(1);
+    
+    gl::drawSolidRect(ci::Rectf(0,0,mActiveFbo->getWidth(),mActiveFbo->getHeight()));
+    
     // for debugging only
-//    ci::gl::draw(mActiveFbo->getColorTexture());
+    //    ci::gl::draw(mActiveFbo->getColorTexture());
     ci::gl::popMatrices();
-
-
+    
+    
 }
 
 
@@ -405,7 +402,7 @@ void Composition::writeDataFile(){
     }catch(...){
         CI_LOG_E( "couldn't write to path: " + dataFilePath);
     }
-
+    
 }
 
 
@@ -439,7 +436,7 @@ void Composition::finished(){
     writeDataFile();
     
     std::string path = mOutputFolder + "/__" +  mCompositionId + "composition.gif";
-
+    
     std::vector<std::string> layerImages;
     
     if(ci::fs::exists(mOutputFolder)){
@@ -448,7 +445,7 @@ void Composition::finished(){
                 if( is_directory( *it )){
                     std::string layerName  = it->path().filename().string();
                     std::vector<std::string> stepImages;
-
+                    
                     // found a layer folder now read the files;
                     for( fs::directory_iterator it2( it->path()); it2 != fs::directory_iterator(); ++it2 ){
                         {
@@ -469,7 +466,7 @@ void Composition::finished(){
                     }
                     layerImages.push_back(stepImages.back());
                     std::cout << "---- end ---" << std::endl;
-
+                    
                 }
             }
         }
@@ -477,7 +474,7 @@ void Composition::finished(){
     // only write a layered final if user has been using layers
     if(layerImages.size() > 1){
         std::sort (layerImages.begin(), layerImages.end());
-
+        
         framesToGif(layerImages, mOutputFolder + "/_" + mCompositionId + "_final.gif");
     }
     
@@ -503,7 +500,7 @@ void Composition::saveLineSegmentForGif(){
     std::string path = mOutputFolder + "/layer_" + getStringWithLeadingZero(mImageLayerId, 5)+ "/" + getStringWithLeadingZero(mStepId, 5) + ".gif";
     
     writeGifStep(path);
-
+    
 }
 
 void Composition::saveLayer(){
@@ -516,18 +513,18 @@ void Composition::saveLayer(){
 void Composition::writeGifStep(std::string fileName){
     
     auto source = mActiveFbo->getColorTexture()->createSource();
-
+    
     std::thread threadObj([=]{
-     
-            try{
-                writeImage(fileName, source);
-                mGifInputFiles.push_back(fileName);
-            }catch(...){
-                CI_LOG_E("error writing GIF image file: " + fileName);
-            }
-       
+        
+        try{
+            writeImage(fileName, source);
+            mGifInputFiles.push_back(fileName);
+        }catch(...){
+            CI_LOG_E("error writing GIF image file: " + fileName);
+        }
+        
     });
-
+    
     threadObj.detach();
 }
 

@@ -53,11 +53,11 @@ class LineDancer : public App {
     Menu menu;
     PlayerLogo mOwnLogo;
     std::map<std::string,PlayerLogo> mConnections;
-
+    
     std::shared_ptr<Composition>    mActiveComposition;
     
     ci::Anim<int> showGifSavedTimer;
-
+    
     ci::mat4 screenMatrix;
     ci::vec3 localCoordinate;
     ci::vec2 zoomAnchor;
@@ -70,12 +70,12 @@ class LineDancer : public App {
     
 public:
     void setup() override;
-
+    
     void mouseDown( MouseEvent event ) override;
     void mouseDrag( MouseEvent event ) override;
     void mouseUp( MouseEvent event ) override;
     void mouseMove( MouseEvent event ) override;
-
+    
     
     void penDown(vec3 point,std::shared_ptr<Composition>& composition);
     void penMove(vec3 point,std::shared_ptr<Composition>& composition);
@@ -114,7 +114,7 @@ void LineDancer::toggleCursor(){
 
 void LineDancer::setup()
 {
-   
+    
     setFullScreen(true);
     setWindowSize(1280, 980);
     
@@ -125,15 +125,15 @@ void LineDancer::setup()
     ci::log::makeLogger<NotificationLogger>();
     
     CI_LOG_I("START application");
-
     
-   // setWindowSize(1600, 800);
-
+    
+    // setWindowSize(1600, 800);
+    
     CI_LOG_I("START ofxTablet");
     ofxTablet::start();
     ofxTablet::onData.connect(bind(&LineDancer::onWacomData,this,std::placeholders::_1));
     CI_LOG_I("finished ofxTablet");
-
+    
     
     menu.setup();
     menu.onNewCommand.connect([=](std::string command){
@@ -161,7 +161,7 @@ void LineDancer::setup()
         
     });
     
-
+    
     
     menu.onBrushSizeChanged.connect([&](float brushScale){
         BrushManagerSingleton::Instance()->brushScale = 120.0f * brushScale;
@@ -170,7 +170,7 @@ void LineDancer::setup()
     
     
     CI_LOG_I("finished menu setup");
-
+    
     
     isPenDown =         false;
     isDrawing =         false;
@@ -184,20 +184,20 @@ void LineDancer::setup()
     lastUpdateTime = ci::app::getElapsedSeconds();
     
     mSettingController.setup();
-
+    
     
     CI_LOG_I("SETUP brush");
     BrushManagerSingleton::Instance()->setup();
     
-
+    
     CI_LOG_I("SETUP composition with FBO");
     setupComposition(mActiveComposition);
     
-
+    
     BrushManagerSingleton::Instance()->brushScale = 80.0f * menu.brushScale;
     BrushManagerSingleton::Instance()->mActiveColor = ColorA(0,0,0,1);
     
-
+    
     if(mNetworkHelper.setup()){
         mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points, bool isEraserOn, std::string color){
             BrushManagerSingleton::Instance()->isEraserOn = isEraserOn;
@@ -210,27 +210,27 @@ void LineDancer::setup()
         });
         
         mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape, std::string color){
-           
+            
             point1.x *= mActiveComposition->mSize.x;
             point1.y *= mActiveComposition->mSize.y;
             
             point2.x *= mActiveComposition->mSize.x;
             point2.y *= mActiveComposition->mSize.y;
-    
+            
             if(shape == "RECT"){
                 mActiveComposition->drawRectangle(point1, point2,true, hexStringToColor(color));
             }
-           else if(shape == "CIRCLE"){
+            else if(shape == "CIRCLE"){
                 mActiveComposition->drawCircle(point1, point2,true,hexStringToColor(color));
             }
-           else if(shape == "LINE"){
+            else if(shape == "LINE"){
                 mActiveComposition->drawLine(point1, point2,true,hexStringToColor(color));
             }
         });
         
         
         mNetworkHelper.onNewConnection.connect([=](std::string& remoteIp){
-        
+            
             PlayerLogo newClient;
             newClient.setup(true,remoteIp ,14);
             newClient.setPosition(vec2( 30,100 + (mConnections.size() * 45)));
@@ -243,7 +243,7 @@ void LineDancer::setup()
             mConnections[remoteIp].alive();
         });
     }
-
+    
     mOwnLogo.setup(false, ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr() , 20);
     mOwnLogo.setPosition(vec2(30,52));
     
@@ -260,7 +260,7 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
     
     composition = make_shared<Composition>();
     composition->setup(GS()->compositionSize);
-
+    
     // when the new points with correct spacing are calculated we send them to the other
     // clients we don't send rawpoints.
     composition->onNewPoints.connect([=] (pointVec p){
@@ -281,12 +281,12 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
 
 
 void LineDancer::onWacomData(TabletData& data){
-//    std::cout << " --- " << std::endl;
-//    std::cout << data.pressure << std::endl;
-//    std::cout << data.pointerType << std::endl;
-//    std::cout << data.buttonMask << std::endl;
-
-   
+    //    std::cout << " --- " << std::endl;
+    //    std::cout << data.pressure << std::endl;
+    //    std::cout << data.pointerType << std::endl;
+    //    std::cout << data.buttonMask << std::endl;
+    
+    
     
     lastDataPoint = data;
     
@@ -336,33 +336,33 @@ void LineDancer::onWacomData(TabletData& data){
     if((isDrawing || isMovingPaper) && !isMenuHit ){
         penMove(localCoordinate,mActiveComposition);
     }
-   
+    
 }
 
 
 
 
 void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
-
+    
     if(isMovingPaper)
     {
         vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
         penMoveStart = p2;
-  
+        
     }else{
-    if(!menu.checkTouchUp()){
-    firstPoint = vec3(point.x,point.y,1.0f);
-        currentPoint =vec3(point.x,point.y,1.0f);
-        isDrawing=true;
-        composition->newLine(point);
-    }
+        if(!menu.checkTouchUp()){
+            firstPoint = vec3(point.x,point.y,1.0f);
+            currentPoint =vec3(point.x,point.y,1.0f);
+            isDrawing=true;
+            composition->newLine(point);
+        }
     }
 }
 
 
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
-   
-   
+    
+    
     
     if(isMovingPaper){
         vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
@@ -372,40 +372,40 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
         
     }else{
         
-    if(!menu.checkTouchUp()){
-        switch (currentState) {
-            case BRUSH:{
-                composition->lineTo(point, GS()->brushColor);
-                break;
+        if(!menu.checkTouchUp()){
+            switch (currentState) {
+                case BRUSH:{
+                    composition->lineTo(point, GS()->brushColor);
+                    break;
+                }
+                case CIRCLE:{
+                    currentPoint = vec3(point.x,point.y,1.0f);
+                    break;
+                }
+                    
+                case RECT:{
+                    currentPoint = vec3(point.x,point.y,1.0f);
+                    
+                    break;
+                }
+                case LINE:{
+                    currentPoint = vec3(point.x,point.y,1.0f);
+                    break;
+                }
+                default:{
+                    //
+                    break;
+                }
             }
-            case CIRCLE:{
-                 currentPoint = vec3(point.x,point.y,1.0f);
-                break;
-            }
-                
-            case RECT:{
-               currentPoint = vec3(point.x,point.y,1.0f);
-                
-                break;
-            }
-            case LINE:{
-               currentPoint = vec3(point.x,point.y,1.0f);
-                break;
-            }
-            default:{
-                //
-                break;
-            }
+            
         }
-        
-    }
     }
 }
 
 
 void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
     if(isMovingPaper) return;
-   
+    
     switch (currentState) {
         case BRUSH:{
             firstPoint = vec3(0,0,0);
@@ -413,13 +413,13 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
             break;
         }
         case CIRCLE:{
-             composition->drawCircle(firstPoint ,currentPoint,false,GS()->brushColor);
+            composition->drawCircle(firstPoint ,currentPoint,false,GS()->brushColor);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
             break;
         }
         case RECT:{
-          composition->drawRectangle(firstPoint ,currentPoint,false,GS()->brushColor);
+            composition->drawRectangle(firstPoint ,currentPoint,false,GS()->brushColor);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
             break;
@@ -428,12 +428,12 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
             composition->drawLine(firstPoint ,currentPoint,false,GS()->brushColor);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
-           
+            
             break;
         }
             
         default:{
-           currentState = BRUSH;
+            currentState = BRUSH;
             break;
         }
     }
@@ -459,7 +459,7 @@ void LineDancer::keyDown( KeyEvent event ){
         penMoveStart = vec2(lastWacomPoint.x,lastWacomPoint.y);
     }
     else if(event.getCode() == event.KEY_v){
-
+        
         zoomDirection = 1;
         calculateAnchor = true;
     }
@@ -482,7 +482,7 @@ void LineDancer::keyDown( KeyEvent event ){
         
         zoomAnchor = vec2(localPointCapped.x / size.x , localPointCapped.y / size.y);
     }
-
+    
 }
 
 void LineDancer::keyUp(KeyEvent event ){
@@ -517,7 +517,7 @@ void LineDancer::keyUp(KeyEvent event ){
     else if(event.getCode() == event.KEY_d){
         GS()->debugMode.value() = !GS()->debugMode.value();
     }
-
+    
 }
 
 
@@ -562,7 +562,7 @@ void LineDancer::mouseMove( MouseEvent event )
 
 void LineDancer::update()
 {
-   
+    
     const float div = ci::app::getElapsedSeconds() - lastUpdateTime;
     lastUpdateTime = ci::app::getElapsedSeconds();
     
@@ -576,13 +576,13 @@ void LineDancer::update()
         GS()->zoomLevel.value() += zoomDirection * div * 0.7;
         if(GS()->zoomLevel.value() < 0.1) GS()->zoomLevel.value() = 0.1;
     }
-
+    
     menu.update();
     mNetworkHelper.update();
-
+    
     
     if(GS()->doFadeOut.value()){
-     
+        
         mActiveComposition->drawFadeOut();
         GS()->fadeoutFactor = GS()->fadeoutFactorDrawing.value() / 10000;
     }
@@ -601,7 +601,7 @@ void LineDancer::drawGrid(){
     int const stepSize = 80;
     ci::ivec2 size = getWindowSize();
     ci::gl::color(0.8, .8f, .6f, 0.6);
-
+    
     for(int x =stepSize * 0.5; x < size.x; x += stepSize){
         for(int y = stepSize*0.5; y < size.y; y += stepSize){
             ci::gl::drawSolidCircle(vec2(x,y),2);
@@ -612,19 +612,19 @@ void LineDancer::drawGrid(){
 
 void LineDancer::draw()
 {
-   
+    
     gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,1.0f));
-  
+    
     ivec2 size = mActiveComposition->getTexture()->getSize();
     
     // Drawing "the paper" at zoomlevel with offset.
     ci::gl::pushMatrices();
-
-        ci::gl::translate(zoomCenterPoint.x, zoomCenterPoint.y, 0);
     
-        ci::gl::scale(GS()->zoomLevel.value(), GS()->zoomLevel.value());
-        ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
-        mActiveComposition->draw();
+    ci::gl::translate(zoomCenterPoint.x, zoomCenterPoint.y, 0);
+    
+    ci::gl::scale(GS()->zoomLevel.value(), GS()->zoomLevel.value());
+    ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
+    mActiveComposition->draw();
     
     switch (currentState) {
         case BRUSH:{
@@ -658,13 +658,13 @@ void LineDancer::draw()
         }
     }
     
-        // get the screenmatrix when all the transformations on the "paper" (fbo) or done.
-        screenMatrix = ci::gl::getModelViewProjection();
-   
-
+    // get the screenmatrix when all the transformations on the "paper" (fbo) or done.
+    screenMatrix = ci::gl::getModelViewProjection();
+    
+    
     ci::gl::popMatrices();
-
-   
+    
+    
     // draw the screen pointer.
     if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0.0, 0.0);
     else ci::gl::color(0, 0.3, 1.0);
@@ -675,7 +675,7 @@ void LineDancer::draw()
     drawGrid();
     menu.draw();
     drawTextMessages();
-
+    
     mOwnLogo.draw();
     // drawing connected clients
     for(auto& l : mConnections){
@@ -686,7 +686,7 @@ void LineDancer::draw()
         ci::gl::enableAlphaBlending();
         NotificationManagerSingleton::Instance()->draw();
         mSettingController.draw();
-
+        
     }
     
     
@@ -719,9 +719,9 @@ void LineDancer::drawTextMessages(){
         
         string s = "GIF SAVED!";
         float stringWidth = GS()->mLargeFont->measureString( s ).x * 0.25f;
-
+        
         GS()->mLargeFont->drawString( s, vec2( getWindowCenter().x - stringWidth, getWindowCenter().y  ),
-                          gl::TextureFont::DrawOptions().scale( 0.5f ).pixelSnap( true ) );
+                                     gl::TextureFont::DrawOptions().scale( 0.5f ).pixelSnap( true ) );
     }
 }
 
@@ -729,4 +729,4 @@ void LineDancer::drawTextMessages(){
 
 
 CINDER_APP(LineDancer, RendererGl(RendererGl::Options().stencil().msaa(4)),
-         [](App::Settings *settings) { settings->setHighDensityDisplayEnabled(); })
+           [](App::Settings *settings) { settings->setHighDensityDisplayEnabled(); })

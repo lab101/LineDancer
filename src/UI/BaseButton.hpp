@@ -15,7 +15,7 @@ class BaseButton{
     
     std::string mArgument;
     ci::gl::TextureRef mTexture;
-
+    
     
     bool isHover;
     ci::Rectf mBoundingScaled;
@@ -23,7 +23,7 @@ class BaseButton{
     
     void calculateBoundingBox();
     
-   
+    
     
 protected:
     ci::Color mColor;
@@ -32,17 +32,17 @@ protected:
     bool isActive;
     bool isSelected;
     ci::vec2 mPosition;
-
-
+    
+    
     
 public:
     
     float mRadius;
-
-
+    
+    
     BaseButton();
     ~BaseButton(){};
-
+    
     virtual void draw();
     void setTexture(ci::gl::TextureRef texture);
     
@@ -71,7 +71,7 @@ public:
     void setPosition(ci::vec2 position);
     void setColor(ci::Color color);
     
-
+    
 };
 
 
