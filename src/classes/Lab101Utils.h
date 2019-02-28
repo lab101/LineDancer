@@ -22,8 +22,8 @@
 
 inline std::string getStringWithLeadingZero(int number,int minWidth){
    
-   std::string txt = ci::toString(number);
-  return std::string(minWidth - txt.length(), '0') + txt;
+   //std::string txt = ci::toString(number);
+  //return std::string(minWidth - txt.length(), '0') + txt;
 
     
 }
@@ -135,6 +135,45 @@ inline float ofMap(float value, float inputMin, float inputMax, float outputMin,
 		return outVal;
 	}
 
+}
+
+inline int HexadecimalToDecimal(std::string hex) { //https://www.programmingalgorithms.com/algorithm/hexadecimal-to-rgb?lang=C%2B%2B
+    int hexLength = hex.length();
+    double dec = 0;
+    std::string hexChars[6] =  {"A","B","C","D","E","F"};
+    
+    for (int i = 0; i < hexLength; ++i)
+    {
+        
+        float b ;
+        for(int j = 0;j<6;j++){
+            if(std::string(1,hex[i]) == hexChars[j]){
+                b = j+10;
+            }else{
+                b = hex[i] - 0.0f; // to int
+            }
+        };
+        
+        if (b >= 48 && b <= 57)
+            b -= 48;
+        else if (b >= 65 && b <= 70)
+            b -= 55;
+        dec += b * std::pow(16, ((hexLength - i) - 1));
+    }
+    return (int)dec;
+}
+
+inline ci::Color hexStringToColor(std::string hex){//https://www.programmingalgorithms.com/algorithm/hexadecimal-to-rgb?lang=C%2B%2B
+    if (hex[0] == '#')
+        hex = hex.erase(0, 1);
+    
+    unsigned char r = (unsigned char)HexadecimalToDecimal(hex.substr(0, 2));
+    unsigned char g = (unsigned char)HexadecimalToDecimal(hex.substr(2, 2));
+    unsigned char b = (unsigned char)HexadecimalToDecimal(hex.substr(4, 2));
+    float R = r/255.0f;
+    float G = g/255.0f;
+    float B = b/255.0f;
+    return ci::Color(R, G, B);
 }
 
 

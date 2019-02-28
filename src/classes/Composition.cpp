@@ -271,8 +271,13 @@ void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
 }
 
 
-void Composition::drawInFbo(std::vector<ci::vec3>& points){
+void Composition::drawInFbo(std::vector<ci::vec3>& points,std::string _color){
     
+    ci::Color color = hexStringToColor(_color);
+    if(_color != "0"){
+    color = hexStringToColor(_color);
+    }
+   
     
     if(points.size() > 0){
 
@@ -283,7 +288,7 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
         gl::ScopedBlendPremult scpBlend;
    
         
-        gl::color(1, 1, 1, 1);
+        gl::color(color);
 
         BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
         
@@ -356,7 +361,7 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitT
         // emmit to other listner in this case network
        if(emmitTrueOrFalse) onNewPoints.emit(pointsToDrawNormalised);
         // draw the new points into the fbo.
-        drawInFbo(pointsToDraw);
+        drawInFbo(pointsToDraw ,"#112F41");
     }
 }
 
@@ -540,7 +545,6 @@ ci::gl::TextureRef Composition::getTexture(){
 }
 
 bool Composition::isInsideComp(glm::vec3 point){
-    bool test =0 < point.x && point.x  < mSize.x;
     if((0 < point.x && point.x  < mSize.x) && (0 < point.y && point.y  < mSize.y)) return true;
     return false;
 }

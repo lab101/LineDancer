@@ -73,7 +73,7 @@ public:
     void setNewSize(ci::ivec2 size,float windowScale);
     void setFbo(ci::gl::FboRef& fbo, ci::ivec2 size,float windowScale);
     
-    void drawInFbo(std::vector<ci::vec3>& points);
+    void drawInFbo(std::vector<ci::vec3>& points, std::string color);
     void calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitTrueOrFalse);
     void draw();
     

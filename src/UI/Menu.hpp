@@ -43,10 +43,6 @@ public:
     void setBrushScale(float newScale);
     void ConnectEvents(BaseButton* button);
    
-    
-    
-    ci::Color hexStringToColor(std::string hex);
-    int HexadecimalToDecimal(std::string hex);
 };
 
 
