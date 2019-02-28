@@ -25,7 +25,7 @@ inline std::string getStringWithLeadingZero(int number,int minWidth){
    //std::string txt = ci::toString(number);
   //return std::string(minWidth - txt.length(), '0') + txt;
 
-    
+    return "3";
 }
 
 inline int getUnixTime(){

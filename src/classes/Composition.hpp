@@ -83,8 +83,8 @@ public:
     void endLine();
     
     void drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color);
-    void drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved);
-    void drawLine(ci::vec3 point1,ci::vec3 point2, bool recieved);
+    void drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color);
+    void drawLine(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color);
     void drawFadeOut();
     void emitShape(ci::vec3 point1, ci::vec3 point2);
     
