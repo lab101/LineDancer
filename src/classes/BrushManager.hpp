@@ -30,7 +30,7 @@ public:
     void setup();
     
 //    void generateBrush(float size,float softness);
-    void drawBrush(std::vector<ci::vec3>& points,float softness);
+    void drawBrush(std::vector<ci::vec3>& points,float softness,ci::ColorA color);
 };
 
 typedef Singleton<BrushManager> BrushManagerSingleton;

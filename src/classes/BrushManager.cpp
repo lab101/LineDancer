@@ -40,13 +40,13 @@ void BrushManager::setup(){
 }
 
 
-void BrushManager::drawBrush(std::vector<vec3>& points,float softness){
+void BrushManager::drawBrush(std::vector<vec3>& points,float softness,ci::ColorA color){
 
     ci::gl::VertBatchRef mBatch = gl::VertBatch::create();
     
     for(vec3& p : points){
         mBatch->vertex( p );
-        mBatch->color(isEraserOn ? GS()->fboBackground  : GS()->brushColor );
+        mBatch->color(isEraserOn ? GS()->fboBackground  : color);
     }
     
     

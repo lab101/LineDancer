@@ -117,11 +117,11 @@ void Composition::endLine(){
 }
 
 
-void Composition::lineTo(ci::vec3 pressurePoint){
+void Composition::lineTo(ci::vec3 pressurePoint,ci::ColorA color){
     if(!isInsideComp(pressurePoint)) return;
     mPath.lineTo(vec2(pressurePoint.x,pressurePoint.y));
     mDepths.lineTo(vec2(pressurePoint.x,pressurePoint.z));
-    calculatePath(mPath,mDepths,true);
+    calculatePath(mPath,mDepths,true,color);
 }
 
 void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color ){
@@ -149,7 +149,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
     for(int j =1 ; j< circumference.size();j++){
         mPath.lineTo(vec2(circumference[j].x,circumference[j].y));
         mDepths.lineTo(vec2(circumference[j].x,brushSize));
-        calculatePath(mPath,mDepths,false);
+        calculatePath(mPath,mDepths,false,color);
     }
     endLine();
 
@@ -179,7 +179,7 @@ void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved, ci::
     newLine(point1);
     mPath.lineTo(vec2(point2.x,point2.y));
     mDepths.lineTo(vec2(point2.x,brushSize));
-    calculatePath(mPath,mDepths,false);
+    calculatePath(mPath,mDepths,false,color);
     
     //-----------------------------------------------------------------------OSC
     if(!recieved){
@@ -220,16 +220,16 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, 
     newLine(point1);
     mPath.lineTo(vec2(point2.x,point1.y));
     mDepths.lineTo(vec2(point2.x,brushSize));
-    calculatePath(mPath,mDepths,false);
+    calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point2.x,point2.y));
     mDepths.lineTo(vec2(point2.x,brushSize));
-    calculatePath(mPath,mDepths,false);
+    calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point1.x,point2.y));
     mDepths.lineTo(vec2(point1.x,brushSize));
-    calculatePath(mPath,mDepths,false);
+    calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point1.x,point1.y));
     mDepths.lineTo(vec2(point1.x,brushSize));
-    calculatePath(mPath,mDepths,false);
+    calculatePath(mPath,mDepths,false,color);
     endLine();
     //-----------------------------------------------------------------------OSC
     if(!recieved){
@@ -268,7 +268,7 @@ void Composition::setFbo(ci::gl::FboRef& fbo,ci::ivec2 size,float windowScale){
 }
 
 
-void Composition::drawInFbo(std::vector<ci::vec3>& points){
+void Composition::drawInFbo(std::vector<ci::vec3>& points,ci::ColorA color){
     
     
     if(points.size() > 0){
@@ -282,7 +282,7 @@ void Composition::drawInFbo(std::vector<ci::vec3>& points){
         
         gl::color(1, 1, 1, 1);
 
-        BrushManagerSingleton::Instance()->drawBrush(points, 0.98);
+        BrushManagerSingleton::Instance()->drawBrush(points, 0.98,color);
         
         gl::setMatricesWindow( ci::app::getWindowSize() );
     }
@@ -316,7 +316,7 @@ void Composition::emitShape(ci::vec3 point1 , ci::vec3 point2){
 }
 
 
-void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitTrueOrFalse){
+void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitTrueOrFalse, ci::ColorA color){
 
     float length = path.calcLength();
     if(length <= minDistance) return;
@@ -353,7 +353,7 @@ void Composition::calculatePath(ci::Path2d& path,ci::Path2d& depths, bool emmitT
         // emmit to other listner in this case network
        if(emmitTrueOrFalse) onNewPoints.emit(pointsToDrawNormalised);
         // draw the new points into the fbo.
-        drawInFbo(pointsToDraw);
+        drawInFbo(pointsToDraw,color);
     }
 }
 

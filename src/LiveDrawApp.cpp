@@ -206,7 +206,7 @@ void LineDancer::setup()
                 p.x *= mActiveComposition->mSize.x;
                 p.y *= mActiveComposition->mSize.y;
             }
-            mActiveComposition->drawInFbo(points);
+            mActiveComposition->drawInFbo(points, hexStringToColor("#ff0000"));
         });
         
         mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape){
@@ -375,7 +375,7 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
     if(!menu.checkTouchUp()){
         switch (currentState) {
             case BRUSH:{
-                composition->lineTo(point);
+                composition->lineTo(point, GS()->brushColor);
                 break;
             }
             case CIRCLE:{
@@ -722,8 +722,6 @@ void LineDancer::drawTextMessages(){
 
         GS()->mLargeFont->drawString( s, vec2( getWindowCenter().x - stringWidth, getWindowCenter().y  ),
                           gl::TextureFont::DrawOptions().scale( 0.5f ).pixelSnap( true ) );
-
-
     }
 }
 
