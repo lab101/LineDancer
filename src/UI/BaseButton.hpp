@@ -19,7 +19,7 @@ class BaseButton{
     
     bool isHover;
     ci::Rectf mBoundingScaled;
-    bool isChildrenVisible;
+    
     
     void calculateBoundingBox();
     
@@ -29,6 +29,8 @@ protected:
     ci::Color mColor;
     std::vector<BaseButton*> mChildren;
     bool isPressed;
+    bool isActive;
+    bool isSelected;
     ci::vec2 mPosition;
 
 
@@ -61,10 +63,14 @@ public:
     void hideChildren();
     void showChildren();
     void toggleChildrenOnOff();
+    void toggleActiveInactive();
+    void selectBtn();
+    void unSelectBtn();
+    
     
     void setPosition(ci::vec2 position);
     void setColor(ci::Color color);
-
+    
 
 };
 

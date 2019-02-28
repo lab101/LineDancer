@@ -93,7 +93,6 @@ void Composition::newComposition(){
 
 
 void Composition::newLine(ci::vec3 pressurePoint){
-    
     mPath.clear();
     mDepths.clear();
     
@@ -119,12 +118,14 @@ void Composition::endLine(){
 
 
 void Composition::lineTo(ci::vec3 pressurePoint){
+    if(!isInsideComp(pressurePoint)) return;
     mPath.lineTo(vec2(pressurePoint.x,pressurePoint.y));
     mDepths.lineTo(vec2(pressurePoint.x,pressurePoint.z));
     calculatePath(mPath,mDepths,true);
 }
 
 void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved ){
+
 //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
@@ -172,6 +173,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved ){
     }
 }
 void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved){
+    
     const int brushSize = 10;
     point1.z = brushSize;
     newLine(point1);
@@ -535,6 +537,12 @@ void Composition::writeGifStep(std::string fileName){
 
 ci::gl::TextureRef Composition::getTexture(){
     return mActiveFbo->getColorTexture();
+}
+
+bool Composition::isInsideComp(glm::vec3 point){
+    bool test =0 < point.x && point.x  < mSize.x;
+    if((0 < point.x && point.x  < mSize.x) && (0 < point.y && point.y  < mSize.y)) return true;
+    return false;
 }
 
 

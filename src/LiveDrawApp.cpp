@@ -37,6 +37,8 @@ class LineDancer : public App {
     bool   isCursorVisible;
     bool   isMovingPaper;
     
+    
+    
     float lastUpdateTime;
     
     vec2 penMoveStart;
@@ -330,11 +332,10 @@ void LineDancer::onWacomData(TabletData& data){
     
     
     // add data
-    if((isDrawing || isMovingPaper) && !isMenuHit){
+    if((isDrawing || isMovingPaper) && !isMenuHit ){
         penMove(localCoordinate,mActiveComposition);
     }
-    
-    
+   
 }
 
 
@@ -344,32 +345,32 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
 
     if(isMovingPaper)
     {
-       
         vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
         penMoveStart = p2;
-        return;
   
-    }
+    }else{
     if(!menu.checkTouchUp()){
     firstPoint = vec3(point.x,point.y,1.0f);
         currentPoint =vec3(point.x,point.y,1.0f);
         isDrawing=true;
         composition->newLine(point);
     }
-   
+    }
 }
 
 
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
    
+   
+    
     if(isMovingPaper){
         vec2 p2 = vec2(lastWacomPoint.x,lastWacomPoint.y);
         vec2 div =(penMoveStart - p2) ;
         zoomCenterPoint -=div;
         penMoveStart = p2;
         
-    }
-   
+    }else{
+        
     if(!menu.checkTouchUp()){
         switch (currentState) {
             case BRUSH:{
@@ -390,7 +391,6 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
                currentPoint = vec3(point.x,point.y,1.0f);
                 break;
             }
-                
             default:{
                 //
                 break;
@@ -398,7 +398,7 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
         }
         
     }
-
+    }
 }
 
 
@@ -415,15 +415,12 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
              composition->drawCircle(firstPoint ,currentPoint,false);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
-        
             break;
         }
-            
         case RECT:{
           composition->drawRectangle(firstPoint ,currentPoint,false);
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
-            
             break;
         }
         case LINE:{
@@ -439,7 +436,6 @@ void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
             break;
         }
     }
-    
     composition->endLine();
 }
 
@@ -449,7 +445,6 @@ void LineDancer::penHover(vec3 point,std::shared_ptr<Composition>& composition){
 }
 
 void LineDancer::keyDown( KeyEvent event ){
-    
     
     if (mSettingController.checkKeyDown(event))
     {
@@ -505,7 +500,6 @@ void LineDancer::keyUp(KeyEvent event ){
         mNetworkHelper.setNextGroup();
         std::string logoText =  ci::toString(mNetworkHelper.getGroupId()) + "|" + ci::toString(mNetworkHelper.getLastMyIpNr());
         mOwnLogo.setText(logoText);
-        
     }
     else if(event.getCode() == event.KEY_c){
         mActiveComposition->clearScene(true);
@@ -617,7 +611,7 @@ void LineDancer::drawGrid(){
 
 void LineDancer::draw()
 {
-
+   
     gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,1.0f));
   
     ivec2 size = mActiveComposition->getTexture()->getSize();

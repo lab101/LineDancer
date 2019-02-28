@@ -50,7 +50,15 @@ void Menu::setup(){
         btnColor->addChildNode(btnTemp);
         btnTemp->setPosition(ci::vec2(((-2*btnTemp->mRadius)-10)*(i+1),0));
         btnTemp->setArgument(color[i]);
+        
+        if(i == color.size()-1){
+            GS()->brushColor = hexStringToColor(color[i]);
+            btnTemp->selectBtn();
+        }
+       
     }
+   
+    
 
 //add shape buttons
     TextButton* btnShape = new TextButton(28, "SHAPES",&(GS()->mSmallFont));
@@ -83,6 +91,7 @@ void Menu::setup(){
     btnBrush->setPosition(ci::vec2(((-2*28)-10)*4,0));
     ci::gl::TextureRef textBrush = ci::gl::Texture::create(ci::loadImage(ci::app::loadResource("Brush.png")));
     btnBrush->setTexture(textBrush);
+    btnBrush->selectBtn();
     btnBrush->setArgument("BRUSH");
     
 //    BaseButton* btnPoly = new BaseButton();
@@ -99,11 +108,19 @@ void Menu::setup(){
     }
     for(auto btnColorChild : btnColor->getChildren()){
         btnColorChild->onPressed.connect([=]{
+            for(auto btnColorChild : btnColor->getChildren()){
+                btnColorChild->unSelectBtn();
+            }
+            btnColorChild->selectBtn();
             btnColor->toggleChildrenOnOff();
         });
     }
-    for(auto btnColorChild : btnShape->getChildren()){
-        btnColorChild->onPressed.connect([=]{
+    for(auto btnShapeChild : btnShape->getChildren()){
+        btnShapeChild->onPressed.connect([=]{
+            for(auto btnShapeChild : btnShape->getChildren()){
+                btnShapeChild->unSelectBtn();
+            }
+            btnShapeChild->selectBtn();
             btnShape->toggleChildrenOnOff();
         });
     }

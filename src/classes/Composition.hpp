@@ -97,7 +97,7 @@ public:
     void finished();
     void drawFadeout();
     
-    
+    bool isInsideComp(ci::vec3 point);
     
 };
 

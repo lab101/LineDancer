@@ -11,15 +11,15 @@
 using namespace ci;
 
 BaseButton::BaseButton(){
-    
+    isActive = true;
+    isSelected = false;
     mRadius  = 28;
-
+    
     isPressed = false;
     isHover = false;
     mColor = ci::Color(0,0,0);
     mArgument = "";
     
-    isChildrenVisible = false;
 }
 
 
@@ -49,37 +49,46 @@ void BaseButton::setColor(ci::Color color){
 
 
 void BaseButton::addChildNode(BaseButton* childNode){
+    childNode->toggleActiveInactive();
     mChildren.push_back(childNode);
 }
 
-void BaseButton::hideChildren(){
-    isChildrenVisible = false;
-}
-void BaseButton::showChildren(){
-   isChildrenVisible = true;
-}
 
 void BaseButton::toggleChildrenOnOff(){
-    isChildrenVisible = !isChildrenVisible;
+    for (auto btn : getChildren()){
+        btn->toggleActiveInactive();
+         btn->toggleChildrenOnOff();
+    }
+   
 }
 
 
+void BaseButton::toggleActiveInactive(){
+    isActive = !isActive;
+}
+
 void BaseButton::draw(){
+    if(!isActive)return;
     
     gl::pushMatrices();
     gl::translate(mPosition);
-    
-    
-   
     
     ci::gl::color(mColor);
     if(isPressed){
         ci::gl::drawSolidCircle(vec2(0,0), mRadius);
     }
     
-    gl::color(mColor);
     
-    ci::gl::drawStrokedCircle(vec2(0,0), mRadius,3, 60);
+    
+    if(isSelected){
+        gl::color(ci::Color(0,0.6,1.0));
+        ci::gl::drawStrokedCircle(vec2(0,0), mRadius + std::abs(std::sin(app::getElapsedSeconds()/2))*2 ,4, 60);
+    }else{
+        gl::color(mColor);
+         ci::gl::drawStrokedCircle(vec2(0,0), mRadius,3, 60);
+    }
+    
+   
     
     
     gl::color(1,1,1);
@@ -87,25 +96,32 @@ void BaseButton::draw(){
 
     
     // DRAW children last
-    if(isChildrenVisible){
+   
     for(BaseButton* button : mChildren){
         button->draw();
     }
-    }
-    
     gl::popMatrices();
     
  }
 
+void BaseButton::selectBtn(){
+    isSelected = true;
+}
+
+void BaseButton::unSelectBtn(){
+    isSelected = false;
+}
+
 
 
 bool BaseButton::checkHover(ci::vec2 point){
+    if(!isActive)return false;
     isHover =  glm::distance(point, mPosition) < mRadius;
     return isHover;
 }
 
 bool BaseButton::checkTouchDown(ci::vec2 point){
-    
+    if(!isActive)return false;
     
     for(auto button : mChildren){
          bool isHit = button->checkTouchDown(point - mPosition);
@@ -120,6 +136,8 @@ bool BaseButton::checkTouchDown(ci::vec2 point){
 
 
 bool BaseButton::touchUp(){
+    if(!isActive)return false;
+    
     for(auto button : mChildren){
         bool isHit = button->touchUp();
         if(isHit){

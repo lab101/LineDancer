@@ -18,6 +18,8 @@ ColorButton::ColorButton(float radius, ci::Color color){
 
 void ColorButton::draw(){
     
+    if(!isActive)return;
+    
     gl::pushMatrices();
     gl::translate(mPosition);
     
@@ -26,8 +28,13 @@ void ColorButton::draw(){
     gl::drawSolidCircle(vec2(0,0), mRadius);
     
     if(!isPressed){
-        gl::color(0,0,0);
-        gl::drawStrokedCircle(vec2(0,0), mRadius,3,60 );
+        if(isSelected){
+            gl::color(ci::Color(0,0.6,1.0));
+            ci::gl::drawStrokedCircle(vec2(0,0), mRadius + std::abs(std::sin(app::getElapsedSeconds()/2))*2 ,4, 60);
+        }else{
+            gl::color(0,0,0);
+            ci::gl::drawStrokedCircle(vec2(0,0), mRadius,3, 60);
+        }
     }
 
     
