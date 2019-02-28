@@ -19,13 +19,15 @@
 #include "cinder/Vector.h"
 #include "cinder/CinderMath.h"
 
+#include "cinder/Utilities.h"
+
 
 inline std::string getStringWithLeadingZero(int number,int minWidth){
    
-   //std::string txt = ci::toString(number);
-  //return std::string(minWidth - txt.length(), '0') + txt;
+    std::string txt = ci::toString(number);
+    return std::string(minWidth - txt.length(), '0') + txt;
 
-    
+    //return "3";
 }
 
 inline int getUnixTime(){
