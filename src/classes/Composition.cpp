@@ -534,7 +534,8 @@ ci::gl::TextureRef Composition::getTexture(){
 }
 
 bool Composition::isInsideComp(glm::vec3 point){
-    if((0 < point.x && point.x  < mSize.x) && (0 < point.y && point.y  < mSize.y)) return true;
+    if((0.0f < point.x && point.x  < mSize.x) && (0.0f < point.y && point.y  < mSize.y)) return true;
+    newLine(point);
     return false;
 }
 

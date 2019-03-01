@@ -116,10 +116,12 @@ bool BaseButton::checkHover(ci::vec2 point){
 }
 
 bool BaseButton::checkTouchDown(ci::vec2 point){
+   
     if(!isActive)return false;
     for(auto button : mChildren){
         bool isHit = button->checkTouchDown(point - mPosition);
         if(isHit){
+            
             isPressed = true;
             return true;
         }
