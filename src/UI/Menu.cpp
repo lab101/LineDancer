@@ -9,8 +9,10 @@
 #include "Menu.hpp"
 #include "Lab101Utils.h"
 #include "GlobalSettings.h"
+#include "SettingManager.h"
 #include "TextButton.hpp"
 #include "ColorButton.hpp"
+
 
 void Menu::setup(){
 
@@ -38,14 +40,11 @@ void Menu::setup(){
 //add color btns
     TextButton* btnColor = new TextButton(28, "COLOR",&(GS()->mSmallFont));
     buttons.push_back(btnColor);
-//-- color children
-    std::vector<std::string> color;
-    color.push_back("#FFFFFF");
-    color.push_back("#112F41");
-    color.push_back("#F2B134");
-    color.push_back("#ED553B");
-    color.push_back("#000000");
+   
     
+//-- color children
+    std::vector<std::string> color = SettingManager::Instance()->readColors();
+
     for(int i = 0; i< color.size();i++){
         ColorButton* btnTemp = new ColorButton(28, hexStringToColor(color[i]));
         btnColor->addChildNode(btnTemp);

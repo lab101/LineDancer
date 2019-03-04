@@ -178,15 +178,17 @@ class SettingManager{
     //map with setting from the settings file form disk.
     ci::JsonTree storedSettingsJson;
     
-    std::string const getSettingPath(){
-        return ci::app::getAppPath().string() + "/settings.json";
-    }
+    
     static SettingManager* instance;
     
     
     
     
 public:
+
+    std::string const getSettingPath(){
+        return ci::getDocumentsDirectory().string() + "lineDancer/lineDancer_settings.json";
+    }
     
     static SettingManager* Instance();
     
@@ -201,10 +203,7 @@ public:
     
     
     void setSettingByJSON(ci::JsonTree data);
-    
-    
-    
-    
+   
     void addSetting(SettingBase* setting);
     
     std::string getSettingStringDataByKey(std::string key)
@@ -223,7 +222,10 @@ public:
     
     
     void readSettings();
+    std::vector<std::string> readColors();
     void writeSettings();
+    
+   
     
     
 };
