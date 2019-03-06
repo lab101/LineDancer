@@ -405,7 +405,7 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
 
 void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
     if(isMovingPaper) return;
-    
+
     switch (currentState) {
         case BRUSH:{
             firstPoint = vec3(0,0,0);
@@ -535,8 +535,9 @@ void LineDancer::mouseDown( MouseEvent event )
 
 void LineDancer::mouseUp( MouseEvent event )
 {
+     bool isMenuHit = menu.checkTouchUp();
     if(!isMouseOnly) return;
-    if(!menu.checkTouchUp()){
+    if(!isMenuHit){
         lastWacomPoint = vec3(event.getPos(),10);
         penUp(mActiveComposition);
     }

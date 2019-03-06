@@ -151,7 +151,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
     endLine();
     
     //-----------------------------------------------------------------------OSC
-    if(!recieved){
+    if(!recieved ){
         std::vector<vec3> pointsToDrawNormalised;
         
         vec3 newPoint1 = vec3(point1);

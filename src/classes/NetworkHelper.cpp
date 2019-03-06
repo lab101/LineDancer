@@ -16,7 +16,7 @@ using namespace ci::osc;
 bool NetworkHelper::setup(){
     try{
         setupOSCSender();
-        mListener.setup(3000);
+        //mListener.setup(3000);
         
     }catch(...){
         return false;
@@ -154,6 +154,7 @@ void NetworkHelper::sendTwoPointShape(vec3& point1,vec3& point2, std::string sha
     
     mSender.sendMessage(message);
     lastBroadcast = app::getElapsedSeconds();
+    
 }
 
 
