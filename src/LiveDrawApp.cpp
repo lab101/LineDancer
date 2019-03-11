@@ -43,7 +43,7 @@ class LineDancer : public App {
     float lastUpdateTime;
     
     vec2 penMoveStart;
-    vec3 firstPoint; // L-----L-----L-----L-----L-----L-----L-----L
+    vec3 firstPoint; 
     vec3 currentPoint;
     
     

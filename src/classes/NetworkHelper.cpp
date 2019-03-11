@@ -110,6 +110,7 @@ void NetworkHelper::setupOSCSender(){
     }
     int port = 3000;
     mSender.setup( broadcast, port, true );
+   // mSender.setup( "127.0.0.1", port, false );
     lastBroadcast = app::getElapsedSeconds();
 }
 

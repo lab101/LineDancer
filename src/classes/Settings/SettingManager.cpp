@@ -54,7 +54,6 @@ void SettingManager::readSettings(){
         return;
     }
     else{
-        
         string file_contents { istreambuf_iterator<char>(input), istreambuf_iterator<char>() };
         
         storedSettingsJson = JsonTree(file_contents);
@@ -76,7 +75,9 @@ std::vector<string> SettingManager::readColors(){
     
     if (!fs::exists(colorPath)){
         CI_LOG_E("CAN'T FIND COLOR SETTING FILE " + colorPath);
-       
+        colorsReturn.push_back("#FFFFFF");
+        colorsReturn.push_back("#000000");
+      
     }
     
     std::ifstream colorInput(colorPath.c_str());

@@ -136,7 +136,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
     gl::setMatricesWindow(ci::app::getWindowSize());//------------------------FBO END
     //------------------------------------------------------------------------DRAW STROKE
     std::vector<vec3> circumference;
-    const int brushSize = 15;
+    const int brushSize = point2.z;
     for(float i = 0; i< 362.0f ; i+=1){
         float x = point1.x + (glm::distance(point1, point2) * glm::cos(glm::radians(i)));
         float y = point1.y + (glm::distance(point1, point2) * glm::sin(glm::radians(i)));
