@@ -27,6 +27,7 @@ public:
     Setting<int> replayStartTime;
 
     Setting<float> zoomLevel;
+    Setting<float> performanceDownScale;
     Setting<int> compositionWidth;
     Setting<int> compositionHeight;
     Setting<int> maxGroups;

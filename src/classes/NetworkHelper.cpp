@@ -131,7 +131,7 @@ void NetworkHelper::sendPoints(std::vector<ci::vec3>& points, bool isEraserOn,st
     for(vec3& p : points){
         message.addFloatArg(p.x);
         message.addFloatArg(p.y);
-        message.addFloatArg(p.z);
+        message.addFloatArg(p.z * GS()->performanceDownScale.value());
     }
     mSender.sendMessage(message);
     lastBroadcast = app::getElapsedSeconds();
@@ -147,10 +147,10 @@ void NetworkHelper::sendTwoPointShape(vec3& point1,vec3& point2, std::string sha
     
     message.addFloatArg(point1.x);
     message.addFloatArg(point1.y);
-    message.addFloatArg(point1.z);
+    message.addFloatArg(point1.z * GS()->performanceDownScale.value());
     message.addFloatArg(point2.x);
     message.addFloatArg(point2.y);
-    message.addFloatArg(point2.z);
+    message.addFloatArg(point2.z * GS()->performanceDownScale.value());
     
     mSender.sendMessage(message);
     lastBroadcast = app::getElapsedSeconds();
