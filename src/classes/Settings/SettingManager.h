@@ -222,9 +222,8 @@ public:
     
     
     void readSettings();
-    std::vector<std::string> readColors();
     void writeSettings();
-    
+   
    
     
     

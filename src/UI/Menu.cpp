@@ -43,7 +43,7 @@ void Menu::setup(){
    
     
 //-- color children
-    std::vector<std::string> color = SettingManager::Instance()->readColors();
+    std::vector<std::string> color = GS()->readColors();
 
     for(int i = 0; i< color.size();i++){
         ColorButton* btnTemp = new ColorButton(28, hexStringToColor(color[i]));

@@ -66,47 +66,11 @@ void SettingManager::readSettings(){
     
 }
 
-std::vector<string> SettingManager::readColors(){
-    
-    std::string colorPath = ci::getDocumentsDirectory().string() + "lineDancer/colors.json";
-    
-    std::vector<string> colorsReturn;
-   
-    
-    if (!fs::exists(colorPath)){
-        CI_LOG_E("CAN'T FIND COLOR SETTING FILE " + colorPath);
-        colorsReturn.push_back("#FFFFFF");
-        colorsReturn.push_back("#000000");
-      
-    }
-    
-    std::ifstream colorInput(colorPath.c_str());
-    if (!colorInput.is_open())
-    {
-        CI_LOG_E("CAN'T OPEN COLOR SETTING FILE " + colorPath);
-      
-    }
-    else{
-        string file_contents { istreambuf_iterator<char>(colorInput), istreambuf_iterator<char>() };
-        
-        std::cout<< JsonTree(file_contents) <<std::endl;
-        
-        ci::JsonTree colorJson =JsonTree(file_contents);
-       
-        for(int i = 0; i< colorJson.getNumChildren(); i++){
-            colorsReturn.push_back(colorJson[i].getValue());
-        }
-    }
-    
-    
-    
-    
-    
-    return colorsReturn;
-}
+
 
 
 void SettingManager::writeSettings(){
+    
     
     JsonTree settingsJson = JsonTree::makeArray();
     
@@ -124,6 +88,8 @@ void SettingManager::writeSettings(){
     
     CI_LOG_I("settings saved to " + getSettingPath());
 }
+
+
 
 
 

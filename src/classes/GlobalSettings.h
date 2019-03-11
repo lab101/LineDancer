@@ -50,6 +50,8 @@ public:
 
     GlobalSettings();
     
+    std::vector<std::string> readColors();
+    void  writeColors();
 
 };
 
