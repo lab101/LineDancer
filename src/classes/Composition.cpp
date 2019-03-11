@@ -31,7 +31,7 @@ void Composition::setup(ivec2 size){
         CI_LOG_E(ex.what());
         exit(-1);
     }
-
+    
     mSize        = size;
     setFbo(mActiveFbo,size, 1);
     
@@ -173,10 +173,10 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
 void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved, ci::Color color){
     
     
-   
+    
     newLine(point1);
-//    lineTo(point2, color);
-//    endLine();
+    //    lineTo(point2, color);
+    //    endLine();
     mPath.lineTo(vec2(point2.x,point2.y));
     mDepths.lineTo(vec2(point2.x,point2.z));
     calculatePath(mPath,mDepths,false,color);
