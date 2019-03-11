@@ -137,7 +137,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
     gl::setMatricesWindow(ci::app::getWindowSize());//------------------------FBO END
     //------------------------------------------------------------------------DRAW STROKE
     std::vector<vec3> circumference;
-    const int brushSize = point2.z;
+    const int brushSize = point1.z;
     for(float i = 0; i< 362.0f ; i+=1){
         float x = point1.x + (glm::distance(point1, point2) * glm::cos(glm::radians(i)));
         float y = point1.y + (glm::distance(point1, point2) * glm::sin(glm::radians(i)));
@@ -146,7 +146,7 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
     newLine(circumference[0]);
     for(int j =1 ; j< circumference.size();j++){
         mPath.lineTo(vec2(circumference[j].x,circumference[j].y));
-        mDepths.lineTo(vec2(circumference[j].x,brushSize));
+        mDepths.lineTo(vec2(circumference[j].x,circumference[j].z));
         calculatePath(mPath,mDepths,false,color);
     }
     endLine();
@@ -172,11 +172,13 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
 }
 void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved, ci::Color color){
     
-    const int brushSize = 10;
-    point1.z = brushSize;
+    
+   
     newLine(point1);
+//    lineTo(point2, color);
+//    endLine();
     mPath.lineTo(vec2(point2.x,point2.y));
-    mDepths.lineTo(vec2(point2.x,brushSize));
+    mDepths.lineTo(vec2(point2.x,point2.z));
     calculatePath(mPath,mDepths,false,color);
     
     //-----------------------------------------------------------------------OSC

@@ -97,7 +97,6 @@ std::vector<string> GlobalSettings::readColors(){
     else{
         string file_contents { istreambuf_iterator<char>(colorInput), istreambuf_iterator<char>() };
         
-        std::cout<< JsonTree(file_contents) <<std::endl;
         
         ci::JsonTree colorJson =JsonTree(file_contents);
         
@@ -117,10 +116,10 @@ std::vector<string> GlobalSettings::readColors(){
 void GlobalSettings::writeColors(){
     vector<std::string> defaultColors;
     defaultColors.push_back("#FFFFFF");
-     defaultColors.push_back("#112F41");
-     defaultColors.push_back("#F2B134");
-     defaultColors.push_back("#ED553B");
-     defaultColors.push_back("#000000");
+    defaultColors.push_back("#112F41");
+    defaultColors.push_back("#F2B134");
+    defaultColors.push_back("#ED553B");
+    defaultColors.push_back("#000000");
     std::string colorPath = ci::getDocumentsDirectory().string() + "lineDancer/colors.json";
     
     JsonTree settingsJson = JsonTree::makeArray();
@@ -128,8 +127,8 @@ void GlobalSettings::writeColors(){
     
     
     for (std::string s : defaultColors){
-            
-         JsonTree color = JsonTree("",s);
+        
+        JsonTree color = JsonTree("",s);
         
         settingsJson.pushBack(color);
     }

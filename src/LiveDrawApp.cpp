@@ -353,8 +353,8 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
         
     }else{
         if(!menu.checkTouchUp()){
-            firstPoint = vec3(point.x,point.y,1.0f);
-            currentPoint =vec3(point.x,point.y,1.0f);
+            firstPoint = vec3(point.x,point.y,BrushManagerSingleton::Instance()->brushScale*0.3);
+            currentPoint =vec3(point.x,point.y,BrushManagerSingleton::Instance()->brushScale*0.3);
             isDrawing=true;
             composition->newLine(point);
         }
@@ -381,17 +381,17 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
                     break;
                 }
                 case CIRCLE:{
-                    currentPoint = vec3(point.x,point.y,1.0f);
+                    currentPoint = vec3(point.x,point.y,BrushManagerSingleton::Instance()->brushScale*0.3);
                     break;
                 }
                     
                 case RECT:{
-                    currentPoint = vec3(point.x,point.y,1.0f);
+                    currentPoint = vec3(point.x,point.y,BrushManagerSingleton::Instance()->brushScale*0.3);
                     
                     break;
                 }
                 case LINE:{
-                    currentPoint = vec3(point.x,point.y,1.0f);
+                    currentPoint = vec3(point.x,point.y,BrushManagerSingleton::Instance()->brushScale*0.3);
                     break;
                 }
                 default:{
@@ -399,7 +399,7 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
                     break;
                 }
             }
-            
+                        
         }
     }
 }
