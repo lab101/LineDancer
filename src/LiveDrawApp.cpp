@@ -259,7 +259,9 @@ void LineDancer::setup()
 void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool hasHistory){
     
     composition = make_shared<Composition>();
-    composition->setup(GS()->compositionSize);
+    float downScale = 1.0 / GS()->performanceDownScale.value();
+    ci::ivec2 downScaledComposition(GS()->compositionWidth.value() * downScale,GS()->compositionHeight.value() * downScale);
+    composition->setup(downScaledComposition);
     
     // when the new points with correct spacing are calculated we send them to the other
     // clients we don't send rawpoints.

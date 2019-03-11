@@ -90,6 +90,7 @@ void Composition::newComposition(){
 
 
 void Composition::newLine(ci::vec3 pressurePoint){
+    
     mPath.clear();
     mDepths.clear();
     
