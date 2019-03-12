@@ -49,7 +49,7 @@ GlobalSettings::GlobalSettings(){
     
     blue = ci::Color(0,0.6,1.0);
     
-    fboBackground = ci::ColorA(1.0,1.0,1.0,1.0);
+    fboBackground = ci::ColorA(0.8,0.8,0.8,1.0);
     brushColor = ci::ColorA(0.0, 0.0,.0,1.0);
     
     fadeoutFactorDrawing = Setting<float>("fadeoutFactorDrawing", 1).setMin(0).setMax(1000).setSteps(1);
@@ -100,11 +100,11 @@ std::vector<string> GlobalSettings::readColors(){
 
 void GlobalSettings::writeColors(){
     vector<std::string> defaultColors;
-    defaultColors.push_back("#FFFFFF");
+     defaultColors.push_back("#000000");
     defaultColors.push_back("#112F41");
     defaultColors.push_back("#F2B134");
     defaultColors.push_back("#ED553B");
-    defaultColors.push_back("#000000");
+    defaultColors.push_back("#FFFFFF");
     std::string colorPath = ci::getDocumentsDirectory().string() + "lineDancer/colors.json";
     
     JsonTree settingsJson = JsonTree::makeArray();

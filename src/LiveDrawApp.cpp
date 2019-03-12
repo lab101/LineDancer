@@ -67,6 +67,7 @@ class LineDancer : public App {
     
     enum  shapeState { BRUSH = 0, CIRCLE = 1, LINE = 2, RECT = 3, POLY = 4 };
     int currentState;
+    int state;
     
 public:
     void setup() override;
@@ -375,7 +376,7 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
     }else{
         
         if(!menu.checkTouchUp()){
-            switch (currentState) {
+            switch (state) {
                 case BRUSH:{
                     composition->lineTo(point, GS()->brushColor);
                     break;
@@ -408,7 +409,7 @@ void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
 void LineDancer::penUp(std::shared_ptr<Composition>&  composition){
     if(isMovingPaper) return;
     
-    switch (currentState) {
+    switch (state) {
         case BRUSH:{
             firstPoint = vec3(0,0,0);
             currentPoint = vec3(0,0,0);
@@ -512,6 +513,8 @@ void LineDancer::keyUp(KeyEvent event ){
     }else if( event.getCode() == event.KEY_e){
         bool isEraserOn = BrushManagerSingleton::Instance()->isEraserOn;
         BrushManagerSingleton::Instance()->isEraserOn = !isEraserOn;
+       
+        
     }
     else if(event.getCode() == event.KEY_1){
         isMouseOnly = !isMouseOnly;
@@ -603,7 +606,7 @@ void LineDancer::drawGrid(){
     
     int const stepSize = 80;
     ci::ivec2 size = getWindowSize();
-    ci::gl::color(0.8, .8f, .6f, 0.6);
+    ci::gl::color(1.0, 1.0f, .8f, 0.6);
     
     for(int x =stepSize * 0.5; x < size.x; x += stepSize){
         for(int y = stepSize*0.5; y < size.y; y += stepSize){
@@ -629,7 +632,14 @@ void LineDancer::draw()
     ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
     mActiveComposition->draw();
     
-    switch (currentState) {
+    if(BrushManagerSingleton::Instance()->isEraserOn){
+        state = BRUSH;
+    }
+    else{
+        state = currentState;
+    }
+    
+    switch (state) {
         case BRUSH:{
             
             break;

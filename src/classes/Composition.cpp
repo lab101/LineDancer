@@ -209,26 +209,25 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, 
     gl::setMatricesWindow( mActiveFbo->getSize() );
     gl::ScopedBlendPremult scpBlend;
     //------------------------------------------------------------------------DRAW
-    gl::color(color);
+    gl::color(GS()->brushColor);
     Rectf rect( point1.x, point1.y, point2.x , point2.y);
     ci::gl::drawSolidRect(rect);
     
     gl::setMatricesWindow( ci::app::getWindowSize() );//----------------------FBO END
     //------------------------------------------------------------------------DRAW STROKE
-    const int brushSize = 10;
-    point1.z = brushSize;
+   
     newLine(point1);
     mPath.lineTo(vec2(point2.x,point1.y));
-    mDepths.lineTo(vec2(point2.x,brushSize));
+    mDepths.lineTo(vec2(point2.x,point1.z));
     calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point2.x,point2.y));
-    mDepths.lineTo(vec2(point2.x,brushSize));
+    mDepths.lineTo(vec2(point2.x,point1.z));
     calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point1.x,point2.y));
-    mDepths.lineTo(vec2(point1.x,brushSize));
+    mDepths.lineTo(vec2(point1.x,point1.z));
     calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point1.x,point1.y));
-    mDepths.lineTo(vec2(point1.x,brushSize));
+    mDepths.lineTo(vec2(point1.x,point1.z));
     calculatePath(mPath,mDepths,false,color);
     endLine();
     //-----------------------------------------------------------------------OSC
@@ -368,9 +367,12 @@ void Composition::draw(){
     
     ci::gl::pushMatrices();
     
-    gl::ScopedGlslProg glslProg( mOnionShader );
-    mOnionShader->uniform( "uTex0", 0 );
-    mOnionShader->uniform( "uTex1", 1 );
+    ci::gl::GlslProgRef textureShader = ci::gl::getStockShader(ci::gl::ShaderDef().texture().color());
+    ci::gl::ScopedGlslProg glslProg(textureShader);
+    
+   // gl::ScopedGlslProg glslProg( mOnionShader );
+   // mOnionShader->uniform( "uTex0", 0 );
+   // mOnionShader->uniform( "uTex1", 1 );
     
     mActiveFbo->getColorTexture()->bind(0);
     mLastDrawingTexture->bind(1);
@@ -468,8 +470,7 @@ void Composition::finished(){
                         std::cout << s << std::endl;
                     }
                     layerImages.push_back(stepImages.back());
-                    std::cout << "---- end ---" << std::endl;
-                    
+                    std::cout << "---- end ---" << std::endl; 
                 }
             }
         }
@@ -477,7 +478,6 @@ void Composition::finished(){
     // only write a layered final if user has been using layers
     if(layerImages.size() > 1){
         std::sort (layerImages.begin(), layerImages.end());
-        
         framesToGif(layerImages, mOutputFolder + "/_" + mCompositionId + "_final.gif");
     }
     
