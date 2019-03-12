@@ -16,8 +16,7 @@ using namespace ci::osc;
 bool NetworkHelper::setup(){
     try{
         setupOSCSender();
-        //mListener.setup(3000);
-        
+        mListener.setup(3000);
     }catch(...){
         return false;
     }
