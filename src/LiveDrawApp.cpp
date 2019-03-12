@@ -201,13 +201,16 @@ void LineDancer::setup()
     
     if(mNetworkHelper.setup()){
         mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points, bool isEraserOn, std::string color){
+            bool currentEraser = BrushManagerSingleton::Instance()->isEraserOn;
             BrushManagerSingleton::Instance()->isEraserOn = isEraserOn;
-            
+
             for(auto&p : points){
                 p.x *= mActiveComposition->mSize.x;
                 p.y *= mActiveComposition->mSize.y;
             }
             mActiveComposition->drawInFbo(points, hexStringToColor(color));
+
+            BrushManagerSingleton::Instance()->isEraserOn = currentEraser;
         });
         
         mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape, std::string color){
