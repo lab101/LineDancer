@@ -61,8 +61,8 @@ public:
     
     ci::signals::Signal<void(PointsPackage pointPackage)>   onReceivePoints;
     ci::signals::Signal<void(PointsPackage pointPackage)> onReceiveShapes;
-    ci::signals::Signal<void(std::string&)>   onNewConnection;
-    ci::signals::Signal<void(std::string&)>   onAlivePing;
+//    ci::signals::Signal<void(std::string&)>   onNewConnection;
+//    ci::signals::Signal<void(std::string&)>   onAlivePing;
 
     std::map<std::string,float> mAliveIps;
 
@@ -72,6 +72,7 @@ public:
 
     std::string const getLastMyIpNr();
     int const getGroupId();
+    bool isMessageAllowed(const ci::osc::Message &msg);
 
     void sendOscMessage(std::string command,ci::vec3 point);
     void sendPoints(std::vector<ci::vec3>& points,bool isEraserOn,std::string color);

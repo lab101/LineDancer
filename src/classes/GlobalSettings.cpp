@@ -91,7 +91,9 @@ std::vector<string> GlobalSettings::readColors(){
         ci::JsonTree colorJson =JsonTree(file_contents);
         
         for(int i = 0; i< colorJson.getNumChildren(); i++){
-            colorsReturn.push_back(colorJson[i].getValue());
+            string colorString = colorJson[i].getValue();
+            std::transform(colorString.begin(), colorString.end(),colorString.begin(), ::toupper);
+            colorsReturn.push_back(colorString);
         }
     }
     return colorsReturn;

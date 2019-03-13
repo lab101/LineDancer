@@ -83,10 +83,10 @@ void BaseButton::draw(){
     
     if(isSelected){
         gl::color(ci::Color(0,0.6,1.0));
-        ci::gl::drawStrokedCircle(vec2(0,0), mRadius + std::abs(std::sin(app::getElapsedSeconds()*2))*2 ,4, 60);
+        ci::gl::drawStrokedCircle(vec2(0,0), mRadius + std::abs(std::sin(app::getElapsedSeconds()*2))*2 ,4, 26);
     }else{
         gl::color(mColor);
-        ci::gl::drawStrokedCircle(vec2(0,0), mRadius,3, 60);
+        ci::gl::drawStrokedCircle(vec2(0,0), mRadius,3, 26);
     }
 
     gl::color(1,1,1);

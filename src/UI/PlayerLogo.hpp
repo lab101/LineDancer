@@ -18,10 +18,16 @@ class PlayerLogo{
     ci::gl::TextureRef mTexture;
     void renderText();
     std::string mText;
-    int mRadius;
+    
+    int mBaseRadius;
+    
+    float currentRadius;
+    float targetRadius;
+    
     float lastAlive;
     ci::Rectf textBoundingScaled;
     ci::vec2 mPosition;
+    
     
     bool isClient;
 
@@ -32,7 +38,7 @@ public:
     void setup(bool fullShape, std::string ipNr, int radius);
     void update();
     void draw();
-    void alive();
+    void alive(float lastAlive);
 
     
 };

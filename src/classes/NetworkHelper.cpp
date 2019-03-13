@@ -36,52 +36,62 @@ mSender( mSocket, udp::endpoint( address_v4::broadcast(), 3000 ) )
 bool NetworkHelper::setup(){
     
     
+    mOwnIpAdress = System::getIpAddress();
+    mLastIpNr = extractLastIpNr(mOwnIpAdress);
+
+
+    mReceiver.setListener("/alive",[&](const osc::Message &msg){
+        isMessageAllowed(msg);
+      
+    });
+
+
+
     mReceiver.setListener("/points",
                           [&](const osc::Message &msg){
-                              //std::lock_guard<std::mutex> lock(mCirclePosMutex);
-                              //mCurrentCirclePos.x = msg[0].int32();
-                              //mCurrentCirclePos.y = msg[1].int32();
                               
                               
-                              int totals = msg.getNumArgs();
-                              int incomingGroupId = msg[0].int32();
-                              if (incomingGroupId != groupId) return;
-                              
-                              // bool isEraserOn = msg.getArgInt32(1);
-                              std::string color = msg.getArgString(2);
-                              std::vector<ci::vec3> points;
-                              for (int i = 3; i < totals; i += 3){
-                                  points.push_back(ci::vec3(msg[i].flt(), msg[i + 1].flt(), msg[i + 2].flt()));
+                              if(isMessageAllowed(msg)){
+                            
+                                  int totals = msg.getNumArgs();
+                                  
+                                  // bool isEraserOn = msg.getArgInt32(1);
+                                  std::string color = msg.getArgString(2);
+                                  std::vector<ci::vec3> points;
+                                  for (int i = 3; i < totals; i += 3){
+                                      points.push_back(ci::vec3(msg[i].flt(), msg[i + 1].flt(), msg[i + 2].flt()));
+                                  }
+                                  PointsPackage newPackage;
+                                  newPackage.setup(points, color);
+                                  newPackage.setEraser(false); ////// DE GOM
+                                  
+                                  mPointsQueueLock.lock();
+                                  pointsQueue.push(newPackage);
+                                  mPointsQueueLock.unlock();
                               }
-                              PointsPackage newPackage;
-                              newPackage.setup(points, color);
-                              newPackage.setEraser(false); ////// DE GOM
-                              
-                              mPointsQueueLock.lock();
-                              pointsQueue.push(newPackage);
-                              mPointsQueueLock.unlock();
                               
                           });
     
     mReceiver.setListener("/shape",
                           [&](const osc::Message &msg){
-                              int totals = msg.getNumArgs();
                               
-                              int incomingGroupId = msg[0].int32();
-                              if (incomingGroupId != groupId) return;
-                              
-                              std::string shape = msg.getArgString(1);
-                              std::string color = msg.getArgString(2);
-                              std::vector<ci::vec3> points;
-                              for (int i = 3; i < totals; i += 3){
-                                  points.push_back(ci::vec3(msg[i].flt(), msg[i + 1].flt(), msg[i + 2].flt()));
+                              if(isMessageAllowed(msg)){
+
+                                  int totals = msg.getNumArgs();
+                                  
+                                  std::string shape = msg.getArgString(1);
+                                  std::string color = msg.getArgString(2);
+                                  std::vector<ci::vec3> points;
+                                  for (int i = 3; i < totals; i += 3){
+                                      points.push_back(ci::vec3(msg[i].flt(), msg[i + 1].flt(), msg[i + 2].flt()));
+                                  }
+                                  PointsPackage newPackage;
+                                  newPackage.setup(points, color);
+                                  newPackage.setShape(shape);
+                                  mShapesQueueLock.lock();
+                                  shapesQueue.push(newPackage);
+                                  mShapesQueueLock.unlock();
                               }
-                              PointsPackage newPackage;
-                              newPackage.setup(points, color);
-                              newPackage.setShape(shape);
-                              mShapesQueueLock.lock();
-                              shapesQueue.push(newPackage);
-                              mShapesQueueLock.unlock();
                               
                           });
     
@@ -118,13 +128,37 @@ bool NetworkHelper::setup(){
     return true;
 }
 
+
+bool NetworkHelper::isMessageAllowed(const osc::Message &msg){
+    
+    
+    if( msg.getNumArgs() < 1) return false;
+
+    std::string remoteIp    = msg.getSenderIpAddress().to_string();
+    int incomingGroupId     = msg[0].int32();
+
+    // ignore our own packages wich return due broadcast
+    if( remoteIp ==  mOwnIpAdress) return false;
+    
+    // check if we are in the same group.
+    if (incomingGroupId != groupId) return false;
+
+    
+    std::string remoteIpLastDigits = extractLastIpNr(remoteIp);
+    mAliveIps[remoteIpLastDigits] = ci::app::getElapsedSeconds();
+    
+    return true;
+}
+
+
+
 void NetworkHelper::setNextGroup(){
     if(++groupId > GS()->maxGroups.value()-1) groupId = 0;
 }
 
 
 void NetworkHelper::update(){
-    if(ci::app::getElapsedSeconds() - lastBroadcast > 4){
+    if(ci::app::getElapsedSeconds() - lastBroadcast > 6){
         sendAlive();
         lastBroadcast = app::getElapsedSeconds();
     }

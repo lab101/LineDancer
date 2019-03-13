@@ -127,6 +127,8 @@ void LineDancer::setup()
     
     
     log::makeLogger<log::LoggerFileRotating>(getAppPath(), "lineDancer.%Y.%m.%d.log", true);
+    // disabled screenlogger because the new threaded osc sender and receiver.
+    // log issues outside the opengl thread which causes crashes (to be fixed later)
   //  ci::log::makeLogger<NotificationLogger>();
     
     CI_LOG_I("START application");
@@ -203,7 +205,10 @@ void LineDancer::setup()
     BrushManagerSingleton::Instance()->mActiveColor = ColorA(0,0,0,1);
     
     
+    // NETWORK SETUP
     if(mNetworkHelper.setup()){
+        
+        // points
         mNetworkHelper.onReceivePoints.connect([=] (PointsPackage package){
             bool currentEraser = BrushManagerSingleton::Instance()->isEraserOn;
             BrushManagerSingleton::Instance()->isEraserOn = package.isEraserOn;
@@ -216,6 +221,7 @@ void LineDancer::setup()
             BrushManagerSingleton::Instance()->isEraserOn = currentEraser;
         });
         
+        // shapes
         mNetworkHelper.onReceiveShapes.connect([=] (PointsPackage package){
             
             for(auto&p : package.points){
@@ -237,25 +243,12 @@ void LineDancer::setup()
         });
         
         
-        mNetworkHelper.onNewConnection.connect([=](std::string& remoteIp){
-            
-            PlayerLogo newClient;
-            newClient.setup(true,remoteIp ,14);
-            newClient.setPosition(vec2( 30,100 + (mConnections.size() * 45)));
-            mConnections[remoteIp] = newClient;
-            
-            
-        });
-        
-        mNetworkHelper.onAlivePing.connect([=](std::string& remoteIp){
-            mConnections[remoteIp].alive();
-        });
     }
     
     mOwnLogo.setup(false, ci::toString( mNetworkHelper.getGroupId()) + "|" + mNetworkHelper.getLastMyIpNr() , 20);
     mOwnLogo.setPosition(vec2(30,52));
     
-    currentState = 0;
+    currentState = BRUSH;
     
     CI_LOG_I("finished SETUP");
     
@@ -377,7 +370,6 @@ void LineDancer::penDown(vec3 point,std::shared_ptr<Composition>& composition){
 
 
 void LineDancer::penMove(vec3 point,std::shared_ptr<Composition>& composition){
-    
     
     
     if(isMovingPaper){
@@ -599,9 +591,27 @@ void LineDancer::update()
     menu.update();
     mNetworkHelper.update();
     
+    // update other participants
+    for(auto& client : mNetworkHelper.mAliveIps){
+        std::string remoteIp = client.first;
+        
+        if(mConnections.find(remoteIp) == mConnections.end()){
+                        PlayerLogo newClient;
+                        newClient.setup(true,remoteIp ,15);
+                        newClient.setPosition(vec2( 30,100 + (mConnections.size() * 45)));
+                        mConnections[remoteIp] = newClient;
+        }
+        
+        
+        mConnections[remoteIp].alive(client.second);
+        mConnections[remoteIp].update();
+
+        
+    }
+
+    
     
     if(GS()->doFadeOut.value()){
-        
         mActiveComposition->drawFadeOut();
         GS()->fadeoutFactor = GS()->fadeoutFactorDrawing.value() / 10000;
     }
@@ -752,7 +762,8 @@ void LineDancer::drawTextMessages(){
 }
 
 void LineDancer::cleanup(){
- mNetworkHelper.cleanup();
+    // make sure all threads are killed.
+    mNetworkHelper.cleanup();
 };
 
 
