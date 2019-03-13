@@ -130,15 +130,13 @@ void Composition::lineTo(ci::vec3 pressurePoint,ci::ColorA color){
     if(mPath.empty()){
         newLine(pressurePoint);
     }else{
-    
         mPath.lineTo(vec2(pressurePoint.x,pressurePoint.y));
         mDepths.lineTo(vec2(pressurePoint.x,pressurePoint.z));
         calculatePath(mPath,mDepths,true,color);
     }
 }
 
-void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color ){
-    
+void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color ){ 
     //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());
@@ -193,7 +191,7 @@ void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved, ci::
     mPath.lineTo(vec2(point2.x,point2.y));
     mDepths.lineTo(vec2(point2.x,point2.z));
     calculatePath(mPath,mDepths,false,color);
-    
+    endLine();
     //-----------------------------------------------------------------------OSC
     if(!recieved){
         std::vector<vec3> pointsToDrawNormalised;
