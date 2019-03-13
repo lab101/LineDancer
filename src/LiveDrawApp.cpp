@@ -741,5 +741,8 @@ void LineDancer::drawTextMessages(){
 
 
 
-CINDER_APP(LineDancer, RendererGl(RendererGl::Options().stencil().msaa(4)),
-           [](App::Settings *settings) { settings->setHighDensityDisplayEnabled(); })
+CINDER_APP(LineDancer, RendererGl(RendererGl::Options().msaa(4)),
+           [](App::Settings *settings) {
+              // settings->setHighDensityDisplayEnabled();
+               
+           })

@@ -64,8 +64,8 @@ GlobalSettings::GlobalSettings(){
     
     float displayScale =  ci::app::getWindowContentScale();
     
-    mLargeFont = gl::TextureFont::create( Font( "Helvetica", 72 * displayScale ), gl::TextureFont::Format().enableMipmapping() );
-    mSmallFont = Font( "Helvetica", 10 * displayScale );
+    mLargeFont = gl::TextureFont::create( Font( "Helvetica", 72  * displayScale ), gl::TextureFont::Format().enableMipmapping() );
+    mSmallFont = Font( "Helvetica", 10  * displayScale );
     
 }
 std::vector<string> GlobalSettings::readColors(){
