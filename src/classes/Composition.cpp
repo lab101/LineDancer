@@ -91,35 +91,50 @@ void Composition::newComposition(){
 
 void Composition::newLine(ci::vec3 pressurePoint){
     
-    mPath.clear();
-    mDepths.clear();
+    clearPath();
     
     mPath.moveTo(vec2(pressurePoint.x   ,pressurePoint.y));
     mDepths.moveTo(vec2(pressurePoint.x ,pressurePoint.z));
     
-    lastDrawDistance = 0;
-    minDistance = 0;
-    
-    // adding new vector of strokes for data capture
-    pointVec newStrokes;
-    strokes.push_back(newStrokes);
 }
 
 
 void Composition::endLine(){
     
+    
     if(GS()->hasGifOutput.value()){
         saveLineSegmentForGif();
     }
+    
     mStepId++;
+    clearPath();
 }
 
 
+void Composition::clearPath(){
+    
+    mPath.clear();
+    mDepths.clear();
+    
+    pointVec newStrokes;
+    strokes.push_back(newStrokes);
+    
+    lastDrawDistance = 0;
+    minDistance = 0;
+
+}
+
 void Composition::lineTo(ci::vec3 pressurePoint,ci::ColorA color){
     if(!isInsideComp(pressurePoint)) return;
-    mPath.lineTo(vec2(pressurePoint.x,pressurePoint.y));
-    mDepths.lineTo(vec2(pressurePoint.x,pressurePoint.z));
-    calculatePath(mPath,mDepths,true,color);
+    
+    if(mPath.empty()){
+        newLine(pressurePoint);
+    }else{
+    
+        mPath.lineTo(vec2(pressurePoint.x,pressurePoint.y));
+        mDepths.lineTo(vec2(pressurePoint.x,pressurePoint.z));
+        calculatePath(mPath,mDepths,true,color);
+    }
 }
 
 void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color ){
@@ -170,13 +185,11 @@ void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci:
         onNewCircle.emit(pointsToDrawNormalised);
     }
 }
+
+
 void Composition::drawLine(ci::vec3 point1,ci::vec3 point2 , bool recieved, ci::Color color){
     
-    
-    
     newLine(point1);
-    //    lineTo(point2, color);
-    //    endLine();
     mPath.lineTo(vec2(point2.x,point2.y));
     mDepths.lineTo(vec2(point2.x,point2.z));
     calculatePath(mPath,mDepths,false,color);
@@ -219,13 +232,13 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, 
     newLine(point1);
     mPath.lineTo(vec2(point2.x,point1.y));
     mDepths.lineTo(vec2(point2.x,point1.z));
-    calculatePath(mPath,mDepths,false,color);
+  //  calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point2.x,point2.y));
     mDepths.lineTo(vec2(point2.x,point1.z));
-    calculatePath(mPath,mDepths,false,color);
+   // calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point1.x,point2.y));
     mDepths.lineTo(vec2(point1.x,point1.z));
-    calculatePath(mPath,mDepths,false,color);
+   // calculatePath(mPath,mDepths,false,color);
     mPath.lineTo(vec2(point1.x,point1.y));
     mDepths.lineTo(vec2(point1.x,point1.z));
     calculatePath(mPath,mDepths,false,color);

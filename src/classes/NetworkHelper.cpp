@@ -19,7 +19,9 @@ using namespace ci::osc;
 
 NetworkHelper::NetworkHelper()
 : mIoService(new asio::io_service), mWork(new asio::io_service::work(*mIoService)),
-mSocket( new udp::socket( App::get()->io_service(), udp::endpoint( udp::v4(), 3000 ) ) ),
+
+mSocket( new udp::socket( *mIoService, udp::endpoint( udp::v4(), 3100 ) ) ),
+
 mReceiver(3000, asio::ip::udp::v4(), *mIoService),
 mSender( mSocket, udp::endpoint( address_v4::broadcast(), 3000 ) )
 {
@@ -33,7 +35,6 @@ mSender( mSocket, udp::endpoint( address_v4::broadcast(), 3000 ) )
 
 bool NetworkHelper::setup(){
     
-    setupOSCSender();
     
     mReceiver.setListener("/points",
                           [&](const osc::Message &msg){
@@ -128,6 +129,27 @@ void NetworkHelper::update(){
         lastBroadcast = app::getElapsedSeconds();
     }
     
+    
+    mPointsQueueLock.lock();
+    
+    while (!pointsQueue.empty())
+    {
+        
+        onReceivePoints.emit(pointsQueue.front());
+        pointsQueue.pop();
+    }
+    
+    mPointsQueueLock.unlock();
+    
+    mShapesQueueLock.lock();
+    
+    while (!shapesQueue.empty())
+    {
+        onReceiveShapes.emit(shapesQueue.front());
+        shapesQueue.pop();
+    }
+    
+    mShapesQueueLock.unlock();
 //    while( mListener.hasWaitingMessages() ) {
 //        osc::Message message;
 //        mListener.getNextMessage( &message );

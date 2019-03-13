@@ -63,6 +63,8 @@ class LineDancer : public App {
     ci::vec3 localCoordinate;
     ci::vec2 zoomAnchor;
     
+    void convertPointToLocalSpace(ci::vec3& point);
+    
     int zoomDirection = 0;
     vec2 zoomCenterPoint;
     
@@ -207,8 +209,7 @@ void LineDancer::setup()
             BrushManagerSingleton::Instance()->isEraserOn = package.isEraserOn;
 
             for(auto&p : package.points){
-                p.x *= mActiveComposition->mSize.x;
-                p.y *= mActiveComposition->mSize.y;
+                convertPointToLocalSpace(p);
             }
             mActiveComposition->drawInFbo(package.points, hexStringToColor(package.color));
 
@@ -217,11 +218,10 @@ void LineDancer::setup()
         
         mNetworkHelper.onReceiveShapes.connect([=] (PointsPackage package){
             
-            package.points[0].x *= mActiveComposition->mSize.x;
-            package.points[0].y *= mActiveComposition->mSize.y;
-            
-            package.points[1].x *= mActiveComposition->mSize.x;
-            package.points[1].y *= mActiveComposition->mSize.y;
+            for(auto&p : package.points){
+                convertPointToLocalSpace(p);
+            }
+
             
             ci::Color shapeColor =hexStringToColor(package.color);
             
@@ -288,6 +288,12 @@ void LineDancer::setupComposition(std::shared_ptr<Composition>& composition,bool
     });
 }
 
+
+void LineDancer::convertPointToLocalSpace(ci::vec3& p){
+    p.x *= mActiveComposition->mSize.x;
+    p.y *= mActiveComposition->mSize.y;
+    p.z /= GS()->performanceDownScale.value();
+}
 
 
 void LineDancer::onWacomData(TabletData& data){

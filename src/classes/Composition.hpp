@@ -46,6 +46,7 @@ class Composition{
     void clearFbo();
     void writeDataFile();
     void framesToGif(std::vector<std::string>& paths, std::string gifPath);
+    void clearPath();
 
      ci::gl::GlslProgRef     mOnionShader;
 
