@@ -11,6 +11,7 @@
 #include "BrushManager.hpp"
 #include "PlayerLogo.hpp"
 #include "Lab101Utils.h"
+#include "PointsPackage.hpp"
 
 #include "NetworkHelper.hpp"
 #include "GlobalSettings.h"
@@ -92,6 +93,7 @@ public:
     
     void update() override;
     void draw() override;
+    void cleanup() override;
     void drawInFbo();
     void drawGrid();
     void drawTextMessages();
@@ -123,7 +125,7 @@ void LineDancer::setup()
     
     
     log::makeLogger<log::LoggerFileRotating>(getAppPath(), "lineDancer.%Y.%m.%d.log", true);
-    ci::log::makeLogger<NotificationLogger>();
+  //  ci::log::makeLogger<NotificationLogger>();
     
     CI_LOG_I("START application");
     
@@ -200,35 +202,37 @@ void LineDancer::setup()
     
     
     if(mNetworkHelper.setup()){
-        mNetworkHelper.onReceivePoints.connect([=] (std::vector<ci::vec3>& points, bool isEraserOn, std::string color){
+        mNetworkHelper.onReceivePoints.connect([=] (PointsPackage package){
             bool currentEraser = BrushManagerSingleton::Instance()->isEraserOn;
-            BrushManagerSingleton::Instance()->isEraserOn = isEraserOn;
+            BrushManagerSingleton::Instance()->isEraserOn = package.isEraserOn;
 
-            for(auto&p : points){
+            for(auto&p : package.points){
                 p.x *= mActiveComposition->mSize.x;
                 p.y *= mActiveComposition->mSize.y;
             }
-            mActiveComposition->drawInFbo(points, hexStringToColor(color));
+            mActiveComposition->drawInFbo(package.points, hexStringToColor(package.color));
 
             BrushManagerSingleton::Instance()->isEraserOn = currentEraser;
         });
         
-        mNetworkHelper.onReceiveShapes.connect([=] (cinder::vec3& point1,cinder::vec3& point2, std::string shape, std::string color){
+        mNetworkHelper.onReceiveShapes.connect([=] (PointsPackage package){
             
-            point1.x *= mActiveComposition->mSize.x;
-            point1.y *= mActiveComposition->mSize.y;
+            package.points[0].x *= mActiveComposition->mSize.x;
+            package.points[0].y *= mActiveComposition->mSize.y;
             
-            point2.x *= mActiveComposition->mSize.x;
-            point2.y *= mActiveComposition->mSize.y;
+            package.points[1].x *= mActiveComposition->mSize.x;
+            package.points[1].y *= mActiveComposition->mSize.y;
             
-            if(shape == "RECT"){
-                mActiveComposition->drawRectangle(point1, point2,true, hexStringToColor(color));
+            ci::Color shapeColor =hexStringToColor(package.color);
+            
+            if(package.shape == "RECT"){
+                mActiveComposition->drawRectangle(package.points[0], package.points[1],true,shapeColor );
             }
-            else if(shape == "CIRCLE"){
-                mActiveComposition->drawCircle(point1, point2,true,hexStringToColor(color));
+            else if(package.shape == "CIRCLE"){
+                mActiveComposition->drawCircle(package.points[0], package.points[1],true,shapeColor);
             }
-            else if(shape == "LINE"){
-                mActiveComposition->drawLine(point1, point2,true,hexStringToColor(color));
+            else if(package.shape == "LINE"){
+                mActiveComposition->drawLine(package.points[0], package.points[1],true,shapeColor);
             }
         });
         
@@ -741,7 +745,9 @@ void LineDancer::drawTextMessages(){
     }
 }
 
-
+void LineDancer::cleanup(){
+ mNetworkHelper.cleanup();
+};
 
 
 CINDER_APP(LineDancer, RendererGl(RendererGl::Options().stencil().msaa(4)),
