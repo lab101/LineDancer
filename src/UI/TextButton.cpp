@@ -21,7 +21,8 @@ TextButton::TextButton(float radius, std::string text, ci::Font* font){
 
 void TextButton::renderText(){
     
-    float displayScale =  ci::app::getWindowContentScale();
+    // always do retina.
+    float displayScale = 2;// ci::app::getWindowContentScale();
 
     
     TextBox tbox = TextBox().alignment( TextBox::CENTER ).font( (*mTextFont) ).size( ivec2( mRadius * 2 * displayScale, TextBox::GROW ) ).text( mText );

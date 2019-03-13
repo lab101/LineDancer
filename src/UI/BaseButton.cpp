@@ -11,6 +11,7 @@
 using namespace ci;
 
 BaseButton::BaseButton(){
+    
     isActive = true;
     isSelected = false;
     mRadius  = 28;
@@ -35,10 +36,11 @@ void BaseButton::setPosition(ci::vec2 position){
 
 void BaseButton::calculateBoundingBox(){
     
-    float displayScale = 1 /  ci::app::getWindowContentScale();
     vec2 size = mTexture->getSize();
-    mBoundingScaled = Rectf(vec2(size.x * -displayScale, size.y * -displayScale), vec2(size.x * displayScale, size.y * displayScale) );
-    mBoundingScaled.scaleCentered(displayScale);
+    mBoundingScaled = Rectf(vec2(size.x * -0.5, size.y * -0.5), vec2(size.x * 0.5, size.y * 0.5) );
+    
+    // always do retina.
+    mBoundingScaled.scaleCentered(0.5);
 }
 
 
