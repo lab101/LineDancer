@@ -50,6 +50,7 @@
 		9F1B4768221EE84E00086DFF /* Rect.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1B4766221EE84E00086DFF /* Rect.png */; };
 		9F1B4769221EE84E00086DFF /* Line.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1B4767221EE84E00086DFF /* Line.png */; };
 		9F4E9FFB2223F88A005D58C5 /* Polygon.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F4E9FFA2223F88A005D58C5 /* Polygon.png */; };
+		9F879564223900DC00DD00DD /* PointPackage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F879562223900DC00DD00DD /* PointPackage.cpp */; };
 		9FBE4A4D2226E903001126AC /* Brush.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBE4A4C2226E903001126AC /* Brush.png */; };
 		AED73D58FB0D4129A14EE6C5 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FCFA9EB1C7B4617A7494920 /* OscTypes.cpp */; };
 		B97D7AF17DAA4CBCAEBF6F98 /* LiveDrawApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 610A7B04CB4747348DD4B8CA /* LiveDrawApp.cpp */; };
@@ -135,6 +136,8 @@
 		9F1B4766221EE84E00086DFF /* Rect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Rect.png; path = ../resources/Rect.png; sourceTree = "<group>"; };
 		9F1B4767221EE84E00086DFF /* Line.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Line.png; path = ../resources/Line.png; sourceTree = "<group>"; };
 		9F4E9FFA2223F88A005D58C5 /* Polygon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Polygon.png; path = ../resources/Polygon.png; sourceTree = "<group>"; };
+		9F879562223900DC00DD00DD /* PointPackage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PointPackage.cpp; sourceTree = "<group>"; };
+		9F879563223900DC00DD00DD /* PointPackage.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PointPackage.hpp; sourceTree = "<group>"; };
 		9FBE4A4C2226E903001126AC /* Brush.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Brush.png; path = ../resources/Brush.png; sourceTree = "<group>"; };
 		A07B93730E834C64A16C1070 /* NetworkingUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = NetworkingUtils.cpp; path = ../blocks/OSC/src/ip/posix/NetworkingUtils.cpp; sourceTree = "<group>"; };
 		A51705D56AB545D09653A077 /* OscReceivedElements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = OscReceivedElements.cpp; path = ../blocks/OSC/src/osc/OscReceivedElements.cpp; sourceTree = "<group>"; };
@@ -234,6 +237,8 @@
 				152D48551D89ADAC00AB3610 /* Singleton.hpp */,
 				50E83DEC1F4AA7FC0070464D /* NetworkHelper.cpp */,
 				50E83DED1F4AA7FC0070464D /* NetworkHelper.hpp */,
+				9F879562223900DC00DD00DD /* PointPackage.cpp */,
+				9F879563223900DC00DD00DD /* PointPackage.hpp */,
 			);
 			name = classes;
 			path = ../src/classes;
@@ -499,6 +504,7 @@
 				50504B44202C628B005292AA /* SettingController.cpp in Sources */,
 				F60772C8C7444D378A4CB106 /* OscBundle.cpp in Sources */,
 				152D48661D89ADAC00AB3610 /* ofxTablet.cpp in Sources */,
+				9F879564223900DC00DD00DD /* PointPackage.cpp in Sources */,
 				50573BF220407B7F00A4E4CF /* NotificationLogger.cpp in Sources */,
 				9BDDCB2B82E949DD9FEC28A7 /* OscListener.cpp in Sources */,
 				152D48621D89ADAC00AB3610 /* Composition.cpp in Sources */,
