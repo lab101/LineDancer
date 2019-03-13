@@ -63,13 +63,15 @@ void NetworkHelper::update(){
                 std::string color = message.getArgAsString(2);
                 std::vector<ci::vec3> points;
                 for(int i=3;i < totals;i+=3){
-                    points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
+                    float brushSize = message.getArgAsFloat(i+2) / GS()->performanceDownScale.value();
+                    points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),brushSize));
                 }
                 onReceivePoints.emit(points,isEraserOn,color);
             }else if(adress == "shape"){
                 std::vector<ci::vec3> points;
                 for(int i=3;i <message.getNumArgs();i+=3){
-                    points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),message.getArgAsFloat(i+2)));
+                    float brushSize = message.getArgAsFloat(i+2) / GS()->performanceDownScale.value();
+                    points.push_back(ci::vec3(message.getArgAsFloat(i),message.getArgAsFloat(i+1),brushSize));
                 }
                 std::string shape = message.getArgAsString(1);
                 std::string color = message.getArgAsString(2);

@@ -209,7 +209,7 @@ void Composition::drawRectangle(ci::vec3 point1,ci::vec3 point2, bool recieved, 
     gl::setMatricesWindow( mActiveFbo->getSize() );
     gl::ScopedBlendPremult scpBlend;
     //------------------------------------------------------------------------DRAW
-    gl::color(GS()->brushColor);
+     gl::color(color);
     Rectf rect( point1.x, point1.y, point2.x , point2.y);
     ci::gl::drawSolidRect(rect);
     
