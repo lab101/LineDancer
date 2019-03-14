@@ -483,6 +483,9 @@ void LineDancer::keyDown( KeyEvent event ){
     else if(event.getCode() == event.KEY_s){
         SettingManager::Instance()->writeSettings();
     }
+    else if(event.getCode() == event.KEY_p){
+        mActiveComposition->writeScreenshot();
+    }
     
     
     if(calculateAnchor){

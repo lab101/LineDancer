@@ -523,6 +523,37 @@ void Composition::saveLayer(){
 }
 
 
+void Composition::writeScreenshot(){
+    
+    
+    
+    std::string screenshotFolder = mOutputFolder + "/screenshots/";
+    
+    if(!fs::exists(screenshotFolder)){
+        fs::create_directories(screenshotFolder);
+    }
+    
+    // write the current drawing to a png image
+    std::string fileName = screenshotFolder + "/layer_" + getStringWithLeadingZero(mImageLayerId, 5)+ "/" + getStringWithLeadingZero(mStepId, 5) + ".png";
+    
+    std::cout << "creatiing screenshot" << fileName << std::endl;
+    
+    auto source = mActiveFbo->getColorTexture()->createSource();
+    
+    std::thread threadObj([=]{
+        
+        try{
+            writeImage(fileName, source);
+        }catch(...){
+            CI_LOG_E("error writing PNG screenshot file: " + fileName);
+        }
+        
+    });
+    
+    threadObj.detach();
+
+}
+
 
 void Composition::writeGifStep(std::string fileName){
     

@@ -91,7 +91,8 @@ public:
     
     void saveLineSegmentForGif();
     void saveLayer();
-    
+    void writeScreenshot();
+
 
     
     ci::gl::TextureRef getTexture();

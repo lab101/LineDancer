@@ -44,7 +44,8 @@ void Menu::setup(){
     
 //-- color children
     std::vector<std::string> color = GS()->readColors();
-
+    std::reverse(color.begin(),color.end());
+    
     for(int i = 0; i< color.size();i++){
         ColorButton* btnTemp = new ColorButton(28, hexStringToColor(color[i]));
         btnColor->addChildNode(btnTemp);
