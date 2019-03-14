@@ -55,7 +55,7 @@ bool NetworkHelper::setup(){
                             
                                   int totals = msg.getNumArgs();
                                   
-                                  // bool isEraserOn = msg.getArgInt32(1);
+                                bool isEraserOn = msg.getArgBool(1);
                                   std::string color = msg.getArgString(2);
                                   std::vector<ci::vec3> points;
                                   for (int i = 3; i < totals; i += 3){
@@ -63,7 +63,7 @@ bool NetworkHelper::setup(){
                                   }
                                   PointsPackage newPackage;
                                   newPackage.setup(points, color);
-                                  newPackage.setEraser(false); ////// DE GOM
+                                  newPackage.setEraser(isEraserOn); ////// DE GOM
                                   
                                   mPointsQueueLock.lock();
                                   pointsQueue.push(newPackage);

@@ -136,7 +136,7 @@ void Composition::lineTo(ci::vec3 pressurePoint,ci::ColorA color){
     }
 }
 
-void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color ){ 
+void Composition::drawCircle(ci::vec3 point1,ci::vec3 point2, bool recieved, ci::Color color ){
     //------------------------------------------------------------------------FBO
     gl::ScopedFramebuffer fbScp( mActiveFbo );
     gl::ScopedViewport fbVP (mActiveFbo->getSize());

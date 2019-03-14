@@ -216,7 +216,12 @@ void LineDancer::setup()
             for(auto&p : package.points){
                 convertPointToLocalSpace(p);
             }
-            mActiveComposition->drawInFbo(package.points, hexStringToColor(package.color));
+            if(BrushManagerSingleton::Instance()->isEraserOn)
+            {
+                mActiveComposition->drawInFbo(package.points, GS()->fboBackground);
+            } else{
+                 mActiveComposition->drawInFbo(package.points, hexStringToColor(package.color));
+            }
 
             BrushManagerSingleton::Instance()->isEraserOn = currentEraser;
         });
