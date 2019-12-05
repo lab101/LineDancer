@@ -536,7 +536,7 @@ void Composition::writeScreenshot(){
     // write the current drawing to a png image
     std::string fileName = screenshotFolder + "/layer_" + getStringWithLeadingZero(mImageLayerId, 5)+ "/" + getStringWithLeadingZero(mStepId, 5) + ".png";
     
-    std::cout << "creatiing screenshot" << fileName << std::endl;
+    std::cout << "creating screenshot" << fileName << std::endl;
     
     auto source = mActiveFbo->getColorTexture()->createSource();
     
@@ -576,7 +576,7 @@ void Composition::writeGifStep(std::string fileName){
 
 ci::gl::TextureRef Composition::getTexture(){
     return mActiveFbo->getColorTexture();
-}
+} 
 
 bool Composition::isInsideComp(glm::vec3 point){
     if((0.0f < point.x && point.x  < mSize.x) && (0.0f < point.y && point.y  < mSize.y)) return true;

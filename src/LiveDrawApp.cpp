@@ -62,6 +62,7 @@ class LineDancer : public App {
     ci::mat4 screenMatrix;
     ci::vec3 localCoordinate;
     ci::vec2 zoomAnchor;
+    ci::gl::TextureRef overlay = nullptr;
     
     void convertPointToLocalSpace(ci::vec3& point);
     
@@ -256,6 +257,12 @@ void LineDancer::setup()
     currentState = BRUSH;
     
     CI_LOG_I("finished SETUP");
+    
+    std::string documentsFolder = getDocumentsDirectory().string() + "/lineDancer/overlay.png";
+
+    if(fs::exists(documentsFolder)){
+        overlay = gl::Texture::create(ci::loadImage(documentsFolder));
+    }
     
     
 }
@@ -519,7 +526,8 @@ void LineDancer::keyUp(KeyEvent event ){
         mOwnLogo.setText(logoText);
     }
     else if(event.getCode() == event.KEY_c){
-        mActiveComposition->clearScene(true);
+        hideCursor();
+        //mActiveComposition->clearScene(true);
     }
     else if(event.getCode() == event.KEY_m){
         toggleCursor();
@@ -662,6 +670,8 @@ void LineDancer::draw()
     ci::gl::scale(GS()->zoomLevel.value(), GS()->zoomLevel.value());
     ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
     mActiveComposition->draw();
+    
+    if(overlay != nullptr) gl::draw(overlay);
     
     if(BrushManagerSingleton::Instance()->isEraserOn){
         state = BRUSH;
