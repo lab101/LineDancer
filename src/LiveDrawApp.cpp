@@ -96,6 +96,7 @@ public:
     
     void update() override;
     void draw() override;
+    void drawBrush();
     void cleanup() override;
     void drawInFbo();
     void drawGrid();
@@ -534,14 +535,15 @@ void LineDancer::keyUp(KeyEvent event ){
     }else if( event.getCode() == event.KEY_e){
         bool isEraserOn = BrushManagerSingleton::Instance()->isEraserOn;
         BrushManagerSingleton::Instance()->isEraserOn = !isEraserOn;
-       
-        
     }
     else if(event.getCode() == event.KEY_1){
         isMouseOnly = !isMouseOnly;
     }
     else if(event.getCode() == event.KEY_d){
         GS()->debugMode.value() = !GS()->debugMode.value();
+    }
+    else if(event.getCode() == event.KEY_p){
+        GS()->projectionMode.value() = !GS()->projectionMode.value();
     }
     
 }
@@ -654,24 +656,7 @@ void LineDancer::drawGrid(){
     }
 }
 
-
-void LineDancer::draw()
-{
-    
-    gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,1.0f));
-    
-    ivec2 size = mActiveComposition->getTexture()->getSize();
-    
-    // Drawing "the paper" at zoomlevel with offset.
-    ci::gl::pushMatrices();
-    
-    ci::gl::translate(zoomCenterPoint.x, zoomCenterPoint.y, 0);
-    
-    ci::gl::scale(GS()->zoomLevel.value(), GS()->zoomLevel.value());
-    ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
-    mActiveComposition->draw();
-    
-    if(overlay != nullptr) gl::draw(overlay);
+void LineDancer::drawBrush(){
     
     if(BrushManagerSingleton::Instance()->isEraserOn){
         state = BRUSH;
@@ -711,6 +696,35 @@ void LineDancer::draw()
             break;
         }
     }
+}
+
+
+void LineDancer::draw()
+{
+    
+    if(!GS()->projectionMode.value()){
+        gl::clear(ColorA(249.0f / 255.0f, 242.0f / 255.0f, 160.0f / 255.0f,1.0f));
+    }else{
+        gl::clear(ColorA(0, 0,0,1.0f));
+    }
+    
+    ivec2 size = mActiveComposition->getTexture()->getSize();
+    
+    // Drawing "the paper" at zoomlevel with offset.
+    ci::gl::pushMatrices();
+    
+    ci::gl::translate(zoomCenterPoint.x, zoomCenterPoint.y, 0);
+    
+    ci::gl::scale(GS()->zoomLevel.value(), GS()->zoomLevel.value());
+    ci::gl::translate(-size.x  * zoomAnchor.x , -size.y * zoomAnchor.y , 0);
+    mActiveComposition->draw();
+    
+    
+    if(!GS()->projectionMode.value())
+    {
+        drawBrush();
+        if(overlay != nullptr) gl::draw(overlay);
+    }
     
     // get the screenmatrix when all the transformations on the "paper" (fbo) or done.
     screenMatrix = ci::gl::getModelViewProjection();
@@ -718,22 +732,23 @@ void LineDancer::draw()
     
     ci::gl::popMatrices();
     
-    
-    // draw the screen pointer.
-    if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0.0, 0.0);
-    else ci::gl::color(0, 0.3, 1.0);
-    ci::gl::drawStrokedCircle(vec2(lastWacomPoint.x,lastWacomPoint.y), 8, 2, 12);
-    
-    
-    
-    drawGrid();
-    menu.draw();
-    drawTextMessages();
-    
-    mOwnLogo.draw();
-    // drawing connected clients
-    for(auto& l : mConnections){
-        l.second.draw();
+    if(!GS()->projectionMode.value()){
+        // draw the screen pointer.
+        if(BrushManagerSingleton::Instance()->isEraserOn) ci::gl::color(1, 0.0, 0.0);
+        else ci::gl::color(0, 0.3, 1.0);
+        ci::gl::drawStrokedCircle(vec2(lastWacomPoint.x,lastWacomPoint.y), 8, 2, 12);
+        
+        
+        
+        drawGrid();
+        menu.draw();
+        drawTextMessages();
+        
+        mOwnLogo.draw();
+        // drawing connected clients
+        for(auto& l : mConnections){
+            l.second.draw();
+        }
     }
     
     if(GS()->debugMode.value()){
@@ -742,6 +757,7 @@ void LineDancer::draw()
         mSettingController.draw();
         
     }
+
     
     
 }

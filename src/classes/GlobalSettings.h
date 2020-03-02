@@ -38,6 +38,7 @@ public:
     Setting<bool>   hasLayerButton;
     Setting<bool>   doFadeOut;
     Setting<bool>   debugMode;
+    Setting<bool>   projectionMode;
 
     ci::ColorA blue;
     ci::ColorA fboBackground;

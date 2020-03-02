@@ -25,6 +25,7 @@ GlobalSettings::GlobalSettings(){
     doFadeOut = Setting<bool>("doFadeout",false);
     zoomLevel = Setting<float>("zoomlevel",0.9).setSteps(0.05);
     debugMode = Setting<bool>("debugMode",false);
+    projectionMode = Setting<bool>("projectionMode",false);
     maxGroups = Setting<int>("maxGroups",2);
     
     performanceDownScale = Setting<float>("performanceDownScale",1.0).setSteps(0.5);
@@ -42,6 +43,9 @@ GlobalSettings::GlobalSettings(){
     addSetting(&compositionHeight);
     addSetting(&debugMode);
     addSetting(&maxGroups);
+    addSetting(&projectionMode);
+
+    
     
     compositionSize = ci::ivec2(compositionWidth.value(),compositionHeight.value());
     
